@@ -12,8 +12,34 @@ services:
     volumes:
       - tienda_data:/data
 
+  # One-shot: importa y activa los flujos de workflows/ en n8n en cada arranque.
+  # n8n no arranca hasta que este servicio termina con exito.
+  n8n-import:
+    image: docker.n8n.io/n8nio/n8n
+    entrypoint: >
+      sh -c "for f in /credentials/*.json; do
+               echo Importando credencial $$f;
+               n8n import:credentials --input=\"$$f\" || exit 1;
+             done &&
+             for f in /workflows/*.json; do
+               echo Importando $$f;
+               n8n import:workflow --input=\"$$f\" || exit 1;
+             done &&
+             n8n export:workflow --all --output=/tmp/export.json &&
+             node /activate.mjs"
+    volumes:
+      - ./workflows:/workflows:ro
+      - ./credentials:/credentials:ro
+      - ./scripts/n8n-activate.mjs:/activate.mjs:ro
+      - n8n_data:/home/node/.n8n
+    environment:
+      - GENERIC_TIMEZONE=Europe/Madrid
+
   n8n:
     image: docker.n8n.io/n8nio/n8n
+    depends_on:
+      n8n-import:
+        condition: service_completed_successfully
     ports:
       - "5678:5678"
     environment:
