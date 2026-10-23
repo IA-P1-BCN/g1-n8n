@@ -22,6 +22,12 @@ services:
     volumes:
       - n8n_data:/home/node/.n8n
 
+  # Buzón de pruebas: recoge todos los correos que envía n8n y los muestra en http://localhost:8025
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"
+
 volumes:
   tienda_data:
   n8n_data:

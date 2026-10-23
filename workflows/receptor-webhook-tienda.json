@@ -1,0 +1,208 @@
+{
+  "name": "Receptor · Webhook tienda (US-17 scaffold)",
+  "id": "HXZBeAF7TZrK4zfD",
+  "nodes": [
+    {
+      "id": "webhook-tienda",
+      "name": "Webhook tienda",
+      "webhookId": "b4a71c22-8f51-4a34-9c49-f9e77aa31a80",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -260,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tienda",
+        "responseMode": "onReceived",
+        "options": {}
+      }
+    },
+    {
+      "id": "extraer-body",
+      "name": "Evento y datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -140,
+        0
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.body }}"
+      }
+    },
+    {
+      "id": "switch-evento",
+      "name": "Repartir por evento",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        -20,
+        0
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ev-creado",
+                    "leftValue": "={{ $json.evento }}",
+                    "rightValue": "apartado.creado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "apartado.creado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ev-abono",
+                    "leftValue": "={{ $json.evento }}",
+                    "rightValue": "abono.registrado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "abono.registrado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ev-venta",
+                    "leftValue": "={{ $json.evento }}",
+                    "rightValue": "venta.registrada",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "venta.registrada"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ev-vencido",
+                    "leftValue": "={{ $json.evento }}",
+                    "rightValue": "apartado.vencido",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "apartado.vencido"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "exec-flujo01",
+      "name": "Ejecutar Flujo 01",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        -120
+      ],
+      "parameters": {
+        "mode": "once",
+        "workflowId": {
+          "__rl": true,
+          "value": "pwLRoxMrKVfAR2XK",
+          "mode": "id"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook tienda": {
+      "main": [
+        [
+          {
+            "node": "Evento y datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evento y datos": {
+      "main": [
+        [
+          {
+            "node": "Repartir por evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Repartir por evento": {
+      "main": [
+        [
+          {
+            "node": "Ejecutar Flujo 01",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "active": true
+}
