@@ -1,0 +1,146 @@
+{
+  "name": "Flujo ROJO de demostración",
+  "id": "pwLRoxMrKVfAR2XK",
+  "nodes": [
+    {
+      "id": "trigger-flujo01",
+      "name": "Cuando el receptor llama",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -260,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "if-email",
+      "name": "¿El cliente tiene email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        -20,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "email-presente",
+              "leftValue": "={{ $json.datos.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "gmail-cliente",
+      "name": "Enviar resumen al cliente",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        -140
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "={{ $json.datos.email }}",
+        "subject": "=👟 Apartado confirmado · Zapatería Paso Firme",
+        "emailFormat": "html",
+        "html": "=<h2>👟 Apartado confirmado</h2><p>Hola {{ $json.datos.cliente }},</p><p>tus zapatos quedan guardados para ti 🎁</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Producto</b></td><td>{{ $json.datos.producto }} (talla {{ $json.datos.talla }})</td></tr><tr><td><b>Precio</b></td><td>{{ $json.datos.precio }} €</td></tr><tr><td><b>Ya abonado</b></td><td>{{ $json.datos.abonado }} €</td></tr><tr><td><b>Te queda por pagar</b></td><td>{{ $json.datos.pendiente }} €</td></tr><tr><td><b>Límite para liquidarlo</b></td><td>{{ $json.datos.fecha_limite.split(\"-\").reverse().join(\"/\") }}</td></tr></table><p>Cuando hayas pagado todo, ¡pásate a por ellos!</p><p>Zapatería Paso Firme</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      },
+      "webhookId": "ae03de08-18d1-4019-8a26-e432bc32b32c"
+    },
+    {
+      "id": "gmail-tienda",
+      "name": "Avisar a la tienda",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        160
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=👟 Cliente sin email · apartado nº {{ $json.datos.id }}",
+        "emailFormat": "html",
+        "html": "=<p>Se ha creado el apartado <b>nº {{ $json.datos.id }}</b> de {{ $json.datos.cliente }} pero <b>el cliente no tiene email</b>, así que no se le ha podido enviar la confirmación.</p><p>{{ $json.datos.producto }} (talla {{ $json.datos.talla }}) · precio {{ $json.datos.precio }} € · abonado {{ $json.datos.abonado }} €</p><p>Teléfono: {{ $json.datos.telefono ?? \"no disponible\" }} · plazo hasta el {{ $json.datos.fecha_limite.split(\"-\").reverse().join(\"/\") }}</p><p>Avisad a la persona en cuanto venga por la tienda. — Flujo 01</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      },
+      "webhookId": "f042b0f7-9767-488e-91c5-7f1ac2500fbc"
+    }
+  ],
+  "connections": {
+    "Cuando el receptor llama": {
+      "main": [
+        [
+          {
+            "node": "¿El cliente tiene email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿El cliente tiene email?": {
+      "main": [
+        [
+          {
+            "node": "Enviar resumen al cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar a la tienda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook tienda": {
+      "main": [
+        [
+          {
+            "node": "Nodo fantasma",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true
+}
