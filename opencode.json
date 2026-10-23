@@ -3,7 +3,7 @@
   "mcp": {
     "n8n-mcp": {
       "type": "local",
-      "command": ["cmd", "/c", "n8n-mcp"],
+      "command": ["node", ".opencode/mcp/n8n-mcp.cjs"],
       "enabled": true,
       "environment": {
         "MCP_MODE": "stdio",
