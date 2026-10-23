@@ -10,9 +10,7 @@
           "LOG_LEVEL": "error",
           "DISABLE_CONSOLE_OUTPUT": "true",
           "N8N_API_URL": "http://localhost:5678",
-          "WEBHOOK_SECURITY_MODE": "moderate",
-          "N8N_API_KEY": "{env:N8N_API_KEY}",
-          "N8N_MCP_ACCESS_TOKEN": "{env:N8N_MCP_ACCESS_TOKEN}"
+          "WEBHOOK_SECURITY_MODE": "moderate"
         }
       }
     }
