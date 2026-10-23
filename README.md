@@ -30,6 +30,8 @@ N8N_WEBHOOK_URL=http://n8n:5678/webhook/tienda
 SEED=1
 ```
 
+> **Nota:** la clave `API_KEY` se obtiene dentro de la interfaz de n8n: **Settings > n8n API** (en el paso 5 verás cómo usarla en opencode).
+
 ### 3. Arrancar los servicios
 
 ```bash
