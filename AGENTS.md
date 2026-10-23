@@ -9,3 +9,9 @@ GitHub Issues on a Projects board — milestones as epics, stories as issues, te
 ### Domain docs
 
 Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+
+REGLAS GENERALES
+- protege la rama main, pr con 1 review
+- usa convenitonal commit y conventional branches
+- usa TDD
