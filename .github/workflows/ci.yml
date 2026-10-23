@@ -1,0 +1,15 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validar-flujos:
+    name: Validar JSON de flujos n8n
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validación de workflows/*.json
+        run: python3 scripts/valida_flujos.py workflows
