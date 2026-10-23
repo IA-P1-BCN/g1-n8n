@@ -46,9 +46,16 @@ docker compose up -d
 
 Con `SEED=1` la tienda se arranca con datos la primera vez (usa `SEED=0` para arrancar vacía).
 
-### 4. Importar los flujos en n8n
+### 4. Flujos de n8n
 
-Los flujos viven en `workflows/`. Importa los JSON desde el editor de n8n (en proyectos se generan en la UI: `Workflows > Import from File`).
+Los flujos viven en `workflows/` y **se importan y activan automáticamente** en cada arranque del stack (servicio one-shot `n8n-import` de docker compose; n8n espera a que la importación termine antes de arrancar).
+
+Si editas o añades un JSON en `workflows/`, reinicia el stack para subirlos:
+
+```bash
+docker compose stop n8n n8n-import
+docker compose up -d
+```
 
 ### 5. Configurar el MCP de n8n en opencode
 
