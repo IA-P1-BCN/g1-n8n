@@ -17,7 +17,11 @@ services:
   n8n-import:
     image: docker.n8n.io/n8nio/n8n
     entrypoint: >
-      sh -c "for f in /workflows/*.json; do
+      sh -c "for f in /credentials/*.json; do
+               echo Importando credencial $$f;
+               n8n import:credentials --input=\"$$f\" || exit 1;
+             done &&
+             for f in /workflows/*.json; do
                echo Importando $$f;
                n8n import:workflow --input=\"$$f\" || exit 1;
              done &&
@@ -25,6 +29,7 @@ services:
              node /activate.mjs"
     volumes:
       - ./workflows:/workflows:ro
+      - ./credentials:/credentials:ro
       - ./scripts/n8n-activate.mjs:/activate.mjs:ro
       - n8n_data:/home/node/.n8n
     environment:
