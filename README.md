@@ -48,7 +48,7 @@ Con `SEED=1` la tienda se arranca con datos la primera vez (usa `SEED=0` para ar
 
 ### 4. Flujos de n8n
 
-Los flujos viven en `workflows/` y **se importan y activan automáticamente** en cada arranque del stack (servicio one-shot `n8n-import` de docker compose; n8n espera a que la importación termine antes de arrancar).
+Los flujos viven en `workflows/` y las credenciales que usan van en `credentials/` (en claro, porque el `n8n-import` las cifra al subir). Ambos **se importan y activan automáticamente** en cada arranque del stack (servicio one-shot `n8n-import` de docker compose; n8n espera a que la importación termine antes de arrancar). En local el SMTP apunta a Mailpit (`mailpit:1025`, sin TLS), así que cualquier correo que envía un flujo se ve en http://localhost:8025.
 
 Si editas o añades un JSON en `workflows/`, reinicia el stack para subirlos:
 
