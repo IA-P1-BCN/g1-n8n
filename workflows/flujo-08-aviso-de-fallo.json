@@ -1,0 +1,119 @@
+{
+  "name": "Flujo 08 · Aviso de fallo",
+  "id": "pFlujo08AvisoFallo",
+  "nodes": [
+    {
+      "id": "trigger-fallo",
+      "name": "Cuando un flujo falla",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "resumen-fallo",
+      "name": "Resumir el fallo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -20,
+        0
+      ],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f-flujo",
+              "name": "flujo",
+              "value": "={{ $json.workflow.name }}",
+              "type": "string"
+            },
+            {
+              "id": "f-paso",
+              "name": "paso",
+              "value": "={{ $json.execution.lastNodeExecuted ?? \"nodo desconocido\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f-error",
+              "name": "error",
+              "value": "={{ $json.execution.error.message ?? \"sin detalle del error\" }}",
+              "type": "string"
+            },
+            {
+              "id": "f-cuando",
+              "name": "cuando",
+              "value": "={{ $now.setZone('Europe/Madrid').toFormat('dd/MM/yyyy HH:mm') }}",
+              "type": "string"
+            },
+            {
+              "id": "f-ejecucion",
+              "name": "ejecucion",
+              "value": "={{ $json.execution.url ?? \"verla en Executions de n8n\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "email-fallo",
+      "name": "Avisar de fallo a la tienda",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=🛠 Aviso de fallo · {{ $json.flujo }}",
+        "emailFormat": "html",
+        "html": "=<h2>🛠 Una automatización ha fallado</h2><p>Una automatización de la zapatería se ha detenido; revisad <b>pronto</b> para que no quede roto semanas.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Flujo</b></td><td>{{ $json.flujo }}</td></tr><tr><td><b>Paso</b></td><td>{{ $json.paso }}</td></tr><tr><td><b>Error</b></td><td>{{ $json.error }}</td></tr><tr><td><b>Cuándo</b></td><td>{{ $json.cuando }}</td></tr></table><p>Abre la ejecución para ver el detalle y arreglarlo: <a href=\"{{ $json.ejecucion }}\">{{ $json.ejecucion }}</a></p><p>Repite la operación afectada cuando esté resuelto. — Flujo 08</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      },
+      "webhookId": "3f1e2a9c-6b44-4f7a-9d21-58c0e7a4b8f2"
+    }
+  ],
+  "connections": {
+    "Cuando un flujo falla": {
+      "main": [
+        [
+          {
+            "node": "Resumir el fallo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumir el fallo": {
+      "main": [
+        [
+          {
+            "node": "Avisar de fallo a la tienda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "active": true
+}
