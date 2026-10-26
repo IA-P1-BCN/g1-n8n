@@ -163,6 +163,24 @@
           "mode": "id"
         }
       }
+    },
+    {
+      "id": "exec-flujo02",
+      "name": "Ejecutar Flujo 02",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        120
+      ],
+      "parameters": {
+        "mode": "once",
+        "workflowId": {
+          "__rl": true,
+          "value": "pFlujo02ReciboAbono",
+          "mode": "id"
+        }
+      }
     }
   ],
   "connections": {
@@ -193,6 +211,13 @@
         [
           {
             "node": "Ejecutar Flujo 01",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ejecutar Flujo 02",
             "type": "main",
             "index": 0
           }
