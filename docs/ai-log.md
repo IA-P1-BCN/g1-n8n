@@ -67,7 +67,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 
 
-### US-17 · Receptor · Webhook tienda ([#26](https://github.com/IA-P1-BCN/g1-n8n/issues/26), 2026-10-27/28)
+### US-17 · Receptor · Webhook tienda ([#26](https://github.com/IA-P1-BCN/g1-n8n/issues/26), PR #125, 2026-10-27/28)
 
 - **Prompts (textuales de la sesión)**:
   1. *(27/10)* «quiero hacer esta tarea, [US-17 #26]»
@@ -87,7 +87,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 ### Tareas transversales (2026-10-22/28)
 
-- US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — en PRs #111/#118.
+- US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — scaffold en PRs #111/#118; spec, renombrado, fallback y evidencia en la PR #125.
 - 28/10 · infra desmonta `n8n-import` (US-22, esta PR): `task install`/`task arrancar`/`task importar` en Taskfile.
 - US-16 · CI: validación de JSON de flujos (`scripts/valida_flujos.py` en cada PR) — PR #112.
 - Infra · auto-importar/activar `workflows/` y `credentials/` en cada arranque (servicio one-shot `n8n-import`) — PR #115.
