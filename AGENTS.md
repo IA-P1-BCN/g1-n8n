@@ -29,7 +29,7 @@ REGLAS GENERALES
 | mailpit | http://localhost:8025 | Gestor de correos |
 
 ## IA Agents
-Usamos agente Opencode y MCP n8n-mcp.
+Usamos agente Opencode y MCP n8n-mcp. Trazabilidad de prompts, decisiones y errores del agente: `docs/ai-log.md` (una entrada por tarea; todo error detectado se registra con su corrección).
 
 ## Convenciones de nombres
 | Artefacto | Convención | Ejemplo |
@@ -46,7 +46,7 @@ Usamos agente Opencode y MCP n8n-mcp.
 - **Importar:** automático — en cada arranque el stack sube `credentials/` y `workflows/` y los activa (servicio one-shot `n8n-import`). Tras editar un JSON:
   `docker compose stop n8n n8n-import && docker compose up -d`
 - **Exportar:** desde el editor de n8n (Download) o CLI al fichero exacto de `workflows/`:
-  `docker exec g1-n8n-n8n-1 n8n export:workflow --id=<ID> --stdout > workflows/flujo-nn-nombre.json`
+  `docker exec paso-firme-n8n-1 n8n export:workflow --id=<ID> --stdout > workflows/flujo-nn-nombre.json`
 - **Credenciales:** en el JSON solo se referencian por id/nombre; los valores van en `credentials/` (n8n las cifra al subirlas), nunca en claro dentro del workflow.
 - **Vocabulario:** los nombres de flujos, nodos y mensajes usan el de `GLOSSARY.md` (Abono, Pendiente, Liquidado, Vale…).
 
