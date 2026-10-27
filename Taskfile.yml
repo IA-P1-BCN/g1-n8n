@@ -17,9 +17,14 @@ tasks:
       - python scripts/ejecutar-tests.py {{.CLI_ARGS}}
 
   payload:
-    desc: "Envia a n8n el payload de un fichero JSON (task payload -- payloads/venta-registrada.json)"
+    desc: "Envia a n8n el payload de un fichero JSON (flags: --esperar, --url, --timeout; ej. task payload -- payloads/venta-registrada.json --esperar)"
     cmds:
       - python -u scripts/enviar-payload.py {{.CLI_ARGS}}
+
+  demo:
+    desc: "Crea por API los datos de la demo (flag: --limpio vacia antes app y Mailpit; ej. task demo -- --limpio)"
+    cmds:
+      - python -u scripts/demo.py {{.CLI_ARGS}}
 
   importar:
     desc: "Importa credentials/ y workflows/ en n8n y activa los flujos (para n8n durante el proceso; lánzalo tras editar JSONs o al levantar el stack)"

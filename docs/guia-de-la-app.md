@@ -309,6 +309,7 @@ Los clientes de ejemplo tienen correos `@example.com`: **para recibir vosotros l
 |---|---|
 | Empezar de cero y recargar los datos de ejemplo | `docker compose down -v` y luego `docker compose up -d` (⚠️ borra también tus flujos de n8n; recupéralos con `task importar`) |
 | Arrancar con la app vacía | `SEED=0` en el `.env` |
+| Crear datos frescos para la demo (apartado liquidado, por vencer, vencido y ventas de hoy) | `task demo` en la raíz del repo; `task demo -- --limpio` vacía antes la app y Mailpit (ver README) |
 
 ---
 

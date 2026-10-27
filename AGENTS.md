@@ -16,6 +16,7 @@ REGLAS GENERALES
 - usa conventional commit y conventional branches
 - usa TDD
 - **Descripción de la PR**: primero el texto descriptivo (qué, cómo se prueba, evidencia) y al final los cierres, **una línea limpia por issue**: `Closes #26`. Sin paréntesis, comas, ni texto en esa línea (GitHub solo reconoce `Closes`/`Fixes`/`Resolves` en inglés).
+- **Comandos y flags**: todo comando nuevo se documenta en el README y en la doc relacionada (guía, specs…), y el `desc` de su task en `Taskfile.yml` lista los flags con un ejemplo (`task demo -- --limpio`). Sin flags ocultos.
 
 ## Reglas del negocio y datos
 - Reglas del sistema de apartado (abono inicial mín. 5 €, plazo 90 días, estados activo/liquidado/vencido, vale…): `docs/business/business-rules.md`
@@ -35,6 +36,10 @@ REGLAS GENERALES
 | Documentación de la API | http://localhost:8000/docs | Probar los endpoints que usará n8n (Swagger) |
 | n8n | http://localhost:5678 | Construir las automatizaciones |
 | mailpit | http://localhost:8025 | Gestor de correos |
+
+**Datos de la demo:** `task demo` crea por API un apartado liquidado, uno por vencer, uno vencido con su vale y ventas de hoy (ver README); `task demo -- --limpio` vacía antes app y Mailpit (no toca n8n).
+
+**Escenarios por flujo:** el output de `task demo` es la guía rápida (escenario → flujo → dónde mirar). Al añadir un flujo, añade su escenario a `scripts/demo.py` (datos y línea de la guía) y su payload de ejemplo a `payloads/`; pruébalo con `task payload -- payloads/<fichero>.json --esperar`.
 
 ## IA Agents
 Usamos agente Opencode y MCP n8n-mcp. Trazabilidad de prompts, decisiones y errores del agente: `docs/ai-log.md` (una entrada por tarea; todo error detectado se registra con su corrección).

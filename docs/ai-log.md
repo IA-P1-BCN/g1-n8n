@@ -95,6 +95,22 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 - **Errores → correcciones**: ver tabla (E13 · volumen obsoleto del importador, E14 · export con EACCES).
 - **Resultado**: `specs/receptor-webhook-tienda.md`, `tests/us-17/` (33 PASS), evidencia versionada en `docs/evidencia/us-17/`, `task test` verde (US-05 incluida), importador arreglado (compose + `--stdout`).
 
+### US-18 · Datos de prueba y script de demo (2026-10-28)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(28/10)* «prs mergeadas, ahora necesito hacer esta task https://github.com/IA-P1-BCN/g1-n8n/issues/31»
+  2. *(28/10)* «task demo: debe tener un flag para empezar de cero totalmente, limpio; poner en agents un ejemplo de cada flujo, un escenario preparado en task demo (para flujos actuales y añadidos posterior); debe mostrar el resumen en el output de los escenarios para tener una guía rápida; debe poner un ejemplo de ejecución de un custom payload con el task payload»
+  3. *(28/10)* «en el taskfile, debes poner si hay flags, siempre documenta nuevos comandos en readme y docs relacionados, añade esta regla a agents.md si no existe»
+- **Plan (#32)**: script de host contra la API (no un flujo de n8n: no depende del webhook ni de credenciales SMTP y se repite sin abrir el editor). `task demo` → `scripts/demo.py` (solo stdlib): un apartado liquidado con abono inicial + abonos parciales de varias formas, uno a 5 días de vencer (`fecha`, la del campo de migración) con un abono parcial, uno fuera de plazo vencido con su vale y tres ventas de hoy (efectivo, tarjeta, bizum). Al final **verifica por GET** lo creado (liquidado con 0 pendiente, 3 abonos, vale y ventas de hoy) → exit 0/1.
+- **Decisiones**:
+  - *Aceptar*: `task demo` como comando de desarrollador, sin tests automáticos (la historia no tiene sub-issue de «Pruebas y evidencia»): la comprobación va dentro del script y la evidencia del run en la PR.
+  - *Aceptar*: usar `fecha` para el apartado por vencer y el vencido; así se demuestran los avisos y el vale sin esperar 90 días.
+  - *Aceptar*: `--limpio` vacía las tablas con `docker compose exec tienda` (sin reiniciar ni re-sembrar) y el buzón por la API de Mailpit; así no se pierden los flujos de n8n.
+  - *Aceptar*: la **guía rápida** la imprime el propio script con los ids reales de la corrida (apartado/venta → flujo → Mailpit), y AGENTS obliga a añadir escenario + payload al crear un flujo.
+  - *Rechazar*: crear los datos con un flujo de n8n — mismo resultado con más piezas (webhook, credenciales) y sin ventaja para la demo.
+  - *Rechazar*: `docker compose down -v` para limpiar: se lleva por delante n8n y obliga a `task importar`; el flag toca solo los datos de la app y el buzón.
+- **Resultado**: `scripts/demo.py`, task `demo`, sección «Datos frescos para la demo» en README (tabla de escenarios), fila en la guía de la app, regla de escenarios y de **comandos/flags documentados** en AGENTS.md y esta entrada. Ejecutado con `--limpio` contra el stack local: apartados #1/#2/#3, ventas #1-#3, vale `VALE-00003`, 6 correos en Mailpit; `exit 0`. Evidencia en la PR.
+
 ### Tareas transversales (2026-10-22/28)
 
 - US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — scaffold en PRs #111/#118; spec, renombrado, fallback y evidencia en la PR #125.
@@ -123,3 +139,4 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 | E12 | 28/10 | La suite e2e falló justo tras `task importar` (n8n recién rearrancado): el webhook devolvía error de conexión (status 0) durante el arranque de n8n | 2 FAIL — «webhook acepta el evento» y «aviso recibido» | `webhook_datos` reintenta (ventana ~30 s) también ante error de conexión, no solo 404/200 | Tras un rearranque de n8n, espera a que el webhook responda: integrar el warm-up en los tests |
 | E13 | 28/10 | `task importar` decía «Successfully imported» pero la instancia seguía con el nombre/opciones viejos: el script montaba el volumen `paso-firme_n8n_data` (nombre del proyecto anterior) mientras el stack usa `g1-n8n_n8n_data` | Comparar la API de n8n después de importar: `versionId` sin cambiar y el Switch sin `fallbackOutput` | El importador usa `docker compose run` del servicio `n8n` (misma imagen y volumen del compose, sin nombres a mano); se quitan `IMAGEN_N8N`/`VOLUMEN_N8N` del Taskfile | Un import que no falla no es un import que aplica: verifica el estado en la instancia, no el exit code |
 | E14 | 28/10 | El paso de activación fallaba con `EACCES: permission denied, open '/out/export.json'`: el CLI corre como `node` (uid 1000) y no puede escribir en el `mkdtemp` del host (0700, uid 501); `chmod 777` tampoco basta en macOS | Error del `export:workflow` dentro de `task importar` | Se exporta con `export:workflow --all --stdout` y se captura la salida en Python: sin fichero ni montaje `/out` | Para leer datos de un contenedor, `--stdout` + parseo en el host evita permisos de volúmenes |
+| E15 | 28/10 | `scripts/demo.py` calculaba `RAIZ` con `parents[2]` (fuera del repo): no encontraría el `.env` y la clave saldría vacía (`401`) | Revisión del script antes de ejecutarlo | `parents[1]` (la raíz del repo es el padre de `scripts/`) | Ruta de un fichero de `scripts/`: `parents[1]`, no `parents[2]`; revisar antes del primer run |
