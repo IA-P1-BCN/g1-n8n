@@ -216,7 +216,7 @@ def main():
           f"{resumen.get('vencido')} vencidos · {resumen.get('total')} apartados")
     print("· Guía rápida de la demo:")
     print(f"    apartado #{liquidado['id']} · liquidado en 3 abonos · Flujo 01 (confirmación) y Flujo 02 (recibos) → Mailpit")
-    print(f"    apartado #{por_vencer['id']} · vence en {dias} días · escenario del recordatorio (flujo pendiente)")
+    print(f"    apartado #{por_vencer['id']} · vence en {dias} días · recordatorio (flujo pendiente) + recibo de su abono (Flujo 02)")
     print(f"    apartado #{vencido['id']} · vencido con vale {vale['codigo']} · escenario del vale (flujo pendiente)")
     print("    ventas #" + ", #".join(str(v["id"]) for v in ventas) +
           " · efectivo, tarjeta y bizum · escenario del cierre e informes (flujos pendientes)")
