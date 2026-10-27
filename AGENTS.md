@@ -23,8 +23,9 @@ REGLAS GENERALES
 ## Pruebas de aceptación (sub-issues "Pruebas y evidencia")
 - La evidencia **son tests**: cada historia lleva una suite e2e en `tests/us-NN/` con un script por escenario de aceptación (solo stdlib); los helpers compartidos viven en `tests/us-NN/ayudantes.py`.
 - Cada test ejecuta los escenarios contra el stack local (n8n/app/mailpit por HTTP localhost, URLs sobre-escribibles por env, sin credenciales) y termina con exit code.
+- **Comando de referencia:** `task test` (todas las suites; una sola: `task test -- us-NN`), vía Taskfile.yml y `scripts/ejecutar-tests.py`.
 - El **output de cada test** (payload, respuesta, avisos/mensajes capturados y resultado de cada criterio) se versiona en `docs/evidencia/us-NN/` y se lista en `resumen-escenario-*.txt`; la evidencia solo-manual (curl o capturas) no vale: el buzón de Mailpit se vacía y las ejecuciones de n8n se pierden.
-- El sub-issue de pruebas considera "hecho" cuando cada script de la suite pasa (`exit 0`) y los outputs versionados están en la PR.
+- El sub-issue de pruebas considera "hecho" cuando el `task test` pasa (todas las suites de la historia) y los outputs versionados están en la PR.
 
 ## URLs
 | Servicio | URL | Para qué |
