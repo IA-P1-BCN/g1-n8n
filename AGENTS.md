@@ -20,6 +20,13 @@ REGLAS GENERALES
 - Reglas del sistema de apartado (abono inicial mín. 5 €, plazo 90 días, estados activo/liquidado/vencido, vale…): `docs/business/business-rules.md`
 - Datos de partida (Excel actual y avisos del banco de `data/correos/`): `docs/business/business-data.md`
 
+## Pruebas de aceptación (sub-issues "Pruebas y evidencia")
+- La evidencia **son tests**: cada historia lleva una suite e2e en `tests/us-NN/` con un script por escenario de aceptación (solo stdlib); los helpers compartidos viven en `tests/us-NN/ayudantes.py`.
+- Cada test ejecuta los escenarios contra el stack local (n8n/app/mailpit por HTTP localhost, URLs sobre-escribibles por env, sin credenciales) y termina con exit code.
+- **Comando de referencia:** `task test` (todas las suites; una sola: `task test -- us-NN`), vía Taskfile.yml y `scripts/ejecutar-tests.py`.
+- El **output de cada test** (payload, respuesta, avisos/mensajes capturados y resultado de cada criterio) se versiona en `docs/evidencia/us-NN/` y se lista en `resumen-escenario-*.txt`; la evidencia solo-manual (curl o capturas) no vale: el buzón de Mailpit se vacía y las ejecuciones de n8n se pierden.
+- El sub-issue de pruebas considera "hecho" cuando el `task test` pasa (todas las suites de la historia) y los outputs versionados están en la PR.
+
 ## URLs
 | Servicio | URL | Para qué |
 |---|---|---|
@@ -37,6 +44,8 @@ Usamos agente Opencode y MCP n8n-mcp.
 | Flujo (workflow en n8n) | `Flujo NN · Nombre` | `Flujo 02 · Recibo de cada abono` |
 | Fichero del flujo | `workflows/flujo-nn-nombre.json` (kebab-case) | `flujo-02-recibo-de-cada-abono.json` |
 | Spec SDD | `specs/flujo-nn-nombre.md` | `specs/flujo-02-recibo-de-cada-abono.md` |
+| Suite de pruebas | `tests/us-nn/` (una por historia, un script por escenario) | `tests/us-02/` |
+| Evidencia | `docs/evidencia/us-nn/resumen-escenario-*.txt` | `docs/evidencia/us-05/resumen-escenario-a.txt` |
 | Rama | conventional: `feat\|docs\|test/us-nn-tarea` (kebab-case) | `feat/us-02-recibo-abono` |
 | Commit | conventional: `feat\|docs\|fix\|test(us-NN): …` | `feat(us-02): recibo de cada abono` |
 | Nodos | en español, descriptivos; pregunta si es IF/Switch | `¿El cliente tiene email?`, `Repartir por evento` |

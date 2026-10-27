@@ -1,0 +1,6 @@
+PASS · sin-secretos · webhook acepta el evento · Workflow was started
+PASS · sin-secretos · aviso recibido en Mailpit · 🛠 Aviso de fallo · Flujo 01 · Confirmación de apartado
+PASS · sin-secretos · sin contraseñas ni claves · {'ULTRA-SECRETO-en82bxyz': (False, False), 'AKIABADKEY123': (False, False)}
+PASS · sin-secretos · aviso con los campos de la lista blanca · {'flujo': 'Flujo 01 · Confirmación de apartado', 'paso': 'Enviar resumen al cliente', 'error': 'No recipients defined'}
+
+total: 4 PASS / 0 FAIL

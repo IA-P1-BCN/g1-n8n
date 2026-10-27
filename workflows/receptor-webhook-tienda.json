@@ -227,7 +227,8 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": true
+    "availableInMCP": true,
+    "errorWorkflow": "pFlujo08AvisoFallo"
   },
   "active": true
 }

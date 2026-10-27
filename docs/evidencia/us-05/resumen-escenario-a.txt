@@ -1,0 +1,15 @@
+PASS · fallo-provocado · webhook acepta el evento · Workflow was started
+PASS · fallo-provocado · aviso recibido en Mailpit · 🛠 Aviso de fallo · Flujo 01 · Confirmación de apartado
+PASS · fallo-provocado · nombra el flujo · Flujo 01 · Confirmación de apartado
+PASS · fallo-provocado · nombra el paso · Enviar resumen al cliente
+PASS · fallo-provocado · incluye el error · No recipients defined
+PASS · fallo-provocado · enlace a la ejecución · http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/63
+PASS · fallo-provocado · aviso del Receptor (padre) · 🛠 Aviso de fallo · Receptor · Webhook tienda (US-17 scaffold)
+PASS · fallo-provocado · paso del receptor · Ejecutar Flujo 01
+PASS · fallo-provocado · webhook acepta la petición · Workflow was started
+PASS · fallo-provocado · aviso recibido en Mailpit · 🛠 Aviso de fallo · Receptor · Webhook tienda (US-17 scaffold)
+PASS · fallo-provocado · nombra el flujo · Receptor · Webhook tienda (US-17 scaffold)
+PASS · fallo-provocado · nombra el paso · Evento y datos
+PASS · fallo-provocado · incluye el error · The 'JSON Output' in item 0 does not contain a valid JSON object
+
+total: 13 PASS / 0 FAIL
