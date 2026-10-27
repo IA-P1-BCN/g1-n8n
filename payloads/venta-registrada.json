@@ -1,0 +1,10 @@
+{
+  "evento": "venta.registrada",
+  "datos": {
+    "id": 501,
+    "fecha": "2026-10-27",
+    "concepto": "Botín piel marrón · 38",
+    "importe": 89.9,
+    "forma_pago": "efectivo"
+  }
+}
