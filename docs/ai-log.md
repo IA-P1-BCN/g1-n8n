@@ -97,15 +97,18 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 ### US-18 · Datos de prueba y script de demo (2026-10-28)
 
-- **Prompt (textual de la sesión)**:
+- **Prompts (textuales de la sesión)**:
   1. *(28/10)* «prs mergeadas, ahora necesito hacer esta task https://github.com/IA-P1-BCN/g1-n8n/issues/31»
+  2. *(28/10)* «task demo: debe tener un flag para empezar de cero totalmente, limpio; poner en agents un ejemplo de cada flujo, un escenario preparado en task demo (para flujos actuales y añadidos posterior); debe mostrar el resumen en el output de los escenarios para tener una guía rápida; debe poner un ejemplo de ejecución de un custom payload con el task payload»
 - **Plan (#32)**: script de host contra la API (no un flujo de n8n: no depende del webhook ni de credenciales SMTP y se repite sin abrir el editor). `task demo` → `scripts/demo.py` (solo stdlib): un apartado liquidado con abono inicial + abonos parciales de varias formas, uno a 5 días de vencer (`fecha`, la del campo de migración) con un abono parcial, uno fuera de plazo vencido con su vale y tres ventas de hoy (efectivo, tarjeta, bizum). Al final **verifica por GET** lo creado (liquidado con 0 pendiente, 3 abonos, vale y ventas de hoy) → exit 0/1.
 - **Decisiones**:
   - *Aceptar*: `task demo` como comando de desarrollador, sin tests automáticos (la historia no tiene sub-issue de «Pruebas y evidencia»): la comprobación va dentro del script y la evidencia del run en la PR.
   - *Aceptar*: usar `fecha` para el apartado por vencer y el vencido; así se demuestran los avisos y el vale sin esperar 90 días.
+  - *Aceptar*: `--limpio` vacía las tablas con `docker compose exec tienda` (sin reiniciar ni re-sembrar) y el buzón por la API de Mailpit; así no se pierden los flujos de n8n.
+  - *Aceptar*: la **guía rápida** la imprime el propio script con los ids reales de la corrida (apartado/venta → flujo → Mailpit), y AGENTS obliga a añadir escenario + payload al crear un flujo.
   - *Rechazar*: crear los datos con un flujo de n8n — mismo resultado con más piezas (webhook, credenciales) y sin ventaja para la demo.
-  - *Rechazar*: borrar o resetear la BD en el script: la app no expone DELETE y `down -v` ya cubre el «empezar de cero»; se documenta que cada ejecución acumula.
-- **Resultado**: `scripts/demo.py`, task `demo`, sección «Datos frescos para la demo» en README, fila en la guía de la app y línea en AGENTS.md. Ejecutado contra el stack local: apartados #48/#49/#50, ventas #257-#259, vale `VALE-00050`, correos en Mailpit; `exit 0`. Evidencia en la PR.
+  - *Rechazar*: `docker compose down -v` para limpiar: se lleva por delante n8n y obliga a `task importar`; el flag toca solo los datos de la app y el buzón.
+- **Resultado**: `scripts/demo.py`, task `demo`, sección «Datos frescos para la demo» en README (tabla de escenarios), fila en la guía de la app, regla de escenarios en AGENTS.md y esta entrada. Ejecutado con `--limpio` contra el stack local: apartados #1/#2/#3, ventas #1-#3, vale `VALE-00003`, 6 correos en Mailpit; `exit 0`. Evidencia en la PR.
 
 ### Tareas transversales (2026-10-22/28)
 

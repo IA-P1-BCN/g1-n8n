@@ -52,16 +52,33 @@ Con `SEED=1` la tienda se arranca con datos la primera vez (usa `SEED=0` para ar
 #### Datos frescos para la demo
 
 ```bash
-task demo
+task demo             # añade un juego de datos al que ya haya
+task demo -- --limpio # vacía antes la app y Mailpit: empieza de cero
 ```
 
-`scripts/demo.py` crea por API (sin tocar la base de datos) lo que hace falta para enseñar la tienda:
+`scripts/demo.py` crea por API (nada de SQL a mano) lo que hace falta para enseñar la tienda:
 
 - un **apartado nuevo** con su abono inicial y abonos parciales **hasta liquidarlo**;
 - uno **a punto de vencer** y otro **vencido con su vale**;
 - **ventas de hoy** por efectivo, tarjeta y bizum.
 
-Al final comprueba con `GET` que la API devuelve lo creado y, si algo falla, sale con error. Cada ejecución **añade** datos nuevos (no borra nada): para empezar de cero, `docker compose down -v` y vuelve a arrancar. Como los POST pasan por la app, también disparan el webhook: las confirmaciones y los recibos aparecen en Mailpit (http://localhost:8025).
+Al final comprueba con `GET` que la API devuelve lo creado, y si algo falla sale con error. La salida termina con la **guía rápida de los escenarios**: qué apartado o venta prueba cada flujo y dónde mirarlo.
+
+`--limpio` (solo con el stack de docker compose) vacía apartados, abonos, ventas, vales y el buzón de Mailpit; **no toca n8n**, así que los flujos y las credenciales siguen donde estaban. Sin el flag, cada ejecución **añade** datos nuevos.
+
+| Flujo | Escenario de `task demo` | Qué mirar |
+|---|---|---|
+| 01 · Confirmación de apartado | el apartado liquidado | correo «Apartado confirmado» en Mailpit |
+| 02 · Recibo de cada abono | sus 3 abonos y el abono parcial del «por vencer» | correos «Recibo de tu abono» y «Último abono recibido» |
+| 04 · Cierre diario (pendiente) | ventas de hoy en efectivo, tarjeta y bizum | — |
+| 06 · Vencimiento y vale (pendiente) | el apartado vencido con su vale | — |
+| 08 · Aviso de fallo | no es un escenario de datos: se prueba forzando un fallo | — |
+
+Para probar un evento a mano (retocar algo o añadir un caso), duplica un fichero de `payloads/`, edítalo y lánzalo igual:
+
+```bash
+task payload -- payloads/venta-registrada.json --esperar
+```
 
 - `API_URL` (por defecto `http://localhost:8000`) para apuntar a otra app; `API_KEY` se lee del entorno o del `.env`.
 - Diferencia con `SEED=1`: el seed llena la tienda **una sola vez** al arrancar, con meses de historial; `task demo` añade un juego fresco **a demanda** sobre la app que ya está en marcha.
