@@ -14,39 +14,39 @@
 | Flujo 02 · Recibo de cada abono | `pFlujo02ReciboAbono` | true | `pFlujo08AvisoFallo` |
 | Flujo 08 · Aviso de fallo | `pFlujo08AvisoFallo` | true | — (no se apunta a sí mismo) |
 
-## Pruebas reproducibles ✅
+## Pruebas (suites en `tests/us-05/`) ✅
 
-El script e2e **`scripts/us-05-pruebas-evidencia.py`** (solo stdlib) reproduce los escenarios de
-aceptación contra el stack local (solo necesita n8n + mailpit arriba):
+La suite de la historia da vida a los escenarios de aceptación contra el stack local
+(solo necesita n8n + mailpit arriba), un test por escenario:
 
 ```bash
-python scripts/us-05-pruebas-evidencia.py        # exit code 1 si algún criterio falla
+python tests/us-05/escenario-a-fallo-provocado.py   # Escenario A: fallo provocado → aviso con flujo, paso y error
+python tests/us-05/escenario-b-sin-secretos.py      # Escenario B: el aviso no incluye contraseñas ni claves
 # N8N_URL / MAILPIT_URL sobreescriben http://localhost:5678 y http://localhost:8025
 ```
 
-Resultado de la última ejecución (re-ejecutable, idempotente): **14 PASS / 0 FAIL**.
+`ayudantes.py` concentra los helpers (API de Mailpit y n8n, extracción de los campos del aviso, escritura de la evidencia) para que cada test sea independiente: registra los ids ya presentes en Mailpit, dispara su propio fallo y espera su aviso — las suites son re-ejecutables (idempotentes).
 
-- **Test 1 · Escenario A + B** — `apartado.creado` con `datos.email = "nadie"` y señuelos
-  `password`/`apikey` → aviso en Mailpit con flujo (`Flujo 01 · Confirmación de apartado`),
-  paso (`Enviar resumen al cliente`), error (`No recipients defined`) y enlace a la ejecución;
-  más el aviso del Receptor (paso `Ejecutar Flujo 01`). Los señuelos **no** aparecen en el aviso
-  (Text/HTML: `false`).
-- **Test 2 · Escenario A (Receptor)** — webhook con body `[1,2,3]` → aviso con flujo
-  `Receptor · Webhook tienda`, paso `Evento y datos` y error
-  `The 'JSON Output' in item 0 does not contain a valid JSON object`.
+Resultado de la última ejecución: **13 PASS / 0 FAIL** (Escenario A) y **4 PASS / 0 FAIL** (Escenario B).
+
+- **Escenario A** — `apartado.creado` con `datos.email = "nadie"` → aviso con flujo
+  (`Flujo 01 · Confirmación de apartado`), paso (`Enviar resumen al cliente`), error
+  (`No recipients defined`) y enlace a la ejecución; más el aviso del Receptor (paso
+  `Ejecutar Flujo 01`). Y webhook con body `[1,2,3]` → aviso con paso `Evento y datos`
+  y error `The 'JSON Output' in item 0 does not contain a valid JSON object`.
+- **Escenario B** — el evento lleva señuelos `password`/`apikey`; el aviso **no** los
+  contiene (Text/HTML: `false`), solo los cinco campos de la lista blanca.
 
 Evidencia del output de cada test, versionada en `docs/evidencia/us-05/`:
 
 | Fichero | Contenido |
 |---|---|
-| `resumen.txt` | Resultado PASS/FAIL de cada criterio y total |
-| `fallo-flujo-01-payload.json` | Evento enviado (con los señuelos) |
-| `fallo-flujo-01-webhook.json` | Respuesta del webhook de n8n |
-| `fallo-flujo-01-aviso.json` | Aviso completo recibido (Mailpit: asunto, Text, HTML) |
-| `fallo-flujo-01-receptor-aviso.json` | Aviso del Receptor (padre) |
-| `fallo-receptor-payload.txt` / `fallo-receptor-webhook.json` | Body inválido y respuesta |
-| `fallo-receptor-aviso.json` | Aviso del fallo en el Receptor |
-| `busqueda-secretos.txt` | Resultado de buscar los señuelos en Text/HTML: `false` |
+| `resumen-escenario-a.txt`, `resumen-escenario-b.txt` | Resultado PASS/FAIL de cada criterio y total por suite |
+| `escenario-a-fallo-flujo-01-payload.json`, `-webhook.json`, `-aviso.json` | Evento, respuesta del webhook y aviso completo (Mailpit) |
+| `escenario-a-fallo-flujo-01-receptor-aviso.json` | Aviso del Receptor (falla del sub-flujo y del padre) |
+| `escenario-a-fallo-receptor-payload.txt`, `-webhook.json`, `-aviso.json` | Fallo en el Receptor (body inválido) |
+| `escenario-b-sin-secretos-payload.json`, `-webhook.json`, `-aviso.json` | Evento con señuelos y aviso |
+| `escenario-b-busqueda-secretos.txt` | Búsqueda de los señuelos en Text/HTML: `false` |
 
 ## Primera ejecución (manual, 26/10/2026)
 

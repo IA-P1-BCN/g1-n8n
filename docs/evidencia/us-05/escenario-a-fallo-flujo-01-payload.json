@@ -11,8 +11,6 @@
     "abonado": 10,
     "pendiente": 79.9,
     "fecha_limite": "2027-01-24",
-    "estado": "activo",
-    "password": "ULTRA-SECRETO-en82bxyz",
-    "apikey": "AKIABADKEY123"
+    "estado": "activo"
   }
 }
