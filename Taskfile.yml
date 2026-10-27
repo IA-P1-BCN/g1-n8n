@@ -21,6 +21,11 @@ tasks:
     cmds:
       - python -u scripts/enviar-payload.py {{.CLI_ARGS}}
 
+  demo:
+    desc: "Crea por API los datos de la demo: apartado liquidado, uno por vencer, uno vencido con vale y ventas de hoy"
+    cmds:
+      - python -u scripts/demo.py {{.CLI_ARGS}}
+
   importar:
     desc: "Importa credentials/ y workflows/ en n8n y activa los flujos (para n8n durante el proceso; lánzalo tras editar JSONs o al levantar el stack)"
     cmds:
