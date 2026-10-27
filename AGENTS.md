@@ -36,6 +36,8 @@ REGLAS GENERALES
 | n8n | http://localhost:5678 | Construir las automatizaciones |
 | mailpit | http://localhost:8025 | Gestor de correos |
 
+**Datos de la demo:** `task demo` crea por API un apartado liquidado, uno por vencer, uno vencido con su vale y ventas de hoy (ver README); cada ejecución añade datos.
+
 ## IA Agents
 Usamos agente Opencode y MCP n8n-mcp. Trazabilidad de prompts, decisiones y errores del agente: `docs/ai-log.md` (una entrada por tarea; todo error detectado se registra con su corrección).
 
