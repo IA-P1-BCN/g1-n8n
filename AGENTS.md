@@ -20,6 +20,11 @@ REGLAS GENERALES
 - Reglas del sistema de apartado (abono inicial mín. 5 €, plazo 90 días, estados activo/liquidado/vencido, vale…): `docs/business/business-rules.md`
 - Datos de partida (Excel actual y avisos del banco de `data/correos/`): `docs/business/business-data.md`
 
+## Pruebas de aceptación (sub-issues "Pruebas y evidencia")
+- Cada historia lleva un **script reproducible** e2e en `scripts/us-nn-*.py` (solo stdlib) que ejecuta los escenarios de la historia contra el stack local (n8n/app/mailpit por HTTP localhost, URLs sobre-escribibles por env, sin credenciales) y termina con exit code.
+- El **output de cada test** (payload, respuesta, avisos/mensajes capturados y resultado de cada criterio) se versiona en `docs/evidencia/us-NN/` y se lista en un `resumen.txt`; la evidencia solo-manual (curl o capturas) no vale: el buzón de Mailpit se vacía y las ejecuciones de n8n se pierden.
+- El sub-issue de pruebas considera "hecho" cuando el script pasa (`exit 0`) y los outputs versionados están en la PR.
+
 ## URLs
 | Servicio | URL | Para qué |
 |---|---|---|
