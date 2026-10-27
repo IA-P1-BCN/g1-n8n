@@ -179,6 +179,8 @@ def validar_flujo(nombre_fichero):
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     carpeta = sys.argv[1] if len(sys.argv) > 1 else "workflows"
     ficheros = sorted(glob.glob(os.path.join(carpeta, "*.json")))
     if not ficheros:
