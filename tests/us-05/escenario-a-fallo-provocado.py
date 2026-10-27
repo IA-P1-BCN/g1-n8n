@@ -23,7 +23,7 @@ def test_fallo_en_flujo_01(conocidos):
             "fecha_limite": "2027-01-24", "estado": "activo",
         },
     }
-    estado, respuesta = a.api(f"{a.N8N_URL}/webhook/tienda", payload)
+    estado, respuesta = a.webhook_datos(payload)
     a.guardar("escenario-a-fallo-flujo-01-payload.json", payload)
     a.guardar("escenario-a-fallo-flujo-01-webhook.json", {"status": estado, "respuesta": respuesta})
     a.apuntar(PRUEBA, "webhook acepta el evento", estado == 200, str(respuesta.get("message", "")))
@@ -52,7 +52,7 @@ def test_fallo_en_flujo_01(conocidos):
 
 def test_fallo_en_receptor():
     conocidos = a.mensajes_actuales()
-    estado, respuesta = a.api(f"{a.N8N_URL}/webhook/tienda", b"[1,2,3]")
+    estado, respuesta = a.webhook_datos(b"[1,2,3]")
     a.guardar("escenario-a-fallo-receptor-payload.txt", "[1,2,3]")
     a.guardar("escenario-a-fallo-receptor-webhook.json", {"status": estado, "respuesta": respuesta})
     a.apuntar(PRUEBA, "webhook acepta la petición", estado == 200, str(respuesta.get("message", "")))
