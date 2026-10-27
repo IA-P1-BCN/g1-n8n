@@ -1,5 +1,5 @@
 {
-  "name": "Receptor · Webhook tienda (US-17 scaffold)",
+  "name": "Receptor · Webhook tienda",
   "id": "HXZBeAF7TZrK4zfD",
   "nodes": [
     {
@@ -143,7 +143,10 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "evento desconocido"
+        }
       }
     },
     {

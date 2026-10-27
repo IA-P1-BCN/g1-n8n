@@ -1,0 +1,26 @@
+{
+  "evento": "apartado.vencido",
+  "datos": {
+    "apartado": {
+      "id": 971,
+      "fecha": "2026-07-01",
+      "cliente": "Prueba US-17",
+      "telefono": "600000000",
+      "email": "prueba.us17@paso-firme.local",
+      "producto": "Botín piel marrón",
+      "talla": "38",
+      "precio": 89.9,
+      "abonado": 20.0,
+      "pendiente": 69.9,
+      "fecha_limite": "2026-09-29",
+      "estado": "vencido"
+    },
+    "vale": {
+      "id": 12,
+      "codigo": "VALE-00971",
+      "apartado_id": 971,
+      "fecha": "2026-10-27",
+      "importe": 20.0
+    }
+  }
+}

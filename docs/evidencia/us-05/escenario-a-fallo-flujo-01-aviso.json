@@ -1,6 +1,6 @@
 {
-  "ID": "2jZRqiTtyTHfk1vqnXVB5m",
-  "MessageID": "24f40092-ed05-8fdf-eda1-67cb0b5635f9@paso-firme.local",
+  "ID": "6AU58wWdPz8oXwUFDlQio5",
+  "MessageID": "6cd5781e-4403-f1c4-1929-d333e87f39eb@paso-firme.local",
   "From": {
     "Name": "",
     "Address": "n8n@paso-firme.local"
@@ -22,12 +22,12 @@
     "Errors": "",
     "HeaderPost": ""
   },
-  "Date": "2026-10-27T10:37:06Z",
+  "Date": "2026-10-27T19:23:50Z",
   "Tags": [],
   "Username": "",
-  "Text": "-------------------------------\n🛠 Una automatización ha fallado\n-------------------------------\n\nUna automatización de la zapatería se ha detenido; revisad *pronto* para que no quede roto semanas.\n\n*Flujo* Flujo 01 · Confirmación de apartado *Paso* Enviar resumen al cliente *Error* No recipients defined *Cuándo* 27/10/2026 11:37\n\nAbre la ejecución para ver el detalle y arreglarlo: http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/152\n\nRepite la operación afectada cuando esté resuelto. — Flujo 08\n\n---\nThis email was sent automatically with n8n ( https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_232d8ba210b1ea7626d60d9833ffb181d7fa260c1c580eaab2ac9f28f4fd81ed )",
-  "HTML": "\r\n\t\t\t\t\t<h2>🛠 Una automatización ha fallado</h2><p>Una automatización de la zapatería se ha detenido; revisad <b>pronto</b> para que no quede roto semanas.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Flujo</b></td><td>Flujo 01 · Confirmación de apartado</td></tr><tr><td><b>Paso</b></td><td>Enviar resumen al cliente</td></tr><tr><td><b>Error</b></td><td>No recipients defined</td></tr><tr><td><b>Cuándo</b></td><td>27/10/2026 11:37</td></tr></table><p>Abre la ejecución para ver el detalle y arreglarlo: <a href=\"http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/152\">http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/152</a></p><p>Repite la operación afectada cuando esté resuelto. — Flujo 08</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_232d8ba210b1ea7626d60d9833ffb181d7fa260c1c580eaab2ac9f28f4fd81ed\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n",
-  "Size": 1842,
+  "Text": "-------------------------------\n🛠 Una automatización ha fallado\n-------------------------------\n\nUna automatización de la zapatería se ha detenido; revisad *pronto* para que no quede roto semanas.\n\n*Flujo* Flujo 01 · Confirmación de apartado *Paso* Enviar resumen al cliente *Error* No recipients defined *Cuándo* 27/10/2026 20:23\n\nAbre la ejecución para ver el detalle y arreglarlo: http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/139\n\nRepite la operación afectada cuando esté resuelto. — Flujo 08\n\n---\nThis email was sent automatically with n8n ( https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_2b450c1056ff4f9622ec0b31937381bef9fbd7d4b76cadd7ebf8798799ff58b8 )",
+  "HTML": "\r\n\t\t\t\t\t<h2>🛠 Una automatización ha fallado</h2><p>Una automatización de la zapatería se ha detenido; revisad <b>pronto</b> para que no quede roto semanas.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Flujo</b></td><td>Flujo 01 · Confirmación de apartado</td></tr><tr><td><b>Paso</b></td><td>Enviar resumen al cliente</td></tr><tr><td><b>Error</b></td><td>No recipients defined</td></tr><tr><td><b>Cuándo</b></td><td>27/10/2026 20:23</td></tr></table><p>Abre la ejecución para ver el detalle y arreglarlo: <a href=\"http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/139\">http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/139</a></p><p>Repite la operación afectada cuando esté resuelto. — Flujo 08</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_2b450c1056ff4f9622ec0b31937381bef9fbd7d4b76cadd7ebf8798799ff58b8\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n",
+  "Size": 1834,
   "Inline": [],
   "Attachments": []
 }
