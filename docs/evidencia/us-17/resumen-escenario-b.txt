@@ -1,0 +1,8 @@
+PASS · apartado-creado · el webhook acepta el evento · Workflow was started
+PASS · apartado-creado · ejecución registrada en Executions · id 149
+PASS · apartado-creado · la ejecución termina bien · success
+PASS · apartado-creado · el Switch lo manda a su rama · apartado.creado · salidas=[1, 0, 0, 0, 0]
+PASS · apartado-creado · la rama lleva el evento apartado.creado · apartado.creado
+PASS · apartado-creado · la rama ejecuta el Flujo 01 · ['Webhook tienda', 'Evento y datos', 'Repartir por evento', 'Ejecutar Flujo 01']
+
+total: 6 PASS / 0 FAIL

@@ -15,6 +15,7 @@ REGLAS GENERALES
 - protege la rama main, pr con 1 review
 - usa conventional commit y conventional branches
 - usa TDD
+- **Descripción de la PR**: primero el texto descriptivo (qué, cómo se prueba, evidencia) y al final los cierres, **una línea limpia por issue**: `Closes #26`. Sin paréntesis, comas, ni texto en esa línea (GitHub solo reconoce `Closes`/`Fixes`/`Resolves` en inglés).
 
 ## Reglas del negocio y datos
 - Reglas del sistema de apartado (abono inicial mín. 5 €, plazo 90 días, estados activo/liquidado/vencido, vale…): `docs/business/business-rules.md`
@@ -22,7 +23,7 @@ REGLAS GENERALES
 
 ## Pruebas de aceptación (sub-issues "Pruebas y evidencia")
 - La evidencia **son tests**: cada historia lleva una suite e2e en `tests/us-NN/` con un script por escenario de aceptación (solo stdlib); los helpers compartidos viven en `tests/us-NN/ayudantes.py`.
-- Cada test ejecuta los escenarios contra el stack local (n8n/app/mailpit por HTTP localhost, URLs sobre-escribibles por env, sin credenciales) y termina con exit code.
+- Cada test ejecuta los escenarios contra el stack local (n8n/app/mailpit por HTTP localhost, URLs sobre-escribibles por env, sin credenciales en el repo) y termina con exit code. Para leer las **executions** de n8n (`tests/us-17/`) se usa la clave local `API_KEY` del `.env`.
 - **Comando de referencia:** `task test` (todas las suites; una sola: `task test -- us-NN`), vía Taskfile.yml y `scripts/ejecutar-tests.py`.
 - El **output de cada test** (payload, respuesta, avisos/mensajes capturados y resultado de cada criterio) se versiona en `docs/evidencia/us-NN/` y se lista en `resumen-escenario-*.txt`; la evidencia solo-manual (curl o capturas) no vale: el buzón de Mailpit se vacía y las ejecuciones de n8n se pierden.
 - El sub-issue de pruebas considera "hecho" cuando el `task test` pasa (todas las suites de la historia) y los outputs versionados están en la PR.

@@ -1,0 +1,17 @@
+{
+  "evento": "apartado.creado",
+  "datos": {
+    "id": 970,
+    "fecha": "2026-10-27",
+    "cliente": "Prueba US-17",
+    "telefono": "600000000",
+    "email": "prueba.us17@paso-firme.local",
+    "producto": "Botín piel marrón",
+    "talla": "38",
+    "precio": 89.9,
+    "abonado": 10.0,
+    "pendiente": 79.9,
+    "fecha_limite": "2027-01-25",
+    "estado": "activo"
+  }
+}

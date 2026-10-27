@@ -77,10 +77,27 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - *Aceptar*: `--esperar` consulta Executions con la clave local del `.env` y muestra la rama del Switch, reutilizando el criterio de US-17; sin `--esperar` no necesita credenciales.
   - *Rechazar*: tests automáticos del comando — es herramienta de desarrollo, no un criterio de aceptación; se verifica a mano en la PR y se documenta en el README.
 - **Resultado**: `payloads/` con los 4 eventos, task `payload`, sección «Probar el receptor con un payload propio» en el README y línea en AGENTS.md. Probado con los 4 eventos (con `--esperar`) y los casos de error: fichero inexistente, JSON roto y falta `evento`.
+### US-17 · Receptor · Webhook tienda ([#26](https://github.com/IA-P1-BCN/g1-n8n/issues/26), PR #125, 2026-10-27/28)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(27/10)* «quiero hacer esta tarea, [US-17 #26]»
+  2. *(27/10)* «el flujo 01 y 02 no se toca?»
+  3. *(27/10)* «explicame entonces el nuevo workflow que haria?»
+  4. *(27/10)* «cual seria el uso de este switch? si no modificamos US-05»
+  5. *(27/10)* «ok al plan, us-05 como esta»
+- **Decisiones**:
+  - *Aceptar*: el receptor **ya existía** (llegó con US-01/US-02); US-17 se cierra con spec, renombrado, fallback y la suite que demuestra las 4 ramas. No se tocan Flujo 01/02.
+  - *Aceptar*: la evidencia del reparto se lee de la **API de Executions** de n8n (`runData['Repartir por evento'].data.main`), con la clave local `API_KEY` del `.env`; así las ramas 3/4 (aún sin sub-flujo) también quedan probadas sin inventar correos.
+  - *Aceptar*: el Switch sigue leyendo `{{ $json.evento }}` (no `{{ $json.body.evento }}`): `Evento y datos` ya extrae `body`, y su validación es la que provoca el fallo que prueba US-05. La equivalencia queda documentada en la spec.
+  - *Aceptar*: `fallbackOutput: "extra"` renombrado «evento desconocido»: un evento no contemplado se ve en la ejecución en vez de descartarse en silencio.
+  - *Aceptar*: tests con los payloads que manda la app (no se crean apartados/ventas reales): deterministas, idempotentes y sin ensuciar la base.
+  - *Rechazar*: `responseMode: responseNode` para devolver la rama en la respuesta HTTP — cambiaría el comportamiento del webhook y rompería la evidencia de US-05 (body inválido → 200).
+- **Errores → correcciones**: ver tabla (E13 · volumen obsoleto del importador, E14 · export con EACCES).
+- **Resultado**: `specs/receptor-webhook-tienda.md`, `tests/us-17/` (33 PASS), evidencia versionada en `docs/evidencia/us-17/`, `task test` verde (US-05 incluida), importador arreglado (compose + `--stdout`).
 
 ### Tareas transversales (2026-10-22/28)
 
-- US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — en PRs #111/#118.
+- US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — scaffold en PRs #111/#118; spec, renombrado, fallback y evidencia en la PR #125.
 - 28/10 · infra desmonta `n8n-import` (US-22, esta PR): `task install`/`task arrancar`/`task importar` en Taskfile.
 - US-16 · CI: validación de JSON de flujos (`scripts/valida_flujos.py` en cada PR) — PR #112.
 - Infra · auto-importar/activar `workflows/` y `credentials/` en cada arranque (servicio one-shot `n8n-import`) — PR #115.
@@ -104,3 +121,5 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 | E10 | 26/10 | `AGENTS.md` decía `docker exec g1-n8n-n8n-1` y el contenedor real es `paso-firme-n8n-1` (el compose se llama así) | «No such container» al exportar el flujo | Se usó el nombre real en toda la sesión; fichero corregido en esta PR | La documentación desactualizada del AGENTS.md guía al error (lo avisa el propio AGENTS.md) |
 | E11 | 28/10 | `task importar` colgado sin salida durante minutos: Python `stdout` va buffered en tuberías y el progreso de docker no se veía (el abort del usuario cortó una corrida que funcionaba) | Timeout de 5 min sin output | `python -u scripts/n8n-importar.py` en el task y salida paso a paso (`-u` + `print` con `·`) que ya existía | Con task/pipes, forzar unbuffered (`-u`) o se queda ciego qué está ejecutando |
 | E12 | 28/10 | La suite e2e falló justo tras `task importar` (n8n recién rearrancado): el webhook devolvía error de conexión (status 0) durante el arranque de n8n | 2 FAIL — «webhook acepta el evento» y «aviso recibido» | `webhook_datos` reintenta (ventana ~30 s) también ante error de conexión, no solo 404/200 | Tras un rearranque de n8n, espera a que el webhook responda: integrar el warm-up en los tests |
+| E13 | 28/10 | `task importar` decía «Successfully imported» pero la instancia seguía con el nombre/opciones viejos: el script montaba el volumen `paso-firme_n8n_data` (nombre del proyecto anterior) mientras el stack usa `g1-n8n_n8n_data` | Comparar la API de n8n después de importar: `versionId` sin cambiar y el Switch sin `fallbackOutput` | El importador usa `docker compose run` del servicio `n8n` (misma imagen y volumen del compose, sin nombres a mano); se quitan `IMAGEN_N8N`/`VOLUMEN_N8N` del Taskfile | Un import que no falla no es un import que aplica: verifica el estado en la instancia, no el exit code |
+| E14 | 28/10 | El paso de activación fallaba con `EACCES: permission denied, open '/out/export.json'`: el CLI corre como `node` (uid 1000) y no puede escribir en el `mkdtemp` del host (0700, uid 501); `chmod 777` tampoco basta en macOS | Error del `export:workflow` dentro de `task importar` | Se exporta con `export:workflow --all --stdout` y se captura la salida en Python: sin fichero ni montaje `/out` | Para leer datos de un contenedor, `--stdout` + parseo en el host evita permisos de volúmenes |

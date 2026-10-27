@@ -31,7 +31,7 @@ N8N_WEBHOOK_URL=http://n8n:5678/webhook/tienda
 SEED=1
 ```
 
-> **Nota:** la clave `API_KEY` se obtiene dentro de la interfaz de n8n: **Settings > n8n API** (en el paso 5 verás cómo usarla en opencode).
+> **Nota:** la clave `API_KEY` se obtiene dentro de la interfaz de n8n: **Settings > n8n API** (en el paso 5 verás cómo usarla en opencode). La suite `tests/us-17/` usa esa misma clave para leer las **executions** de n8n y comprobar a qué rama fue cada evento.
 
 ### 3. Arrancar los servicios
 
@@ -57,7 +57,7 @@ Los flujos viven en `workflows/` y las credenciales que usan van en `credentials
 task importar
 ```
 
-(`scripts/n8n-importar.py`: para n8n, sube credenciales y flujos al CLI de n8n en contenedores one-shot con el volumen de datos, activa los flujos que queden inactivos y rearranca n8n.) Lánzalo **al levantar el stack por primera vez** y **tras editar o añadir** cualquier JSON. En local el SMTP apunta a Mailpit (`mailpit:1025`, sin TLS), así que cualquier correo que envía un flujo se ve en http://localhost:8025.
+(`scripts/n8n-importar.py`: para n8n, sube credenciales y flujos al CLI de n8n en contenedores one-shot del propio servicio `n8n` —misma imagen y mismo volumen de datos—, activa los flujos y rearranca n8n.) Lánzalo **al levantar el stack por primera vez** y **tras editar o añadir** cualquier JSON. En local el SMTP apunta a Mailpit (`mailpit:1025`, sin TLS), así que cualquier correo que envía un flujo se ve en http://localhost:8025.
 Si haces cambios en el editor de n8n, expórtalos al fichero exacto de `workflows/`:
 
 ```bash
@@ -72,6 +72,19 @@ docker exec paso-firme-n8n-1 n8n export:workflow --all --stdout > workflows/fluj
 | Flujo 02 · Recibo de cada abono | `flujo-02-recibo-de-cada-abono.json` | evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
 | Flujo 08 · Aviso de fallo | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara solo si otro flujo falla (el resto lo apuntan en sus ajustes) | SMTP Mailpit (pruebas) |
 | Receptor · Webhook tienda | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (la app avisa aquí) | — |
+
+#### Eventos del receptor
+
+Un único webhook publicado reparte los eventos de la app con un Switch (`Repartir por evento`); su spec está en [`specs/receptor-webhook-tienda.md`](specs/receptor-webhook-tienda.md).
+
+| Evento | Rama del Switch | Destino |
+|---|---|---|
+| `apartado.creado` | `apartado.creado` | Flujo 01 · Confirmación de apartado |
+| `abono.registrado` | `abono.registrado` | Flujo 02 · Recibo de cada abono |
+| `venta.registrada` | `venta.registrada` | reservada para el Flujo 04 (US-09) |
+| `apartado.vencido` | `apartado.vencido` | reservada para el Flujo 06 (US-07) |
+| *(cualquier otro)* | `evento desconocido` | no se pierde: queda visible en Executions |
+
 
 #### Credenciales y variables (lista completa, sin valores)
 

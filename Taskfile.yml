@@ -1,9 +1,5 @@
 version: "3"
 
-vars:
-  IMAGEN_N8N: docker.n8n.io/n8nio/n8n
-  VOLUMEN_N8N: paso-firme_n8n_data  # volumen de datos de n8n; cámbialo si renombras la carpeta del proyecto
-
 tasks:
   install:
     desc: "Configuración inicial: copia .env.example a .env (si aún no existe, no lo sobreescribe)"
