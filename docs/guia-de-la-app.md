@@ -33,13 +33,14 @@ La conversación va en las dos direcciones:
 
 ## 2. Direcciones: qué es cada cosa
 
-Cuando levantáis el proyecto (`docker compose up -d`, ver [Cómo empezar](../README.md#-cómo-empezar)) se encienden **dos contenedores**:
+Cuando levantáis el proyecto (`docker compose up -d`, ver [Cómo empezar](../README.md#-cómo-empezar)) se encienden **tres contenedores**:
 
 | Servicio | Desde tu navegador o terminal | Desde dentro de n8n | Para qué |
 |---|---|---|---|
 | La app | http://localhost:8000 | `http://tienda:8000` | Pantallas y API |
 | Swagger (documentación de la API) | http://localhost:8000/docs | `http://tienda:8000/docs` | Probar cada endpoint con un botón |
 | n8n | http://localhost:5678 | `http://n8n:5678` | Construir las automatizaciones |
+| Mailpit | http://localhost:8025 | `http://mailpit:8025` | Buzón de pruebas de los correos |
 
 > ⚠️ **La trampa del `localhost`.** Cada contenedor es como una casa distinta y `localhost` significa «esta casa». Para n8n, `localhost` es **n8n mismo**, no la tienda. Por eso, **dentro de n8n** (nodo HTTP Request) se escribe `http://tienda:8000/...`, usando el nombre del servicio. Y por la misma razón la app avisa a n8n en `http://n8n:5678/...`.
 
@@ -306,7 +307,7 @@ Los clientes de ejemplo tienen correos `@example.com`: **para recibir vosotros l
 
 | Quiero... | Cómo |
 |---|---|
-| Empezar de cero y recargar los datos de ejemplo | `docker compose down -v` y luego `docker compose up -d` (⚠️ borra también tus flujos de n8n) |
+| Empezar de cero y recargar los datos de ejemplo | `docker compose down -v` y luego `docker compose up -d` (⚠️ borra también tus flujos de n8n; recupéralos con `task importar`) |
 | Arrancar con la app vacía | `SEED=0` en el `.env` |
 
 ---

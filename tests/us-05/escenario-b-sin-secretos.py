@@ -28,7 +28,7 @@ def main():
             "password": a.SEÑUELOS[0], "apikey": a.SEÑUELOS[1],
         },
     }
-    estado, respuesta = a.api(f"{a.N8N_URL}/webhook/tienda", payload)
+    estado, respuesta = a.webhook_datos(payload)
     a.guardar("escenario-b-sin-secretos-payload.json", payload)
     a.guardar("escenario-b-sin-secretos-webhook.json", {"status": estado, "respuesta": respuesta})
     a.apuntar(PRUEBA, "webhook acepta el evento", estado == 200, str(respuesta.get("message", "")))

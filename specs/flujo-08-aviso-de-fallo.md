@@ -50,6 +50,6 @@ Los de la historia (US-05), de ahí a la prueba de usuario:
 
 ## Notas de arquitectura
 
-- El JSON fija `settings.errorWorkflow` también en el **Receptor** y en los flujos 01 y 02, así el apuntador sobrevive a cada re-importación del `n8n-import` (los documentos importan por `id` y actualizan sus ajustes).
+- El JSON fija `settings.errorWorkflow` también en el **Receptor** y en los flujos 01 y 02, así el apuntador sobrevive a cada re-importación (`task importar`; los documentos importan por `id` y actualizan sus ajustes).
 - **Envío de correo**: nodo *Send Email* (SMTP) con la credencial `SMTP Mailpit (pruebas)` → durante el desarrollo los avisos se ven en el buzón de pruebas Mailpit (http://localhost:8025). Para producción basta asignar una credencial SMTP real (u OAuth2 de Gmail) con los mismos campos.
 - Al ser el flujo de fallo **trasversal**, se numera aparte de los flujos de evento (08 en adelante): no entra en el reparto del receptor.

@@ -52,8 +52,7 @@ Usamos agente Opencode y MCP n8n-mcp. Trazabilidad de prompts, decisiones y erro
 | Receptor y sub-flujos | receptor único `Receptor · Webhook tienda`; un sub-workflow por evento | nodo `Ejecutar Flujo 02` |
 
 ## Importar / exportar flujos
-- **Importar:** automático — en cada arranque el stack sube `credentials/` y `workflows/` y los activa (servicio one-shot `n8n-import`). Tras editar un JSON:
-  `docker compose stop n8n n8n-import && docker compose up -d`
+- **Importar:** manual, a voluntad — `task importar` (`scripts/n8n-importar.py`, Python: para n8n, sube `credentials/` y `workflows/` al CLI de n8n en contenedores one-shot con el volumen de datos, activa los flujos y lo rearranca). Lánzalo al levantar el stack por primera vez y tras editar cualquier JSON.
 - **Exportar:** desde el editor de n8n (Download) o CLI al fichero exacto de `workflows/`:
   `docker exec paso-firme-n8n-1 n8n export:workflow --id=<ID> --stdout > workflows/flujo-nn-nombre.json`
 - **Credenciales:** en el JSON solo se referencian por id/nombre; los valores van en `credentials/` (n8n las cifra al subirlas), nunca en claro dentro del workflow.

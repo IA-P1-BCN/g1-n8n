@@ -46,16 +46,43 @@ docker compose up -d
 
 Con `SEED=1` la tienda se arranca con datos la primera vez (usa `SEED=0` para arrancar vacía).
 
-### 4. Flujos de n8n
+### 4. Flujos de n8n: importar y credenciales
 
-Los flujos viven en `workflows/` y las credenciales que usan van en `credentials/` (en claro, porque el `n8n-import` las cifra al subir). Ambos **se importan y activan automáticamente** en cada arranque del stack (servicio one-shot `n8n-import` de docker compose; n8n espera a que la importación termine antes de arrancar). En local el SMTP apunta a Mailpit (`mailpit:1025`, sin TLS), así que cualquier correo que envía un flujo se ve en http://localhost:8025.
-
-Si editas o añades un JSON en `workflows/`, reinicia el stack para subirlos:
+Los flujos viven en `workflows/` y las credenciales que usan van en `credentials/` (en claro en el repo; n8n las cifra al importarlas). La importación **no es automática**: se lanza a voluntad con:
 
 ```bash
-docker compose stop n8n n8n-import
-docker compose up -d
+task importar
 ```
+
+(`scripts/n8n-importar.py`: para n8n, sube credenciales y flujos al CLI de n8n en contenedores one-shot con el volumen de datos, activa los flujos que queden inactivos y rearranca n8n.) Lánzalo **al levantar el stack por primera vez** y **tras editar o añadir** cualquier JSON. En local el SMTP apunta a Mailpit (`mailpit:1025`, sin TLS), así que cualquier correo que envía un flujo se ve en http://localhost:8025.
+Si haces cambios en el editor de n8n, expórtalos al fichero exacto de `workflows/`:
+
+```bash
+docker exec paso-firme-n8n-1 n8n export:workflow --all --stdout > workflows/flujo-nn-nombre.json
+```
+
+#### Flujos incluidos
+
+| Flujo | Fichero en `workflows/` | Disparador | Credenciales / variables |
+|---|---|---|---|
+| Flujo 01 · Confirmación de apartado | `flujo-01-confirmacion-apartado.json` | evento `apartado.creado` vía receptor | SMTP Mailpit (pruebas) |
+| Flujo 02 · Recibo de cada abono | `flujo-02-recibo-de-cada-abono.json` | evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
+| Flujo 08 · Aviso de fallo | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara solo si otro flujo falla (el resto lo apuntan en sus ajustes) | SMTP Mailpit (pruebas) |
+| Receptor · Webhook tienda | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (la app avisa aquí) | — |
+
+#### Credenciales y variables (lista completa, sin valores)
+
+| Credencial / variable | Tipo | Qué hay que configurar (valores en tu entorno, no en el repo) | La usan los flujos |
+|---|---|---|---|
+| `SMTP Mailpit (pruebas)` | SMTP | servidor (`mailpit` en la red de Docker), puerto, usuario y contraseña (Mailpit no los pide en local) y TLS desactivado | 01, 02 y 08 |
+| credencial SMTP real (producción) | SMTP u OAuth2 de Gmail | asignarla a los nodos de correo en lugar de la de Mailpit | 01, 02 y 08 |
+| `API_KEY` (`.env`) | variable de la app | clave que exige la API de la tienda; la generas en n8n con **Settings > n8n API** | app ↔ n8n |
+| `N8N_WEBHOOK_URL` (`.env`) | variable de la app | URL del receptor de n8n para los eventos de la tienda | todos los eventos |
+| `cambia-esta-direccion@paso-firme.local` | `toEmail` de los avisos a la tienda | **sustituir por el correo real de la tienda** antes de pasar a producción | 01, 02 y 08 |
+
+Ninguna credencial pide valores dentro de los JSON de `workflows/`: se referencian por id/nombre y los valores viven en `credentials/` (o en n8n) — nunca los subas al repo.
+
+Más documentación: [guía de la app](docs/guia-de-la-app.md) (para qué sirve cada endpoint y cómo probarlo) y [glosario del dominio](GLOSSARY.md) (Abono, Pendiente, Liquidado, Vale…, el vocabulario de flujos y mensajes).
 
 ### 5. Configurar el MCP de n8n en opencode
 
