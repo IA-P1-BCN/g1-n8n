@@ -17,12 +17,12 @@ tasks:
       - python scripts/ejecutar-tests.py {{.CLI_ARGS}}
 
   payload:
-    desc: "Envia a n8n el payload de un fichero JSON (task payload -- payloads/venta-registrada.json)"
+    desc: "Envia a n8n el payload de un fichero JSON (flags: --esperar, --url, --timeout; ej. task payload -- payloads/venta-registrada.json --esperar)"
     cmds:
       - python -u scripts/enviar-payload.py {{.CLI_ARGS}}
 
   demo:
-    desc: "Crea por API los datos de la demo: apartado liquidado, uno por vencer, uno vencido con vale y ventas de hoy"
+    desc: "Crea por API los datos de la demo (flag: --limpio vacia antes app y Mailpit; ej. task demo -- --limpio)"
     cmds:
       - python -u scripts/demo.py {{.CLI_ARGS}}
 

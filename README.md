@@ -170,6 +170,7 @@ Hay ejemplos listos para copiar y retocar en `payloads/` (`apartado-creado.json`
 ```
 
 - Destino: variable `N8N_URL` (por defecto `http://localhost:5678`) o `--url`. Ojo: el `.env` guarda `http://n8n:5678/...`, que es la URL interna de Docker para la app; desde el host usa la de por defecto.
+- `--esperar` espera la ejecución como máximo `--timeout` segundos (30 por defecto).
 - Códigos de salida: `0` bien · `1` fichero, JSON o `evento` inválido (o respuesta distinta de 200) · `2` uso. Al lanzarlo con `task`, cualquier fallo termina con el código 201 del propio task.
 
 ### 5. Configurar el MCP de n8n en opencode

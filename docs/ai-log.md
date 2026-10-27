@@ -100,6 +100,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 - **Prompts (textuales de la sesión)**:
   1. *(28/10)* «prs mergeadas, ahora necesito hacer esta task https://github.com/IA-P1-BCN/g1-n8n/issues/31»
   2. *(28/10)* «task demo: debe tener un flag para empezar de cero totalmente, limpio; poner en agents un ejemplo de cada flujo, un escenario preparado en task demo (para flujos actuales y añadidos posterior); debe mostrar el resumen en el output de los escenarios para tener una guía rápida; debe poner un ejemplo de ejecución de un custom payload con el task payload»
+  3. *(28/10)* «en el taskfile, debes poner si hay flags, siempre documenta nuevos comandos en readme y docs relacionados, añade esta regla a agents.md si no existe»
 - **Plan (#32)**: script de host contra la API (no un flujo de n8n: no depende del webhook ni de credenciales SMTP y se repite sin abrir el editor). `task demo` → `scripts/demo.py` (solo stdlib): un apartado liquidado con abono inicial + abonos parciales de varias formas, uno a 5 días de vencer (`fecha`, la del campo de migración) con un abono parcial, uno fuera de plazo vencido con su vale y tres ventas de hoy (efectivo, tarjeta, bizum). Al final **verifica por GET** lo creado (liquidado con 0 pendiente, 3 abonos, vale y ventas de hoy) → exit 0/1.
 - **Decisiones**:
   - *Aceptar*: `task demo` como comando de desarrollador, sin tests automáticos (la historia no tiene sub-issue de «Pruebas y evidencia»): la comprobación va dentro del script y la evidencia del run en la PR.
@@ -108,7 +109,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - *Aceptar*: la **guía rápida** la imprime el propio script con los ids reales de la corrida (apartado/venta → flujo → Mailpit), y AGENTS obliga a añadir escenario + payload al crear un flujo.
   - *Rechazar*: crear los datos con un flujo de n8n — mismo resultado con más piezas (webhook, credenciales) y sin ventaja para la demo.
   - *Rechazar*: `docker compose down -v` para limpiar: se lleva por delante n8n y obliga a `task importar`; el flag toca solo los datos de la app y el buzón.
-- **Resultado**: `scripts/demo.py`, task `demo`, sección «Datos frescos para la demo» en README (tabla de escenarios), fila en la guía de la app, regla de escenarios en AGENTS.md y esta entrada. Ejecutado con `--limpio` contra el stack local: apartados #1/#2/#3, ventas #1-#3, vale `VALE-00003`, 6 correos en Mailpit; `exit 0`. Evidencia en la PR.
+- **Resultado**: `scripts/demo.py`, task `demo`, sección «Datos frescos para la demo» en README (tabla de escenarios), fila en la guía de la app, regla de escenarios y de **comandos/flags documentados** en AGENTS.md y esta entrada. Ejecutado con `--limpio` contra el stack local: apartados #1/#2/#3, ventas #1-#3, vale `VALE-00003`, 6 correos en Mailpit; `exit 0`. Evidencia en la PR.
 
 ### Tareas transversales (2026-10-22/28)
 
