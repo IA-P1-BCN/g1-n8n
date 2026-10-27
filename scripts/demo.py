@@ -9,16 +9,23 @@ Deja la tienda lista para la demo sin apuntar nada a mano:
 - **ventas del día** por las tres formas de pago.
 
 Todos los POST pasan por la API, así que también disparan el webhook: las confirmaciones y recibos
-de los flujos 01/02 aparecen en Mailpit. Al final se comprueba con GET que la API devuelve lo creado.
+de los flujos 01/02 aparecen en Mailpit. Al final se comprueba con GET lo creado y se imprime una
+**guía rápida** de los escenarios (qué apartado o venta prueba cada flujo y dónde mirarlo).
+
+Con `--limpio` vacía antes la base de datos de la app y el buzón de Mailpit (el stack de Docker
+tiene que estar levantado; no toca n8n), para empezar de cero.
 
 Uso:  python scripts/demo.py
-      variables: API_URL (http://localhost:8000), API_KEY (entorno o .env)
+      python scripts/demo.py --limpio
+      variables: API_URL (http://localhost:8000), API_KEY (entorno o .env), MAILPIT_URL (http://localhost:8025)
 Exit code: 0 demo lista · 1 algún paso o la comprobación falló.
 """
 
+import argparse
 import json
 import os
 import pathlib
+import subprocess
 import sys
 import urllib.error
 import urllib.request
@@ -26,7 +33,7 @@ from datetime import date, timedelta
 
 RAIZ = pathlib.Path(__file__).resolve().parents[1]
 API_URL = (os.environ.get("API_URL") or "http://localhost:8000").rstrip("/")
-FORMAS = ["efectivo", "tarjeta", "bizum"]
+MAILPIT_URL = (os.environ.get("MAILPIT_URL") or "http://localhost:8025").rstrip("/")
 
 
 def clave_api():
@@ -94,17 +101,59 @@ def vender(concepto, importe, forma_pago):
                 (201,), f"registrar la venta de {concepto}")
 
 
+def limpiar_base():
+    """Vacía apartados, abonos, ventas y vales. Usa el propio contenedor de la app: no toca n8n."""
+    orden = ["docker", "compose", "exec", "-T", "tienda", "python", "-c",
+             "import sqlite3, config; con = sqlite3.connect(config.DB_PATH); "
+             "con.executescript('DELETE FROM vales; DELETE FROM abonos; DELETE FROM ventas; DELETE FROM apartados;'); "
+             "con.commit(); con.close()"]
+    try:
+        proceso = subprocess.run(orden, cwd=RAIZ, capture_output=True, text=True, timeout=60)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as e:
+        return f"no se pudo ejecutar docker compose ({e})"
+    if proceso.returncode != 0:
+        return proceso.stderr.strip() or proceso.stdout.strip() or "docker compose exec falló"
+    return None
+
+
+def limpiar_buzon():
+    """Vacía Mailpit; si no está disponible no es un fallo (solo avisa)."""
+    peticion = urllib.request.Request(f"{MAILPIT_URL}/api/v1/messages", method="DELETE")
+    try:
+        with urllib.request.urlopen(peticion, timeout=5) as r:
+            return r.status < 300
+    except Exception:
+        return False
+
+
 def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    parser = argparse.ArgumentParser(description="Crea los datos de la demo por API.")
+    parser.add_argument("--limpio", action="store_true",
+                        help="vacía antes la base de datos de la app y Mailpit (empezar de cero)")
+    args = parser.parse_args()
+
     if not clave_api():
         print("ERROR: falta API_KEY en el entorno o en .env (la app la exige en la cabecera X-API-Key)", file=sys.stderr)
         return 1
 
+    if args.limpio:
+        if API_URL != "http://localhost:8000":
+            print(f"ERROR: «--limpio» solo funciona con el stack local de docker compose "
+                  f"(API_URL es {API_URL})", file=sys.stderr)
+            return 1
+        error = limpiar_base()
+        if error:
+            print(f"ERROR: no se pudo vaciar la base de datos: {error}", file=sys.stderr)
+            return 1
+        print("· limpio: base de datos de la app vaciada")
+        print("· limpio: buzón de Mailpit vaciado" if limpiar_buzon() else "· aviso: Mailpit no responde, no vacío el buzón")
+
     hoy = date.today()
     print(f"· API: {API_URL}")
 
-    # 1. Apartado nuevo con abono inicial + abonos parciales hasta liquidarlo.
+    # 1. Apartado nuevo con abono inicial + abonos parciales hasta liquidarlo (Flujo 01 y Flujo 02).
     liquidado = crear_apartado("Marisa Demo", "demo.liquidado@paso-firme.local", "Botín piel marrón", "38",
                                89.90, 10.00, "efectivo")
     abonos = [("efectivo", 10.00)]
@@ -162,9 +211,19 @@ def main():
         print(f"ERROR: el vale {vale['codigo']} no aparece en la API", file=sys.stderr)
         return 1
 
+    # 6. Guía rápida: qué escenario prueba cada flujo y dónde mirarlo.
     print(f"· resumen: {resumen.get('activo')} activos · {resumen.get('liquidado')} liquidados · "
           f"{resumen.get('vencido')} vencidos · {resumen.get('total')} apartados")
-    print(f"· demo lista: {API_URL} · correos en http://localhost:8025")
+    print("· Guía rápida de la demo:")
+    print(f"    apartado #{liquidado['id']} · liquidado en 3 abonos · Flujo 01 (confirmación) y Flujo 02 (recibos) → Mailpit")
+    print(f"    apartado #{por_vencer['id']} · vence en {dias} días · escenario del recordatorio (flujo pendiente)")
+    print(f"    apartado #{vencido['id']} · vencido con vale {vale['codigo']} · escenario del vale (flujo pendiente)")
+    print("    ventas #" + ", #".join(str(v["id"]) for v in ventas) +
+          " · efectivo, tarjeta y bizum · escenario del cierre e informes (flujos pendientes)")
+    print(f"    app {API_URL} · API {API_URL}/docs · correos {MAILPIT_URL}")
+    print("· Prueba un evento a mano (para retocar o añadir algo fácil):")
+    print("    task payload -- payloads/venta-registrada.json --esperar")
+    print("    (duplica un fichero de payloads/, retócalo y lánzalo igual)")
     return 0
 
 
