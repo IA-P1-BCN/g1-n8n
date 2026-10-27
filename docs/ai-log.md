@@ -51,7 +51,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - Elección del usuario: suites en Python (stdlib), outputs versionados, Taskfile para orquestar.
 - **Resultado**: `tests/us-05/` (13 + 4 PASS), evidencia versionada, `task test` como comando del repo.
 
-### US-22 · Importación manual de flujos + nuevos tasks `install`/`arrancar` ([#44](https://github.com/IA-P1-BCN/g1-n8n/issues/44), PR #123, 2026-10-27/28)
+### US-22 · Importación manual de flujos + nuevos tasks `install`/`arrancar` ([#44](https://github.com/IA-P1-BCN/g1-n8n/issues/44), PR #124, 2026-10-27/28)
 
 - **Prompts (textuales de la sesión)**:
   1. *(27/10)* «Trabajemos en esta tarea: README con importación de flujos y lista de credenciales — quita el script `n8n-import` del docker-compose y pásalo a scripts/ en Python con su task en Taskfile para importar a voluntad»
