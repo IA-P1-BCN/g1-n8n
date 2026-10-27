@@ -52,8 +52,8 @@ def mensajes_actuales():
     return {identificador(m) for m in (lista or {}).get("messages", [])}
 
 
-def webhook_datos(payload, reintentos=6, espera=2):
-    """POST al webhook del receptor, reintentando mientras n8n arranca o registra el webhook (404 tras un reinicio)."""
+def webhook_datos(payload, reintentos=15, espera=2):
+    """POST al webhook del receptor, reintentando mientras n8n arranca o registra el webhook (404 o conexión caída tras un rearranque: ~30 s de ventana)."""
     estado, respuesta = 0, {}
     for intento in range(1, reintentos + 1):
         estado, respuesta = api(f"{N8N_URL}/webhook/tienda", payload)

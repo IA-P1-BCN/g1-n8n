@@ -5,6 +5,16 @@ vars:
   VOLUMEN_N8N: paso-firme_n8n_data  # volumen de datos de n8n; cámbialo si renombras la carpeta del proyecto
 
 tasks:
+  install:
+    desc: "Configuración inicial: copia .env.example a .env (si aún no existe, no lo sobreescribe)"
+    cmds:
+      - cmd: python -c "import os, shutil; shutil.copyfile('.env.example', '.env') if not os.path.exists('.env') else print('.env ya existe, no lo toco')"
+
+  arrancar:
+    desc: "Levanta el stack local (tienda, n8n y mailpit); la primera vez sigue con task importar"
+    cmds:
+      - docker compose up -d
+
   test:
     desc: "Ejecuta las suites e2e de tests/ contra el stack local (solo una: task test -- us-05)"
     cmds:
@@ -13,7 +23,7 @@ tasks:
   importar:
     desc: "Importa credentials/ y workflows/ en n8n y activa los flujos (para n8n durante el proceso; lánzalo tras editar JSONs o al levantar el stack)"
     cmds:
-      - python scripts/n8n-importar.py
+      - python -u scripts/n8n-importar.py
 
   default:
     cmds:

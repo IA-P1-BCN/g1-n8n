@@ -7,7 +7,8 @@ Orquestación de n8n sobre la API de la tienda: flujos de confirmación de apart
 ### Requisitos
 
 - [Docker](https://docs.docker.com/get-docker/)
-- [Node.js](https://nodejs.org/) (v20 o superior, necesario para opencode y el MCP de n8n)
+- [Task](https://taskfile.dev/) (v3.54 o superior — el runner de `task install`, `task arrancar`, `task importar` y `task test`)
+- [Python](https://www.python.org/) (v3.11 o superior — scripts de la carpeta `scripts/`)
 
 ### 1. Clonar el repositorio
 
@@ -19,10 +20,10 @@ cd g1-n8n
 ### 2. Configurar el `.env`
 
 ```bash
-cp .env.example .env
+task install
 ```
 
-Edita `.env`:
+(Copia `.env.example` a `.env`; si ya existía, no lo sobreescribe.) Edita `.env`:
 
 ```env
 API_KEY=cambia-esta-clave
@@ -35,8 +36,10 @@ SEED=1
 ### 3. Arrancar los servicios
 
 ```bash
-docker compose up -d
+task arrancar
 ```
+
+Después de la primera arrancada (o tras el `down -v`), importa flujos y credenciales: `task importar` (ver [paso 4](#4-flujos-de-n8n-importar-y-credenciales)).
 
 | Servicio | URL                       | Descripción                                        |
 | -------- | ------------------------- | -------------------------------------------------- |

@@ -51,9 +51,26 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - Elección del usuario: suites en Python (stdlib), outputs versionados, Taskfile para orquestar.
 - **Resultado**: `tests/us-05/` (13 + 4 PASS), evidencia versionada, `task test` como comando del repo.
 
-### Tareas transversales (2026-10-22/27)
+### US-22 · Importación manual de flujos + nuevos tasks `install`/`arrancar` ([#44](https://github.com/IA-P1-BCN/g1-n8n/issues/44), PR #123, 2026-10-27/28)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(27/10)* «Trabajemos en esta tarea: README con importación de flujos y lista de credenciales — quita el script `n8n-import` del docker-compose y pásalo a scripts/ en Python con su task en Taskfile para importar a voluntad»
+  2. *(28/10)* «Prueba delante de mí el import, task importar»
+  3. *(28/10)* «Crea un task para arrancar los servicios y un task install que copie el .env y haz PR»
+- **Decisiones**:
+  - *Aceptar*: importación **manual, a voluntad** (`task importar`) en vez del servicio one-shot `n8n-import` del compose — con `settings.errorWorkflow` ya fijado en los JSON, la re-importación conserva los apuntadores.
+  - *Rechazar*: implementación del importador en Node (`.mjs`, propuesta del agente) — el equipo lo quiere en Python como el resto de scripts (solo stdlib).
+  - *Aceptar*: el importador orquesta el CLI de n8n en contenedores one-shot al volumen de datos (`import:credentials`, `import:workflow`, `export:workflow`, `publish:workflow`) porque la entrypoint del shell de la imagen no enruta `node` directamente; para/rearranca n8n y sale 1 ante el mínimo fallo.
+  - Elección del usuario: tasks `install` (copia `.env.example` → `.env` sin sobreescribir) y `arrancar` (`docker compose up -d`).
+- **Errores → correcciones**: ver tabla (E11 · buffered bajo task, E12 · carrera de arranque en frío).
+- **Resultado**: `task importar` probado end-to-end (importa 1 credencial + 4 flujos, 4 activados y rearranca); documentación nueva en README (`task install` → `task arrancar` → `task importar`, tabla de flujos y credenciales sin valores); stack sencillo de levantar de cero.
+
+
+
+### Tareas transversales (2026-10-22/28)
 
 - US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — en PRs #111/#118.
+- 28/10 · infra desmonta `n8n-import` (US-22, esta PR): `task install`/`task arrancar`/`task importar` en Taskfile.
 - US-16 · CI: validación de JSON de flujos (`scripts/valida_flujos.py` en cada PR) — PR #112.
 - Infra · auto-importar/activar `workflows/` y `credentials/` en cada arranque (servicio one-shot `n8n-import`) — PR #115.
 - US-19 · contexto de agente: `AGENTS.md` con negocio, URLs, convenciones e import/export — PR #119.
@@ -74,3 +91,5 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 | E8 | 27/10 | Typo `linha` (portugués) en el runner antes de ejecutarlo | Revisión propia previa a la 1.ª ejecución | Corregido a `linea` | Ni en código breve: revisar identificadores antes de ejecutar |
 | E9 | 27/10 | `Taskfile.yml` no parseaba («mapping values are not allowed») por el `desc` con dos puntos y guiones literales sin citar | `task test` falla al parsear | Citar la descripción | YAML: citar cualquier escalar con `:` interior |
 | E10 | 26/10 | `AGENTS.md` decía `docker exec g1-n8n-n8n-1` y el contenedor real es `paso-firme-n8n-1` (el compose se llama así) | «No such container» al exportar el flujo | Se usó el nombre real en toda la sesión; fichero corregido en esta PR | La documentación desactualizada del AGENTS.md guía al error (lo avisa el propio AGENTS.md) |
+| E11 | 28/10 | `task importar` colgado sin salida durante minutos: Python `stdout` va buffered en tuberías y el progreso de docker no se veía (el abort del usuario cortó una corrida que funcionaba) | Timeout de 5 min sin output | `python -u scripts/n8n-importar.py` en el task y salida paso a paso (`-u` + `print` con `·`) que ya existía | Con task/pipes, forzar unbuffered (`-u`) o se queda ciego qué está ejecutando |
+| E12 | 28/10 | La suite e2e falló justo tras `task importar` (n8n recién rearrancado): el webhook devolvía error de conexión (status 0) durante el arranque de n8n | 2 FAIL — «webhook acepta el evento» y «aviso recibido» | `webhook_datos` reintenta (ventana ~30 s) también ante error de conexión, no solo 404/200 | Tras un rearranque de n8n, espera a que el webhook responda: integrar el warm-up en los tests |
