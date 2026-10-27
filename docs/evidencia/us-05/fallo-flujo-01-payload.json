@@ -1,0 +1,18 @@
+{
+  "evento": "apartado.creado",
+  "datos": {
+    "id": 997,
+    "fecha": "2026-10-26",
+    "cliente": "Prueba de fallo",
+    "email": "nadie",
+    "producto": "Botín piel marrón",
+    "talla": "38",
+    "precio": 89.9,
+    "abonado": 10,
+    "pendiente": 79.9,
+    "fecha_limite": "2027-01-24",
+    "estado": "activo",
+    "password": "ULTRA-SECRETO-en82bxyz",
+    "apikey": "AKIABADKEY123"
+  }
+}

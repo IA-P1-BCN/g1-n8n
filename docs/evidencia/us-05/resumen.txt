@@ -1,0 +1,16 @@
+PASS · fallo-flujo-01 · webhook acepta el evento · Workflow was started
+PASS · fallo-flujo-01 · aviso recibido en Mailpit · 🛠 Aviso de fallo · Flujo 01 · Confirmación de apartado
+PASS · fallo-flujo-01 · nombra el flujo · Flujo 01 · Confirmación de apartado
+PASS · fallo-flujo-01 · nombra el paso · Enviar resumen al cliente
+PASS · fallo-flujo-01 · incluye el error · No recipients defined
+PASS · fallo-flujo-01 · enlace a la ejecución · http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/47
+PASS · fallo-flujo-01 · sin contraseñas ni claves (Escenario B) · {"ULTRA-SECRETO-en82bxyz": [false, false], "AKIABADKEY123": [false, false]}
+PASS · fallo-flujo-01 · aviso del Receptor (padre) · 🛠 Aviso de fallo · Receptor · Webhook tienda (US-17 scaffold)
+PASS · fallo-flujo-01 · paso del receptor · Ejecutar Flujo 01
+PASS · fallo-receptor · webhook acepta la petición · Workflow was started
+PASS · fallo-receptor · aviso recibido en Mailpit · 🛠 Aviso de fallo · Receptor · Webhook tienda (US-17 scaffold)
+PASS · fallo-receptor · nombra el flujo · Receptor · Webhook tienda (US-17 scaffold)
+PASS · fallo-receptor · nombra el paso · Evento y datos
+PASS · fallo-receptor · incluye el error · The 'JSON Output' in item 0 does not contain a valid JSON object
+
+total: 14 PASS / 0 FAIL

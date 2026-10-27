@@ -1,6 +1,6 @@
 # Evidencia · US-05 Avisos de errores (Flujo 08 · Aviso de fallo)
 
-> Historia: US-05 (issue #21) · fecha: 26/10/2026 · stack local: tienda + n8n + Mailpit
+> Historia: US-05 (issue #21) · última ejecución: 27/10/2026 · stack local: tienda + n8n + Mailpit
 
 ## Preparación
 
@@ -14,33 +14,43 @@
 | Flujo 02 · Recibo de cada abono | `pFlujo02ReciboAbono` | true | `pFlujo08AvisoFallo` |
 | Flujo 08 · Aviso de fallo | `pFlujo08AvisoFallo` | true | — (no se apunta a sí mismo) |
 
-## Escenario A — Fallo provocado ✅
+## Pruebas reproducibles ✅
 
-1. **Fallo en el Flujo 01**: `POST http://localhost:5678/webhook/tienda` con el evento
-   `apartado.creado` y `datos.email = "nadie"` (destinatario inválido para SMTP).
-   El nodo **Enviar resumen al cliente** falla y n8n ejecuta el Error Workflow.
-2. Aviso recibido en Mailpit (id `4S5Wwz84ldq1zNPzYgYCow`):
+El script e2e **`scripts/us-05-pruebas-evidencia.py`** (solo stdlib) reproduce los escenarios de
+aceptación contra el stack local (solo necesita n8n + mailpit arriba):
 
-   - Asunto: `🛠 Aviso de fallo · Flujo 01 · Confirmación de apartado`
-   - Tabla del cuerpo:
-     - **Flujo**: `Flujo 01 · Confirmación de apartado`
-     - **Paso**: `Enviar resumen al cliente`
-     - **Error**: `No recipients defined`
-     - **Cuándo**: `26/10/2026 14:53`
-   - Enlace a la ejecución: `http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/19`
+```bash
+python scripts/us-05-pruebas-evidencia.py        # exit code 1 si algún criterio falla
+# N8N_URL / MAILPIT_URL sobreescriben http://localhost:5678 y http://localhost:8025
+```
 
-   Llegan además el aviso del Receptor (**Paso** `Ejecutar Flujo 01`, ejecución 18) y, con otro
-   fallo provocado (webhook con body `[1,2,3]`, id `5krAfyLh0w4sNQ5VOUNImo`), el del nodo
-   **Evento y datos** (`The 'JSON Output' in item 0 does not contain a valid JSON object`):
-   el Error Workflow se ejecuta una vez por cada ejecución que falla.
+Resultado de la última ejecución (re-ejecutable, idempotente): **14 PASS / 0 FAIL**.
 
-Se comprueba lo pedido: **nombre del flujo**, **paso** y **error**, con enlace a la ejecución.
+- **Test 1 · Escenario A + B** — `apartado.creado` con `datos.email = "nadie"` y señuelos
+  `password`/`apikey` → aviso en Mailpit con flujo (`Flujo 01 · Confirmación de apartado`),
+  paso (`Enviar resumen al cliente`), error (`No recipients defined`) y enlace a la ejecución;
+  más el aviso del Receptor (paso `Ejecutar Flujo 01`). Los señuelos **no** aparecen en el aviso
+  (Text/HTML: `false`).
+- **Test 2 · Escenario A (Receptor)** — webhook con body `[1,2,3]` → aviso con flujo
+  `Receptor · Webhook tienda`, paso `Evento y datos` y error
+  `The 'JSON Output' in item 0 does not contain a valid JSON object`.
 
-## Escenario B — Sin secretos ✅
+Evidencia del output de cada test, versionada en `docs/evidencia/us-05/`:
 
-1. El mismo evento del escenario A llevaba señuelos en `datos`: `password: "ULTRA-SECRETO-en82bxyz"`
-   y `apikey: "AKIABADKEY123"`, para verificar que el aviso **no** los incluye.
-2. Búsqueda de ambos valores en **Text** y **HTML** del aviso recibido: todo `False`.
-3. El aviso solo contiene los cinco campos de la lista blanca del nodo *Resumir el fallo*
-   (`flujo`, `paso`, `error`, `cuando`, `ejecucion`); no imprime el `stack`, los parámetros del
-   nodo ni los datos de entrada del evento, así que ni secretos ni datos del cliente salen.
+| Fichero | Contenido |
+|---|---|
+| `resumen.txt` | Resultado PASS/FAIL de cada criterio y total |
+| `fallo-flujo-01-payload.json` | Evento enviado (con los señuelos) |
+| `fallo-flujo-01-webhook.json` | Respuesta del webhook de n8n |
+| `fallo-flujo-01-aviso.json` | Aviso completo recibido (Mailpit: asunto, Text, HTML) |
+| `fallo-flujo-01-receptor-aviso.json` | Aviso del Receptor (padre) |
+| `fallo-receptor-payload.txt` / `fallo-receptor-webhook.json` | Body inválido y respuesta |
+| `fallo-receptor-aviso.json` | Aviso del fallo en el Receptor |
+| `busqueda-secretos.txt` | Resultado de buscar los señuelos en Text/HTML: `false` |
+
+## Primera ejecución (manual, 26/10/2026)
+
+Mismas provocaciones hechas a mano con curl; los avisos quedaron en Mailpit esa tarde
+(p. ej. id `4S5Wwz84ldq1zNPzYgYCow`, paso `Enviar resumen al cliente`, error `No recipients defined`,
+y body `[1,2,3]` → id `5krAfyLh0w4sNQ5VOUNImo`, paso `Evento y datos`). Mailpit se ha vaciado
+desde entonces: la evidencia conservada es la versionada arriba, reproducible con el script.
