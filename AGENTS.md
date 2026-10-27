@@ -15,6 +15,7 @@ REGLAS GENERALES
 - protege la rama main, pr con 1 review
 - usa conventional commit y conventional branches
 - usa TDD
+- **Descripción de la PR**: primero el texto descriptivo (qué, cómo se prueba, evidencia) y al final los cierres, **una línea limpia por issue**: `Closes #26`. Sin paréntesis, comas, ni texto en esa línea (GitHub solo reconoce `Closes`/`Fixes`/`Resolves` en inglés).
 
 ## Reglas del negocio y datos
 - Reglas del sistema de apartado (abono inicial mín. 5 €, plazo 90 días, estados activo/liquidado/vencido, vale…): `docs/business/business-rules.md`
