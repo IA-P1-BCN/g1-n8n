@@ -1,0 +1,12 @@
+version: "3"
+
+tasks:
+  test:
+    desc: "Ejecuta las suites e2e de tests/ contra el stack local (solo una: task test -- us-05)"
+    cmds:
+      - python scripts/ejecutar-tests.py {{.CLI_ARGS}}
+
+  default:
+    cmds:
+      - task --list
+    silent: true
