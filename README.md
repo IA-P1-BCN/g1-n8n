@@ -98,7 +98,45 @@ Un único webhook publicado reparte los eventos de la app con un Switch (`Repart
 
 Ninguna credencial pide valores dentro de los JSON de `workflows/`: se referencian por id/nombre y los valores viven en `credentials/` (o en n8n) — nunca los subas al repo.
 
-Más documentación: [guía de la app](docs/guia-de-la-app.md) (para qué sirve cada endpoint y cómo probarlo) y [glosario del dominio](GLOSSARY.md) (Abono, Pendiente, Liquidado, Vale…, el vocabulario de flujos y mensajes).
+Más documentación: [guía de la app](docs/guia-de-la-app.md) (para qué sirve cada endpoint y cómo probarlo) y [glosario del dominio](GLOSSARY.md) (Abono, Pendiente, Liquidado, Vale…, el vocabulario de flujos y mensajes) — o sigue abajo para probar el receptor con un payload propio.
+
+#### Probar el receptor con un payload propio
+
+En vez de escribir el JSON a mano en la terminal (se escapa mal, sobre todo en PowerShell), guárdalo en un fichero y lánzalo:
+
+```bash
+task payload -- payloads/venta-registrada.json
+```
+
+```
+· payload: payloads/venta-registrada.json
+· evento: venta.registrada
+· destino: http://localhost:5678/webhook/tienda
+· respuesta: 200 · {"message": "Workflow was started"}
+```
+
+Añade `--esperar` para ver en la terminal la ejecución y a qué rama del Switch fue (necesita la clave `API_KEY` del `.env`):
+
+```bash
+task payload -- payloads/abono-registrado.json --esperar
+```
+
+```
+· ejecución: 154 · success · último paso: Repartir por evento
+· rama: abono.registrado · 1 item(s)
+```
+
+Hay ejemplos listos para copiar y retocar en `payloads/` (`apartado-creado.json`, `abono-registrado.json`, `venta-registrada.json`, `apartado-vencido.json`). El mínimo es un objeto con `evento` y `datos`:
+
+```json
+{
+  "evento": "venta.registrada",
+  "datos": { "id": 501, "fecha": "2026-10-27", "concepto": "Botín piel marrón · 38", "importe": 89.9, "forma_pago": "efectivo" }
+}
+```
+
+- Destino: variable `N8N_URL` (por defecto `http://localhost:5678`) o `--url`. Ojo: el `.env` guarda `http://n8n:5678/...`, que es la URL interna de Docker para la app; desde el host usa la de por defecto.
+- Códigos de salida: `0` bien · `1` fichero, JSON o `evento` inválido (o respuesta distinta de 200) · `2` uso. Al lanzarlo con `task`, cualquier fallo termina con el código 201 del propio task.
 
 ### 5. Configurar el MCP de n8n en opencode
 

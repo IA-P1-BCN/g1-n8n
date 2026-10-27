@@ -67,6 +67,16 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 
 
+### Dev · `task payload` para probar el receptor con payloads propios (2026-10-28)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(28/10)* «puedes crear un comando cli en task para crear payloads a medida para probar el flujo deben leer de fichero el payload»
+  2. *(28/10)* «no necesito tests, estos comandos son para pruebas y comprobaciones del developer, pon ejemplos en el readme y documenta»
+- **Decisiones**:
+  - *Aceptar*: `task payload -- fichero.json` con `scripts/enviar-payload.py` (solo stdlib): lee y **valida** el fichero antes del POST, evitando el JSON inline que se rompe en PowerShell (E3).
+  - *Aceptar*: `--esperar` consulta Executions con la clave local del `.env` y muestra la rama del Switch, reutilizando el criterio de US-17; sin `--esperar` no necesita credenciales.
+  - *Rechazar*: tests automáticos del comando — es herramienta de desarrollo, no un criterio de aceptación; se verifica a mano en la PR y se documenta en el README.
+- **Resultado**: `payloads/` con los 4 eventos, task `payload`, sección «Probar el receptor con un payload propio» en el README y línea en AGENTS.md. Probado con los 4 eventos (con `--esperar`) y los casos de error: fichero inexistente, JSON roto y falta `evento`.
 ### US-17 · Receptor · Webhook tienda ([#26](https://github.com/IA-P1-BCN/g1-n8n/issues/26), PR #125, 2026-10-27/28)
 
 - **Prompts (textuales de la sesión)**:

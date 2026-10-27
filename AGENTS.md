@@ -58,6 +58,7 @@ Usamos agente Opencode y MCP n8n-mcp. Trazabilidad de prompts, decisiones y erro
   `docker exec paso-firme-n8n-1 n8n export:workflow --id=<ID> --stdout > workflows/flujo-nn-nombre.json`
 - **Credenciales:** en el JSON solo se referencian por id/nombre; los valores van en `credentials/` (n8n las cifra al subirlas), nunca en claro dentro del workflow.
 - **Vocabulario:** los nombres de flujos, nodos y mensajes usan el de `GLOSSARY.md` (Abono, Pendiente, Liquidado, Vale…).
+- **Probar a mano:** `task payload -- payloads/venta-registrada.json` envía el payload de un fichero al receptor (evita JSON inline en el shell); con `--esperar` muestra la ejecución y la rama del Switch. Ejemplos en `payloads/`.
 
 ## Forma de trabajo
 1. **Contexto antes que flujos:** crear un `AGENTS.md` en la raíz con el negocio y sus reglas del apartado, los servicios integrados, las convenciones de nombres de flujos y nodos, cómo importar y exportar flujos.
