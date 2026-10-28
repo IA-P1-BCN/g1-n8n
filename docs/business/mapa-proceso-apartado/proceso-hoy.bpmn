@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DI/20100923" xmlns:di="http://www.omg.org/spec/DD/20100924" id="defs_hoy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="paso-firme · generador bpmn" exporterVersion="1">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="defs_hoy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="paso-firme · generador bpmn" exporterVersion="1">
   <collaboration id="collab_hoy">
     <participant id="pool_hoy" name="Zapatería Paso Firme · proceso actual, íntegramente a mano" processRef="proc_hoy"/>
   </collaboration>
@@ -53,12 +53,12 @@
     <association id="assoc_nt_diario" sourceRef="t_repaso" targetRef="nt_diario"/>
   </process>
   <bpmndi:BPMNDiagram id="diagrama">
-    <bpmndi:BPMNPlane id="plano" bpmnElement="pool_hoy">
-    <bpmndi:BPMNShape id="shape_pool" bpmnElement="pool_hoy" isHorizontal="true"><dc:Bounds x="140" y="60" width="1980" height="470"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="shape_lane_0" bpmnElement="lane_hoy_0" isHorizontal="true"><dc:Bounds x="140" y="60" width="1980" height="340"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="shape_lane_1" bpmnElement="lane_hoy_1" isHorizontal="true"><dc:Bounds x="140" y="400" width="1980" height="130"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_st_cliente" bpmnElement="st_cliente"><dc:Bounds x="210" y="447" width="36" height="36"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_t_pago" bpmnElement="t_pago"><dc:Bounds x="930" y="425" width="110" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNPlane id="plano" bpmnElement="collab_hoy">
+    <bpmndi:BPMNShape id="shape_pool" bpmnElement="pool_hoy" isHorizontal="true"><dc:Bounds x="140" y="60" width="1980" height="510"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="shape_lane_0" bpmnElement="lane_hoy_0" isHorizontal="true"><dc:Bounds x="140" y="60" width="1980" height="380"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="shape_lane_1" bpmnElement="lane_hoy_1" isHorizontal="true"><dc:Bounds x="140" y="440" width="1980" height="130"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_st_cliente" bpmnElement="st_cliente"><dc:Bounds x="210" y="487" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_t_pago" bpmnElement="t_pago"><dc:Bounds x="930" y="465" width="110" height="80"/></bpmndi:BPMNShape>
     <bpmndi:BPMNShape id="sh_t_libreta" bpmnElement="t_libreta"><dc:Bounds x="330" y="140" width="110" height="80"/></bpmndi:BPMNShape>
     <bpmndi:BPMNShape id="sh_t_calcular" bpmnElement="t_calcular"><dc:Bounds x="550" y="140" width="110" height="80"/></bpmndi:BPMNShape>
     <bpmndi:BPMNShape id="sh_t_avisar" bpmnElement="t_avisar"><dc:Bounds x="770" y="140" width="110" height="80"/></bpmndi:BPMNShape>
@@ -68,36 +68,36 @@
     <bpmndi:BPMNShape id="sh_g_cero" bpmnElement="g_cero"><dc:Bounds x="1650" y="155" width="50" height="50"/></bpmndi:BPMNShape>
     <bpmndi:BPMNShape id="sh_t_entregar" bpmnElement="t_entregar"><dc:Bounds x="1790" y="140" width="110" height="80"/></bpmndi:BPMNShape>
     <bpmndi:BPMNShape id="sh_e_lqd" bpmnElement="e_lqd"><dc:Bounds x="2010" y="162" width="36" height="36"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_t_preguntar" bpmnElement="t_preguntar"><dc:Bounds x="1430" y="260" width="110" height="80"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_st_diario" bpmnElement="st_diario"><dc:Bounds x="330" y="292" width="36" height="36"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_t_repaso" bpmnElement="t_repaso"><dc:Bounds x="430" y="270" width="110" height="80"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_t_vencido" bpmnElement="t_vencido"><dc:Bounds x="660" y="270" width="110" height="80"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_e_vencido" bpmnElement="e_vencido"><dc:Bounds x="830" y="292" width="36" height="36"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_st_cierre" bpmnElement="st_cierre"><dc:Bounds x="950" y="292" width="36" height="36"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_t_dia" bpmnElement="t_dia"><dc:Bounds x="1060" y="270" width="110" height="80"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_t_mes" bpmnElement="t_mes"><dc:Bounds x="1290" y="270" width="110" height="80"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNShape id="sh_e_cifras" bpmnElement="e_cifras"><dc:Bounds x="1510" y="292" width="36" height="36"/></bpmndi:BPMNShape>
-    <bpmndi:BPMNEdge id="ed_f1" bpmnElement="f1"><di:waypoint x="246" y="465"/> <di:waypoint x="300" y="465"/> <di:waypoint x="300" y="180"/> <di:waypoint x="330" y="180"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="sh_t_preguntar" bpmnElement="t_preguntar"><dc:Bounds x="1240" y="250" width="110" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_st_diario" bpmnElement="st_diario"><dc:Bounds x="330" y="272" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_t_repaso" bpmnElement="t_repaso"><dc:Bounds x="430" y="250" width="110" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_t_vencido" bpmnElement="t_vencido"><dc:Bounds x="660" y="250" width="110" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_e_vencido" bpmnElement="e_vencido"><dc:Bounds x="830" y="272" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_st_cierre" bpmnElement="st_cierre"><dc:Bounds x="330" y="372" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_t_dia" bpmnElement="t_dia"><dc:Bounds x="430" y="350" width="110" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_t_mes" bpmnElement="t_mes"><dc:Bounds x="660" y="350" width="110" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="sh_e_cifras" bpmnElement="e_cifras"><dc:Bounds x="830" y="372" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="ed_f1" bpmnElement="f1"><di:waypoint x="246" y="505"/> <di:waypoint x="300" y="505"/> <di:waypoint x="300" y="180"/> <di:waypoint x="330" y="180"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNEdge id="ed_f2" bpmnElement="f2"><di:waypoint x="440" y="180"/> <di:waypoint x="550" y="180"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNEdge id="ed_f3" bpmnElement="f3"><di:waypoint x="660" y="180"/> <di:waypoint x="770" y="180"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f4" bpmnElement="f4"><di:waypoint x="880" y="180"/> <di:waypoint x="900" y="180"/> <di:waypoint x="900" y="465"/> <di:waypoint x="930" y="465"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f5" bpmnElement="f5"><di:waypoint x="1040" y="465"/> <di:waypoint x="1070" y="465"/> <di:waypoint x="1070" y="180"/> <di:waypoint x="1100" y="180"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f4" bpmnElement="f4"><di:waypoint x="880" y="180"/> <di:waypoint x="900" y="180"/> <di:waypoint x="900" y="505"/> <di:waypoint x="930" y="505"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f5" bpmnElement="f5"><di:waypoint x="1040" y="505"/> <di:waypoint x="1070" y="505"/> <di:waypoint x="1070" y="180"/> <di:waypoint x="1100" y="180"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNEdge id="ed_f6" bpmnElement="f6"><di:waypoint x="1210" y="180"/> <di:waypoint x="1310" y="180"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNEdge id="ed_f7" bpmnElement="f7"><di:waypoint x="1360" y="180"/> <di:waypoint x="1450" y="180"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f8" bpmnElement="f8"><di:waypoint x="1335" y="205"/> <di:waypoint x="1335" y="232"/> <di:waypoint x="1415" y="232"/> <di:waypoint x="1415" y="300"/> <di:waypoint x="1430" y="300"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f9" bpmnElement="f9"><di:waypoint x="1485" y="260"/> <di:waypoint x="1485" y="240"/> <di:waypoint x="1335" y="240"/> <di:waypoint x="1335" y="205"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f8" bpmnElement="f8"><di:waypoint x="1335" y="205"/> <di:waypoint x="1335" y="232"/> <di:waypoint x="1295" y="232"/> <di:waypoint x="1295" y="250"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f9" bpmnElement="f9"><di:waypoint x="1350" y="290"/> <di:waypoint x="1372" y="290"/> <di:waypoint x="1372" y="180"/> <di:waypoint x="1360" y="180"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNEdge id="ed_f10" bpmnElement="f10"><di:waypoint x="1560" y="180"/> <di:waypoint x="1650" y="180"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNEdge id="ed_f11" bpmnElement="f11"><di:waypoint x="1700" y="180"/> <di:waypoint x="1790" y="180"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNEdge id="ed_f12" bpmnElement="f12"><di:waypoint x="1700" y="180"/> <di:waypoint x="1724" y="180"/> <di:waypoint x="1724" y="230"/> <di:waypoint x="1210" y="230"/> <di:waypoint x="1210" y="180"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNEdge id="ed_f13" bpmnElement="f13"><di:waypoint x="1900" y="180"/> <di:waypoint x="2010" y="180"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f14" bpmnElement="f14"><di:waypoint x="366" y="310"/> <di:waypoint x="430" y="310"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f15" bpmnElement="f15"><di:waypoint x="540" y="310"/> <di:waypoint x="660" y="310"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f16" bpmnElement="f16"><di:waypoint x="770" y="310"/> <di:waypoint x="830" y="310"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f17" bpmnElement="f17"><di:waypoint x="986" y="310"/> <di:waypoint x="1060" y="310"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f18" bpmnElement="f18"><di:waypoint x="1170" y="310"/> <di:waypoint x="1290" y="310"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNEdge id="ed_f19" bpmnElement="f19"><di:waypoint x="1400" y="310"/> <di:waypoint x="1510" y="310"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNShape id="sh_nt_diario" bpmnElement="nt_diario"><dc:Bounds x="900" y="354" width="360" height="40"/><bpmndi:BPMNLabel/></bpmndi:BPMNShape>
-    <bpmndi:BPMNEdge id="ed_assoc_nt_diario" bpmnElement="assoc_nt_diario"><di:waypoint x="1080" y="354"/><di:waypoint x="485" y="350"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f14" bpmnElement="f14"><di:waypoint x="366" y="290"/> <di:waypoint x="430" y="290"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f15" bpmnElement="f15"><di:waypoint x="540" y="290"/> <di:waypoint x="660" y="290"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f16" bpmnElement="f16"><di:waypoint x="770" y="290"/> <di:waypoint x="830" y="290"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f17" bpmnElement="f17"><di:waypoint x="366" y="390"/> <di:waypoint x="430" y="390"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f18" bpmnElement="f18"><di:waypoint x="540" y="390"/> <di:waypoint x="660" y="390"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="ed_f19" bpmnElement="f19"><di:waypoint x="770" y="390"/> <di:waypoint x="830" y="390"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="sh_nt_diario" bpmnElement="nt_diario"><dc:Bounds x="960" y="358" width="300" height="40"/><bpmndi:BPMNLabel/></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="ed_assoc_nt_diario" bpmnElement="assoc_nt_diario"><di:waypoint x="1110" y="358"/><di:waypoint x="485" y="330"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </definitions>

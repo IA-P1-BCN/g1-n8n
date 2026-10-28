@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DI/20100923" xmlns:di="http://www.omg.org/spec/DD/20100924" id="defs_auto" targetNamespace="http://bpmn.io/schema/bpmn" exporter="paso-firme · generador bpmn" exporterVersion="1">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="defs_auto" targetNamespace="http://bpmn.io/schema/bpmn" exporter="paso-firme · generador bpmn" exporterVersion="1">
   <collaboration id="collab_auto">
     <participant id="pool_auto" name="Zapatería Paso Firme · proceso automatizado con n8n" processRef="proc_auto"/>
   </collaboration>
@@ -61,7 +61,7 @@
     </textAnnotation>
     <association id="assoc_nt_err" sourceRef="f08" targetRef="nt_err"/>
     <textAnnotation id="nt_recep">
-      <text>El Switchán «Repartir por evento» también tiene salidas venta.registrada y apartado.vencido: aún sin conectar (US-03/US-04 pendientes).</text>
+      <text>El Switch «Repartir por evento» también tiene salidas venta.registrada y apartado.vencido: aún sin conectar (US-03/US-04 pendientes).</text>
     </textAnnotation>
     <association id="assoc_nt_recep" sourceRef="n_recep" targetRef="nt_recep"/>
     <textAnnotation id="nt_pago">
@@ -70,7 +70,7 @@
     <association id="assoc_nt_pago" sourceRef="t_pago" targetRef="nt_pago"/>
   </process>
   <bpmndi:BPMNDiagram id="diagrama">
-    <bpmndi:BPMNPlane id="plano" bpmnElement="pool_auto">
+    <bpmndi:BPMNPlane id="plano" bpmnElement="collab_auto">
     <bpmndi:BPMNShape id="shape_pool" bpmnElement="pool_auto" isHorizontal="true"><dc:Bounds x="140" y="60" width="1980" height="940"/></bpmndi:BPMNShape>
     <bpmndi:BPMNShape id="shape_lane_0" bpmnElement="lane_auto_0" isHorizontal="true"><dc:Bounds x="140" y="60" width="1980" height="200"/></bpmndi:BPMNShape>
     <bpmndi:BPMNShape id="shape_lane_1" bpmnElement="lane_auto_1" isHorizontal="true"><dc:Bounds x="140" y="260" width="1980" height="140"/></bpmndi:BPMNShape>
@@ -126,8 +126,8 @@
     <bpmndi:BPMNEdge id="ed_assoc_nt_err" bpmnElement="assoc_nt_err"><di:waypoint x="790" y="735"/><di:waypoint x="805" y="730"/></bpmndi:BPMNEdge>
     <bpmndi:BPMNShape id="sh_nt_recep" bpmnElement="nt_recep"><dc:Bounds x="1010" y="728" width="330" height="50"/><bpmndi:BPMNLabel/></bpmndi:BPMNShape>
     <bpmndi:BPMNEdge id="ed_assoc_nt_recep" bpmnElement="assoc_nt_recep"><di:waypoint x="1175" y="728"/><di:waypoint x="1005" y="720"/></bpmndi:BPMNEdge>
-    <bpmndi:BPMNShape id="sh_nt_pago" bpmnElement="nt_pago"><dc:Bounds x="1030" y="300" width="330" height="40"/><bpmndi:BPMNLabel/></bpmndi:BPMNShape>
-    <bpmndi:BPMNEdge id="ed_assoc_nt_pago" bpmnElement="assoc_nt_pago"><di:waypoint x="1030" y="320"/><di:waypoint x="910" y="328"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNShape id="sh_nt_pago" bpmnElement="nt_pago"><dc:Bounds x="1100" y="300" width="330" height="40"/><bpmndi:BPMNLabel/></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="ed_assoc_nt_pago" bpmnElement="assoc_nt_pago"><di:waypoint x="1100" y="320"/><di:waypoint x="910" y="328"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </definitions>
