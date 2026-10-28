@@ -1,0 +1,26 @@
+{
+  "evento": "apartado.vencido",
+  "datos": {
+    "apartado": {
+      "id": 902,
+      "fecha": "2026-07-01",
+      "cliente": "Cliente de prueba",
+      "telefono": "600000002",
+      "email": "cliente@paso-firme.local",
+      "producto": "Botín piel marrón",
+      "talla": "39",
+      "precio": 89.9,
+      "abonado": 20.0,
+      "pendiente": 69.9,
+      "fecha_limite": "2026-09-29",
+      "estado": "vencido"
+    },
+    "vale": {
+      "id": 21,
+      "codigo": "VALE-00902",
+      "apartado_id": 902,
+      "fecha": "2026-10-27",
+      "importe": 20.0
+    }
+  }
+}

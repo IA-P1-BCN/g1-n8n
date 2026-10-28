@@ -15,6 +15,8 @@ REGLAS GENERALES
 - protege la rama main, pr con 1 review
 - usa conventional commit y conventional branches
 - usa TDD
+- **Descripción de la PR**: primero el texto descriptivo (qué, cómo se prueba, evidencia) y al final los cierres, **una línea limpia por issue**: `Closes #26`. Sin paréntesis, comas, ni texto en esa línea (GitHub solo reconoce `Closes`/`Fixes`/`Resolves` en inglés).
+- **Comandos y flags**: todo comando nuevo se documenta en el README y en la doc relacionada (guía, specs…), y el `desc` de su task en `Taskfile.yml` lista los flags con un ejemplo (`task demo -- --limpio`). Sin flags ocultos.
 
 ## Reglas del negocio y datos
 - Reglas del sistema de apartado (abono inicial mín. 5 €, plazo 90 días, estados activo/liquidado/vencido, vale…): `docs/business/business-rules.md`
@@ -22,7 +24,7 @@ REGLAS GENERALES
 
 ## Pruebas de aceptación (sub-issues "Pruebas y evidencia")
 - La evidencia **son tests**: cada historia lleva una suite e2e en `tests/us-NN/` con un script por escenario de aceptación (solo stdlib); los helpers compartidos viven en `tests/us-NN/ayudantes.py`.
-- Cada test ejecuta los escenarios contra el stack local (n8n/app/mailpit por HTTP localhost, URLs sobre-escribibles por env, sin credenciales) y termina con exit code.
+- Cada test ejecuta los escenarios contra el stack local (n8n/app/mailpit por HTTP localhost, URLs sobre-escribibles por env, sin credenciales en el repo) y termina con exit code. Para leer las **executions** de n8n (`tests/us-17/`) se usa la clave local `API_KEY` del `.env`.
 - **Comando de referencia:** `task test` (todas las suites; una sola: `task test -- us-NN`), vía Taskfile.yml y `scripts/ejecutar-tests.py`.
 - El **output de cada test** (payload, respuesta, avisos/mensajes capturados y resultado de cada criterio) se versiona en `docs/evidencia/us-NN/` y se lista en `resumen-escenario-*.txt`; la evidencia solo-manual (curl o capturas) no vale: el buzón de Mailpit se vacía y las ejecuciones de n8n se pierden.
 - El sub-issue de pruebas considera "hecho" cuando el `task test` pasa (todas las suites de la historia) y los outputs versionados están en la PR.
@@ -34,6 +36,10 @@ REGLAS GENERALES
 | Documentación de la API | http://localhost:8000/docs | Probar los endpoints que usará n8n (Swagger) |
 | n8n | http://localhost:5678 | Construir las automatizaciones |
 | mailpit | http://localhost:8025 | Gestor de correos |
+
+**Datos de la demo:** `task demo` crea por API un apartado liquidado, uno por vencer, uno vencido con su vale y ventas de hoy (ver README); `task demo -- --limpio` vacía antes app y Mailpit (no toca n8n).
+
+**Escenarios por flujo:** el output de `task demo` es la guía rápida (escenario → flujo → dónde mirar). Al añadir un flujo, añade su escenario a `scripts/demo.py` (datos y línea de la guía) y su payload de ejemplo a `payloads/`; pruébalo con `task payload -- payloads/<fichero>.json --esperar`.
 
 ## IA Agents
 Usamos agente Opencode y MCP n8n-mcp. Trazabilidad de prompts, decisiones y errores del agente: `docs/ai-log.md` (una entrada por tarea; todo error detectado se registra con su corrección).
@@ -58,6 +64,7 @@ Usamos agente Opencode y MCP n8n-mcp. Trazabilidad de prompts, decisiones y erro
   `docker exec paso-firme-n8n-1 n8n export:workflow --id=<ID> --stdout > workflows/flujo-nn-nombre.json`
 - **Credenciales:** en el JSON solo se referencian por id/nombre; los valores van en `credentials/` (n8n las cifra al subirlas), nunca en claro dentro del workflow.
 - **Vocabulario:** los nombres de flujos, nodos y mensajes usan el de `GLOSSARY.md` (Abono, Pendiente, Liquidado, Vale…).
+- **Probar a mano:** `task payload -- payloads/venta-registrada.json` envía el payload de un fichero al receptor (evita JSON inline en el shell); con `--esperar` muestra la ejecución y la rama del Switch. Ejemplos en `payloads/`.
 
 ## Forma de trabajo
 1. **Contexto antes que flujos:** crear un `AGENTS.md` en la raíz con el negocio y sus reglas del apartado, los servicios integrados, las convenciones de nombres de flujos y nodos, cómo importar y exportar flujos.

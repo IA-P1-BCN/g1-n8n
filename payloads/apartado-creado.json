@@ -1,0 +1,17 @@
+{
+  "evento": "apartado.creado",
+  "datos": {
+    "id": 901,
+    "fecha": "2026-10-27",
+    "cliente": "Cliente de prueba",
+    "telefono": "600000001",
+    "email": "cliente@paso-firme.local",
+    "producto": "Botín piel marrón",
+    "talla": "38",
+    "precio": 89.9,
+    "abonado": 10.0,
+    "pendiente": 79.9,
+    "fecha_limite": "2027-01-25",
+    "estado": "activo"
+  }
+}

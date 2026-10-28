@@ -1,9 +1,5 @@
 version: "3"
 
-vars:
-  IMAGEN_N8N: docker.n8n.io/n8nio/n8n
-  VOLUMEN_N8N: paso-firme_n8n_data  # volumen de datos de n8n; cámbialo si renombras la carpeta del proyecto
-
 tasks:
   install:
     desc: "Configuración inicial: copia .env.example a .env (si aún no existe, no lo sobreescribe)"
@@ -19,6 +15,16 @@ tasks:
     desc: "Ejecuta las suites e2e de tests/ contra el stack local (solo una: task test -- us-05)"
     cmds:
       - python scripts/ejecutar-tests.py {{.CLI_ARGS}}
+
+  payload:
+    desc: "Envia a n8n el payload de un fichero JSON (flags: --esperar, --url, --timeout; ej. task payload -- payloads/venta-registrada.json --esperar)"
+    cmds:
+      - python -u scripts/enviar-payload.py {{.CLI_ARGS}}
+
+  demo:
+    desc: "Crea por API los datos de la demo (flag: --limpio vacia antes app y Mailpit; ej. task demo -- --limpio)"
+    cmds:
+      - python -u scripts/demo.py {{.CLI_ARGS}}
 
   importar:
     desc: "Importa credentials/ y workflows/ en n8n y activa los flujos (para n8n durante el proceso; lánzalo tras editar JSONs o al levantar el stack)"

@@ -31,7 +31,7 @@ N8N_WEBHOOK_URL=http://n8n:5678/webhook/tienda
 SEED=1
 ```
 
-> **Nota:** la clave `API_KEY` se obtiene dentro de la interfaz de n8n: **Settings > n8n API** (en el paso 5 verás cómo usarla en opencode).
+> **Nota:** la clave `API_KEY` se obtiene dentro de la interfaz de n8n: **Settings > n8n API** (en el paso 5 verás cómo usarla en opencode). La suite `tests/us-17/` usa esa misma clave para leer las **executions** de n8n y comprobar a qué rama fue cada evento.
 
 ### 3. Arrancar los servicios
 
@@ -49,6 +49,40 @@ Después de la primera arrancada (o tras el `down -v`), importa flujos y credenc
 
 Con `SEED=1` la tienda se arranca con datos la primera vez (usa `SEED=0` para arrancar vacía).
 
+#### Datos frescos para la demo
+
+```bash
+task demo             # añade un juego de datos al que ya haya
+task demo -- --limpio # vacía antes la app y Mailpit: empieza de cero
+```
+
+`scripts/demo.py` crea por API (nada de SQL a mano) lo que hace falta para enseñar la tienda:
+
+- un **apartado nuevo** con su abono inicial y abonos parciales **hasta liquidarlo**;
+- uno **a punto de vencer** y otro **vencido con su vale**;
+- **ventas de hoy** por efectivo, tarjeta y bizum.
+
+Al final comprueba con `GET` que la API devuelve lo creado, y si algo falla sale con error. La salida termina con la **guía rápida de los escenarios**: qué apartado o venta prueba cada flujo y dónde mirarlo.
+
+`--limpio` (solo con el stack de docker compose) vacía apartados, abonos, ventas, vales y el buzón de Mailpit; **no toca n8n**, así que los flujos y las credenciales siguen donde estaban. Sin el flag, cada ejecución **añade** datos nuevos.
+
+| Flujo | Escenario de `task demo` | Qué mirar |
+|---|---|---|
+| 01 · Confirmación de apartado | el apartado liquidado | correo «Apartado confirmado» en Mailpit |
+| 02 · Recibo de cada abono | sus 3 abonos y el abono parcial del «por vencer» | correos «Recibo de tu abono» y «Último abono recibido» |
+| 04 · Cierre diario (pendiente) | ventas de hoy en efectivo, tarjeta y bizum | — |
+| 06 · Vencimiento y vale (pendiente) | el apartado vencido con su vale | — |
+| 08 · Aviso de fallo | no es un escenario de datos: se prueba forzando un fallo | — |
+
+Para probar un evento a mano (retocar algo o añadir un caso), duplica un fichero de `payloads/`, edítalo y lánzalo igual:
+
+```bash
+task payload -- payloads/venta-registrada.json --esperar
+```
+
+- `API_URL` (por defecto `http://localhost:8000`) para apuntar a otra app; `API_KEY` se lee del entorno o del `.env`.
+- Diferencia con `SEED=1`: el seed llena la tienda **una sola vez** al arrancar, con meses de historial; `task demo` añade un juego fresco **a demanda** sobre la app que ya está en marcha.
+
 ### 4. Flujos de n8n: importar y credenciales
 
 Los flujos viven en `workflows/` y las credenciales que usan van en `credentials/` (en claro en el repo; n8n las cifra al importarlas). La importación **no es automática**: se lanza a voluntad con:
@@ -57,7 +91,7 @@ Los flujos viven en `workflows/` y las credenciales que usan van en `credentials
 task importar
 ```
 
-(`scripts/n8n-importar.py`: para n8n, sube credenciales y flujos al CLI de n8n en contenedores one-shot con el volumen de datos, activa los flujos que queden inactivos y rearranca n8n.) Lánzalo **al levantar el stack por primera vez** y **tras editar o añadir** cualquier JSON. En local el SMTP apunta a Mailpit (`mailpit:1025`, sin TLS), así que cualquier correo que envía un flujo se ve en http://localhost:8025.
+(`scripts/n8n-importar.py`: para n8n, sube credenciales y flujos al CLI de n8n en contenedores one-shot del propio servicio `n8n` —misma imagen y mismo volumen de datos—, activa los flujos y rearranca n8n.) Lánzalo **al levantar el stack por primera vez** y **tras editar o añadir** cualquier JSON. En local el SMTP apunta a Mailpit (`mailpit:1025`, sin TLS), así que cualquier correo que envía un flujo se ve en http://localhost:8025.
 Si haces cambios en el editor de n8n, expórtalos al fichero exacto de `workflows/`:
 
 ```bash
@@ -73,6 +107,19 @@ docker exec paso-firme-n8n-1 n8n export:workflow --all --stdout > workflows/fluj
 | Flujo 08 · Aviso de fallo | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara solo si otro flujo falla (el resto lo apuntan en sus ajustes) | SMTP Mailpit (pruebas) |
 | Receptor · Webhook tienda | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (la app avisa aquí) | — |
 
+#### Eventos del receptor
+
+Un único webhook publicado reparte los eventos de la app con un Switch (`Repartir por evento`); su spec está en [`specs/receptor-webhook-tienda.md`](specs/receptor-webhook-tienda.md).
+
+| Evento | Rama del Switch | Destino |
+|---|---|---|
+| `apartado.creado` | `apartado.creado` | Flujo 01 · Confirmación de apartado |
+| `abono.registrado` | `abono.registrado` | Flujo 02 · Recibo de cada abono |
+| `venta.registrada` | `venta.registrada` | reservada para el Flujo 04 (US-09) |
+| `apartado.vencido` | `apartado.vencido` | reservada para el Flujo 06 (US-07) |
+| *(cualquier otro)* | `evento desconocido` | no se pierde: queda visible en Executions |
+
+
 #### Credenciales y variables (lista completa, sin valores)
 
 | Credencial / variable | Tipo | Qué hay que configurar (valores en tu entorno, no en el repo) | La usan los flujos |
@@ -85,7 +132,46 @@ docker exec paso-firme-n8n-1 n8n export:workflow --all --stdout > workflows/fluj
 
 Ninguna credencial pide valores dentro de los JSON de `workflows/`: se referencian por id/nombre y los valores viven en `credentials/` (o en n8n) — nunca los subas al repo.
 
-Más documentación: [guía de la app](docs/guia-de-la-app.md) (para qué sirve cada endpoint y cómo probarlo) y [glosario del dominio](GLOSSARY.md) (Abono, Pendiente, Liquidado, Vale…, el vocabulario de flujos y mensajes).
+Más documentación: [guía de la app](docs/guia-de-la-app.md) (para qué sirve cada endpoint y cómo probarlo) y [glosario del dominio](GLOSSARY.md) (Abono, Pendiente, Liquidado, Vale…, el vocabulario de flujos y mensajes) — o sigue abajo para probar el receptor con un payload propio.
+
+#### Probar el receptor con un payload propio
+
+En vez de escribir el JSON a mano en la terminal (se escapa mal, sobre todo en PowerShell), guárdalo en un fichero y lánzalo:
+
+```bash
+task payload -- payloads/venta-registrada.json
+```
+
+```
+· payload: payloads/venta-registrada.json
+· evento: venta.registrada
+· destino: http://localhost:5678/webhook/tienda
+· respuesta: 200 · {"message": "Workflow was started"}
+```
+
+Añade `--esperar` para ver en la terminal la ejecución y a qué rama del Switch fue (necesita la clave `API_KEY` del `.env`):
+
+```bash
+task payload -- payloads/abono-registrado.json --esperar
+```
+
+```
+· ejecución: 154 · success · último paso: Repartir por evento
+· rama: abono.registrado · 1 item(s)
+```
+
+Hay ejemplos listos para copiar y retocar en `payloads/` (`apartado-creado.json`, `abono-registrado.json`, `venta-registrada.json`, `apartado-vencido.json`). El mínimo es un objeto con `evento` y `datos`:
+
+```json
+{
+  "evento": "venta.registrada",
+  "datos": { "id": 501, "fecha": "2026-10-27", "concepto": "Botín piel marrón · 38", "importe": 89.9, "forma_pago": "efectivo" }
+}
+```
+
+- Destino: variable `N8N_URL` (por defecto `http://localhost:5678`) o `--url`. Ojo: el `.env` guarda `http://n8n:5678/...`, que es la URL interna de Docker para la app; desde el host usa la de por defecto.
+- `--esperar` espera la ejecución como máximo `--timeout` segundos (30 por defecto).
+- Códigos de salida: `0` bien · `1` fichero, JSON o `evento` inválido (o respuesta distinta de 200) · `2` uso. Al lanzarlo con `task`, cualquier fallo termina con el código 201 del propio task.
 
 ### 5. Configurar el MCP de n8n en opencode
 

@@ -80,10 +80,53 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 - **Resultado**: los dos diagramas abren en bpmn.io y en las vistas locales (bpmn-js); validación con `bpmn-moddle` (0 warnings) e importación del viewer OK.
 
 
+### Dev · `task payload` para probar el receptor con payloads propios (2026-10-28)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(28/10)* «puedes crear un comando cli en task para crear payloads a medida para probar el flujo deben leer de fichero el payload»
+  2. *(28/10)* «no necesito tests, estos comandos son para pruebas y comprobaciones del developer, pon ejemplos en el readme y documenta»
+- **Decisiones**:
+  - *Aceptar*: `task payload -- fichero.json` con `scripts/enviar-payload.py` (solo stdlib): lee y **valida** el fichero antes del POST, evitando el JSON inline que se rompe en PowerShell (E3).
+  - *Aceptar*: `--esperar` consulta Executions con la clave local del `.env` y muestra la rama del Switch, reutilizando el criterio de US-17; sin `--esperar` no necesita credenciales.
+  - *Rechazar*: tests automáticos del comando — es herramienta de desarrollo, no un criterio de aceptación; se verifica a mano en la PR y se documenta en el README.
+- **Resultado**: `payloads/` con los 4 eventos, task `payload`, sección «Probar el receptor con un payload propio» en el README y línea en AGENTS.md. Probado con los 4 eventos (con `--esperar`) y los casos de error: fichero inexistente, JSON roto y falta `evento`.
+### US-17 · Receptor · Webhook tienda ([#26](https://github.com/IA-P1-BCN/g1-n8n/issues/26), PR #125, 2026-10-27/28)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(27/10)* «quiero hacer esta tarea, [US-17 #26]»
+  2. *(27/10)* «el flujo 01 y 02 no se toca?»
+  3. *(27/10)* «explicame entonces el nuevo workflow que haria?»
+  4. *(27/10)* «cual seria el uso de este switch? si no modificamos US-05»
+  5. *(27/10)* «ok al plan, us-05 como esta»
+- **Decisiones**:
+  - *Aceptar*: el receptor **ya existía** (llegó con US-01/US-02); US-17 se cierra con spec, renombrado, fallback y la suite que demuestra las 4 ramas. No se tocan Flujo 01/02.
+  - *Aceptar*: la evidencia del reparto se lee de la **API de Executions** de n8n (`runData['Repartir por evento'].data.main`), con la clave local `API_KEY` del `.env`; así las ramas 3/4 (aún sin sub-flujo) también quedan probadas sin inventar correos.
+  - *Aceptar*: el Switch sigue leyendo `{{ $json.evento }}` (no `{{ $json.body.evento }}`): `Evento y datos` ya extrae `body`, y su validación es la que provoca el fallo que prueba US-05. La equivalencia queda documentada en la spec.
+  - *Aceptar*: `fallbackOutput: "extra"` renombrado «evento desconocido»: un evento no contemplado se ve en la ejecución en vez de descartarse en silencio.
+  - *Aceptar*: tests con los payloads que manda la app (no se crean apartados/ventas reales): deterministas, idempotentes y sin ensuciar la base.
+  - *Rechazar*: `responseMode: responseNode` para devolver la rama en la respuesta HTTP — cambiaría el comportamiento del webhook y rompería la evidencia de US-05 (body inválido → 200).
+- **Errores → correcciones**: ver tabla (E13 · volumen obsoleto del importador, E14 · export con EACCES).
+- **Resultado**: `specs/receptor-webhook-tienda.md`, `tests/us-17/` (33 PASS), evidencia versionada en `docs/evidencia/us-17/`, `task test` verde (US-05 incluida), importador arreglado (compose + `--stdout`).
+
+### US-18 · Datos de prueba y script de demo (2026-10-28)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(28/10)* «prs mergeadas, ahora necesito hacer esta task https://github.com/IA-P1-BCN/g1-n8n/issues/31»
+  2. *(28/10)* «task demo: debe tener un flag para empezar de cero totalmente, limpio; poner en agents un ejemplo de cada flujo, un escenario preparado en task demo (para flujos actuales y añadidos posterior); debe mostrar el resumen en el output de los escenarios para tener una guía rápida; debe poner un ejemplo de ejecución de un custom payload con el task payload»
+  3. *(28/10)* «en el taskfile, debes poner si hay flags, siempre documenta nuevos comandos en readme y docs relacionados, añade esta regla a agents.md si no existe»
+- **Plan (#32)**: script de host contra la API (no un flujo de n8n: no depende del webhook ni de credenciales SMTP y se repite sin abrir el editor). `task demo` → `scripts/demo.py` (solo stdlib): un apartado liquidado con abono inicial + abonos parciales de varias formas, uno a 5 días de vencer (`fecha`, la del campo de migración) con un abono parcial, uno fuera de plazo vencido con su vale y tres ventas de hoy (efectivo, tarjeta, bizum). Al final **verifica por GET** lo creado (liquidado con 0 pendiente, 3 abonos, vale y ventas de hoy) → exit 0/1.
+- **Decisiones**:
+  - *Aceptar*: `task demo` como comando de desarrollador, sin tests automáticos (la historia no tiene sub-issue de «Pruebas y evidencia»): la comprobación va dentro del script y la evidencia del run en la PR.
+  - *Aceptar*: usar `fecha` para el apartado por vencer y el vencido; así se demuestran los avisos y el vale sin esperar 90 días.
+  - *Aceptar*: `--limpio` vacía las tablas con `docker compose exec tienda` (sin reiniciar ni re-sembrar) y el buzón por la API de Mailpit; así no se pierden los flujos de n8n.
+  - *Aceptar*: la **guía rápida** la imprime el propio script con los ids reales de la corrida (apartado/venta → flujo → Mailpit), y AGENTS obliga a añadir escenario + payload al crear un flujo.
+  - *Rechazar*: crear los datos con un flujo de n8n — mismo resultado con más piezas (webhook, credenciales) y sin ventaja para la demo.
+  - *Rechazar*: `docker compose down -v` para limpiar: se lleva por delante n8n y obliga a `task importar`; el flag toca solo los datos de la app y el buzón.
+- **Resultado**: `scripts/demo.py`, task `demo`, sección «Datos frescos para la demo» en README (tabla de escenarios), fila en la guía de la app, regla de escenarios y de **comandos/flags documentados** en AGENTS.md y esta entrada. Ejecutado con `--limpio` contra el stack local: apartados #1/#2/#3, ventas #1-#3, vale `VALE-00003`, 6 correos en Mailpit; `exit 0`. Evidencia en la PR.
 
 ### Tareas transversales (2026-10-22/28)
 
-- US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — en PRs #111/#118.
+- US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — scaffold en PRs #111/#118; spec, renombrado, fallback y evidencia en la PR #125.
 - 28/10 · infra desmonta `n8n-import` (US-22, esta PR): `task install`/`task arrancar`/`task importar` en Taskfile.
 - US-16 · CI: validación de JSON de flujos (`scripts/valida_flujos.py` en cada PR) — PR #112.
 - Infra · auto-importar/activar `workflows/` y `credentials/` en cada arranque (servicio one-shot `n8n-import`) — PR #115.
@@ -110,3 +153,6 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 | E13 | 28/10 | Consultas jq con comillas dentro de PowerShell se rompían («accepts 1 arg(s)») al ver sub-issues de la #38 | Fallos y salidas vacías del CLI | Inspeccionar la estructura real del JSON y procesarla con `ConvertFrom-Json` de PowerShell, sin jq | Ante un salido raro de `gh`, inspeccionar el JSON bruto y adaptar el recorrido, no repetir el mismo comando |
 | E14 | 28/10 | Los BPMN no abrían en bpmn.io: namespaces `dc`/`di` equivocados (20100923/20100924 en vez de los estándar DD/20100524) y el `BPMNPlane` apuntaba al Participant y no a la Collaboration | «unsupported bpmnElement for BPMNPlane» del usuario |_NS corregidos a `http://www.omg.org/spec/DD/20100524/{DC,DI}` y plane → `collab_*`; validación a nivel moddle (0 warnings) e importación del viewer | Los namespaces DI del BPMN 2.0 son exactos: BPMN/20100524/DI + DD/20100524/{DC,DI}; probar el fichero antes de darlo por bueno |
 | E15 | 28/10 | Nota del diagrama automatizado con texto corrupto («El Switchán») y `ConvertTo-Json` envolviendo el XML como objeto en la vista | Capturas del visor (texto y error «required args») | Texto corregido; vista regenerada con `json.dumps` de Python | Volver a pasar captura de pantalla antes de dar un diagrama por versionado |
+| E13 | 28/10 | `task importar` decía «Successfully imported» pero la instancia seguía con el nombre/opciones viejos: el script montaba el volumen `paso-firme_n8n_data` (nombre del proyecto anterior) mientras el stack usa `g1-n8n_n8n_data` | Comparar la API de n8n después de importar: `versionId` sin cambiar y el Switch sin `fallbackOutput` | El importador usa `docker compose run` del servicio `n8n` (misma imagen y volumen del compose, sin nombres a mano); se quitan `IMAGEN_N8N`/`VOLUMEN_N8N` del Taskfile | Un import que no falla no es un import que aplica: verifica el estado en la instancia, no el exit code |
+| E14 | 28/10 | El paso de activación fallaba con `EACCES: permission denied, open '/out/export.json'`: el CLI corre como `node` (uid 1000) y no puede escribir en el `mkdtemp` del host (0700, uid 501); `chmod 777` tampoco basta en macOS | Error del `export:workflow` dentro de `task importar` | Se exporta con `export:workflow --all --stdout` y se captura la salida en Python: sin fichero ni montaje `/out` | Para leer datos de un contenedor, `--stdout` + parseo en el host evita permisos de volúmenes |
+| E15 | 28/10 | `scripts/demo.py` calculaba `RAIZ` con `parents[2]` (fuera del repo): no encontraría el `.env` y la clave saldría vacía (`401`) | Revisión del script antes de ejecutarlo | `parents[1]` (la raíz del repo es el padre de `scripts/`) | Ruta de un fichero de `scripts/`: `parents[1]`, no `parents[2]`; revisar antes del primer run |

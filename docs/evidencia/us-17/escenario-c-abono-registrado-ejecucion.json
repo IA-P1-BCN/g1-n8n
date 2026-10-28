@@ -1,0 +1,29 @@
+{
+  "id": "151",
+  "workflowId": "HXZBeAF7TZrK4zfD",
+  "status": "success",
+  "mode": "webhook",
+  "startedAt": "2026-10-27T19:23:59.327Z",
+  "stoppedAt": "2026-10-27T19:23:59.436Z",
+  "lastNodeExecuted": "Ejecutar Flujo 02",
+  "nodos": [
+    "Webhook tienda",
+    "Evento y datos",
+    "Repartir por evento",
+    "Ejecutar Flujo 02"
+  ],
+  "salidasDelSwitch": {
+    "apartado.creado": 0,
+    "abono.registrado": 1,
+    "venta.registrada": 0,
+    "apartado.vencido": 0,
+    "fallback": 0
+  },
+  "eventoPorRama": {
+    "apartado.creado": null,
+    "abono.registrado": "abono.registrado",
+    "venta.registrada": null,
+    "apartado.vencido": null,
+    "fallback": null
+  }
+}
