@@ -67,7 +67,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 
 
-### US-20 · Mapa BPMN del proceso de apartado ([#38](https://github.com/IA-P1-BCN/g1-n8n/issues/38), PR #125, 2026-10-28)
+### US-20 · Mapa BPMN del proceso de apartado ([#38](https://github.com/IA-P1-BCN/g1-n8n/issues/38), PR #128, 2026-10-28)
 
 - **Prompts (textuales de la sesión)**:
   1. *(28/10)* «Hagamos esta tarea: Mapa BPMN del proceso de apartado [US-20 #38]»
