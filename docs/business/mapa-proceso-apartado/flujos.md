@@ -55,6 +55,7 @@ flowchart LR
         m1["Registra el Apartado y cada Abono en la app"]
         m2["Descarga el Excel a mano"]
         m3["Entrega la mercancía y archiva el Vale (a mano)"]
+        m4["Recibe el Informe mensual por correo el día 1"]
     end
 
     subgraph LaneApp["Lane · App de la tienda"]
@@ -78,6 +79,8 @@ flowchart LR
         f6["Flujo 06 · vencimiento y Vale (rama apartado.vencido, reservada a US-07, sin conectar)"]
         fx["Rama evento desconocido: queda visible en Executions"]
         nm["Se registra y se acabó: sin correo"]
+        f7["Flujo 07 · Informe mensual (programado día 1)"]
+        f7m["Enviar correo «Informe mensual» a Marisa"]
         f8["Flujo 08 · Aviso de fallo a Marisa"]
         f9["Flujo 09 · Migración del Excel antiguo (data/*.csv → API sin duplicados)"]
         f9m["Enviar correo «Informe de migración del Excel» (casos dudosos)"]
@@ -108,6 +111,13 @@ flowchart LR
     a3 --> m2
     f1 -. "si un flujo falla" .-> f8
     f2 -.-> f8
+    f7 -.-> f8
+    f7 --> f7m
+    f7m --> m4
+    n3 -- "Cualquier otro evento" --> fx
+```
+
+Bizum y transferencia se revisan aún a mano hasta el flujo de Abonos a distancia; el aviso de fallo (Flujo 08) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes; el informe mensual (Flujo 07) se ejecuta automáticamente el día 1 de cada mes y consolida la recaudación y apartados consultando la app.
     f9 -.-> f8
     f9 -- "POST /api/apartados · abonos · ventas" --> a1
     f9 -- "casos dudosos (ej. abono inicial < 5 €)" --> f9m
