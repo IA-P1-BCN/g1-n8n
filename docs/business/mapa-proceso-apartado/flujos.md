@@ -56,6 +56,11 @@ flowchart LR
         m2["Descarga el Excel a mano"]
         m3["Entrega la mercancía y archiva el Vale (a mano)"]
         m4["Recibe el Informe mensual por correo el día 1"]
+        m5["Revisa los avisos que le manda n8n (pagos dudosos o rechazados)"]
+    end
+
+    subgraph LaneBanco["Lane · Banco"]
+        bk["Aviso de Bizum o transferencia al correo de la tienda"]
     end
 
     subgraph LaneApp["Lane · App de la tienda"]
@@ -75,6 +80,10 @@ flowchart LR
         f2c{"¿El Abono lo liquida?"}
         f2m["Enviar correo «Recibo de tu Abono»"]
         f2u["Enviar correo «Último Abono recibido»"]
+        f3["Flujo 03 · Abonos a distancia"]
+        f3ia["IA (Groq): extrae ordenante, importe y concepto"]
+        f3d{"¿Apartado único y regla OK?"}
+        f3ask["Pregunta o avisa a Marisa (correo a la tienda)"]
         f4["Flujo 04 · cierre diario (rama venta.registrada, reservada a US-09, sin conectar)"]
         f6["Flujo 06 · Recordatorios y vencimientos (programado cada mañana)"]
         f6m["Enviar correo «Tu apartado vence en 7 días» / «Mañana vence tu apartado»"]
@@ -118,19 +127,27 @@ flowchart LR
     f6v --> f6vc
     f6vc --> c4
     f6v --> f6vm
+    bk -- "Email Trigger / Form" --> n1
+    n3 -- "aviso.banco" --> f3
+    f3 --> f3ia
+    f3ia --> f3d
+    f3d -- "Sí: registra el Abono (dispara abono.registrado)" --> a1
+    f3d -- "No: dudoso o rechazado" --> f3ask
+    f3ask --> m5
     f2u --> m3
     m3 --> c3
     a3 --> m2
     f1 -. "si un flujo falla" .-> f8
     f2 -.-> f8
+    f3 -.-> f8
     f6 -.-> f8
     f7 -.-> f8
+    f9 -.-> f8
     f7 --> f7m
     f7m --> m4
-    f9 -.-> f8
     f9 -- "POST /api/apartados · abonos · ventas" --> a1
     f9 -- "casos dudosos (ej. abono inicial < 5 €)" --> f9m
     n3 -- "Cualquier otro evento" --> fx
 ```
 
-Bizum y transferencia se revisan aún a mano hasta el flujo de Abonos a distancia; el **Flujo 06** envía cada mañana los recordatorios a 7 y 1 día y vence por API los apartados fuera de plazo (entregando el Vale al cliente y avisando a Marisa de los zapatos que vuelven a la venta); el informe mensual (**Flujo 07**) se ejecuta el día 1 de cada mes; la migración puntual de las hojas antiguas (`data/*.csv`) corre en el **Flujo 09**; el aviso de fallo (**Flujo 08**) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.
+El **Flujo 03 · Abonos a distancia** reconcilia Bizum y transferencia: la IA (Groq) solo extrae ordenante, importe y concepto, y el flujo decide con la API (registra el Abono —que dispara el recibo del Flujo 02— o pregunta/avisa a Marisa si es dudoso o lo rechaza la app). El **Flujo 06** envía cada mañana los recordatorios a 7 y 1 día y vence por API los apartados fuera de plazo (entregando el Vale al cliente y avisando a Marisa de los zapatos que vuelven a la venta). La migración puntual de las hojas antiguas (`data/*.csv`) corre en el **Flujo 09** y el informe mensual (**Flujo 07**) se ejecuta el día 1. El aviso de fallo (**Flujo 08**) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.

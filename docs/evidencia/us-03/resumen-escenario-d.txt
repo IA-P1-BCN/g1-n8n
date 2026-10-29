@@ -1,0 +1,7 @@
+PASS · D-paga-de-mas · ejecución del Flujo 03 · success
+PASS · D-paga-de-mas · la app rechaza el abono (no se registra) · rechazo
+PASS · D-paga-de-mas · no se registró nada (pendiente intacto 10 €) · pendiente=10.0 abonos=1
+PASS · D-paga-de-mas · Marisa recibe el aviso de rechazo · ⚠️ Pago por Bizum/transferencia rechazado · revísalo
+PASS · D-paga-de-mas · el aviso trae el motivo (supera lo pendiente) · motivo presente
+
+total: 5 PASS / 0 FAIL

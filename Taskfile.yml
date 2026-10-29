@@ -26,6 +26,11 @@ tasks:
     cmds:
       - python -u scripts/demo.py {{.CLI_ARGS}}
 
+  correos:
+    desc: "Carga en Mailpit los avisos del banco de data/correos/ (flags: --limpio vacia el buzon, --solo 01,03 solo esos; ej. task correos -- --limpio)"
+    cmds:
+      - python -u scripts/correos-banco.py {{.CLI_ARGS}}
+
   importar:
     desc: "Importa credentials/ y workflows/ en n8n y activa los flujos (para n8n durante el proceso; lánzalo tras editar JSONs o al levantar el stack)"
     cmds:

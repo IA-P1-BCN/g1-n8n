@@ -137,6 +137,7 @@ Para habilitar la gestión activa de workflows desde opencode, añade tu API key
 |---|---|---|---|
 | **Flujo 01 · Confirmación de apartado** | `flujo-01-confirmacion-apartado.json` | Evento `apartado.creado` vía receptor | SMTP Mailpit (pruebas) |
 | **Flujo 02 · Recibo de cada abono** | `flujo-02-recibo-de-cada-abono.json` | Evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
+| **Flujo 03 · Abonos a distancia** | `flujo-03-abonos-a-distancia.json` | Evento `aviso.banco` vía receptor + *Form Trigger* (pegar aviso) | Groq (abonos a distancia), API tienda (X-API-Key), SMTP Mailpit (pruebas) |
 | **Flujo 06 · Recordatorios de vencimiento** | `flujo-06-recordatorios-vencimiento.json` | Programado cada mañana (09:00) o manual: avisa a 7 días y 1 día sin duplicar; vence por API los fuera de plazo, envía el Vale al cliente y avisa a Marisa de los zapatos que vuelven a la venta | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 07 · Informe mensual** | `flujo-07-informe-mensual.json` | Programado día 1 de mes (08:00) o manual | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 08 · Aviso de fallo** | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara automáticamente si cualquier flujo falla | SMTP Mailpit (pruebas) |
@@ -151,6 +152,7 @@ Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la 
 |---|---|---|
 | `apartado.creado` | `apartado.creado` | **Flujo 01** · Confirmación de apartado |
 | `abono.registrado` | `abono.registrado` | **Flujo 02** · Recibo de cada abono |
+| `aviso.banco` | `aviso.banco` | **Flujo 03** · Abonos a distancia (aviso del banco: `{asunto, cuerpo}`) |
 | `venta.registrada` | `venta.registrada` | Reservada para **Flujo 04** (Cierre diario · US-09) |
 | `apartado.vencido` | `apartado.vencido` | Reservada para **Flujo 06** (Vencimiento y Vale · US-07) |
 | *(cualquier otro)* | `evento desconocido` | Se registra en Executions de n8n sin perderse |
@@ -162,11 +164,13 @@ Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la 
 
 | Credencial / variable | Tipo | Configuración requerida | Utilizada por |
 |---|---|---|---|
-| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 06, 07, 08 y 09 |
-| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 06, 07, 08 y 09 |
-| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n (Flujos 06, 07 y 09) |
+| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 03, 06, 07, 08 y 09 |
+| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 03, 06, 07, 08 y 09 |
+| `Groq (abonos a distancia)` | Groq API | Clave gratuita de [console.groq.com](https://console.groq.com) (créala en n8n, **nunca** en el JSON) | Flujo 03 (solo extracción con IA) |
+| `API tienda (X-API-Key)` | Header Auth | Cabecera `X-API-Key` con el valor de `API_KEY` del `.env`; la usa n8n para llamar a la API de la app | Flujo 03 |
+| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n (Flujos 03, 06, 07 y 09) |
 | `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
-| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 06, 07, 08 y 09 |
+| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 03, 06, 07, 08 y 09 |
 
 ---
 
@@ -198,6 +202,19 @@ task demo -- --limpio # Vacía previamente la app y Mailpit para empezar de cero
 | **06 · Vencimiento y vale** | Apartado fuera de plazo (`fecha_limite < hoy`) | `POST /api/apartados/{id}/vencer`, correo «Tu vale por apartado vencido» al cliente y correo «Apartados vencidos hoy: … vuelven a la venta» a Marisa |
 | **08 · Aviso de fallo** | No depende de datos: se prueba forzando un error | Correo de aviso técnico a Marisa |
 | **09 · Migración del Excel** | CSV reales de `data/` (montados en `/data-fuentes:ro`) | 7 apartados, 3 abonos y 6 ventas en la app + correo «Informe de migración del Excel» en Mailpit |
+
+### Avisos del banco en Mailpit (`task correos`)
+
+Carga en el buzón de Mailpit los avisos del banco de [`data/correos/`](data/correos/) (Bizum, transferencias y publicidad de **bancos ficticios** sobre dominios reservados `.example`), que es la entrada que leerá el **Flujo 03 · Abonos a distancia**:
+
+```bash
+task correos             # Entrega los 9 avisos a Mailpit (http://localhost:8025)
+task correos -- --limpio # Vacía antes el buzón para empezar de cero
+```
+
+- `--limpio`: Vacía el buzón de Mailpit antes de cargar (no toca la app ni n8n).
+- `--solo 01,03`: Carga solo esos avisos, por el prefijo del nombre del fichero.
+- Cada aviso conserva su importe, ordenante y concepto; el script comprueba al final que todos están en el buzón y lista remitente e importe. Los tres bancos ficticios (`Banco Peralta`, `Caja Rivera`, `Banco Castaño`) permiten verificar que el flujo no depende de un único remitente.
 
 ### Probar el receptor con un payload propio (`task payload`)
 

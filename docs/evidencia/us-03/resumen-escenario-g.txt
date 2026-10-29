@@ -1,0 +1,6 @@
+PASS · G-cliente-desconocido · ejecución del Flujo 03 · success
+PASS · G-cliente-desconocido · no se registra: se pregunta a Marisa · preguntar
+PASS · G-cliente-desconocido · sin candidatos para el ordenante · apartado=None
+PASS · G-cliente-desconocido · Marisa recibe la pregunta · 🤔 Pago por Bizum/transferencia sin identificar · ¿de quién es?
+
+total: 4 PASS / 0 FAIL

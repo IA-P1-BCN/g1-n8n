@@ -1,0 +1,7 @@
+{
+  "evento": "aviso.banco",
+  "datos": {
+    "asunto": "Has recibido un Bizum de 5,00 €",
+    "cuerpo": "Hola, ZAPATERIA PASO FIRME:\n\nHas recibido un Bizum.\n\nImporte: 5,00 EUR\nOrdenante: SILVIA CORTES\nConcepto: abono sandalias\n\nEl importe ya está disponible en tu cuenta terminada en 4821.\n\nBanco Castaño"
+  }
+}

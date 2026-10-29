@@ -1,0 +1,6 @@
+PASS · B-concepto-con-numero · ejecución del Flujo 03 · success
+PASS · B-concepto-con-numero · el nº del concepto identifica el apartado · apartado=1
+PASS · B-concepto-con-numero · el flujo registra el abono · registrado
+PASS · B-concepto-con-numero · pendiente baja 20 € · pendiente=35.0
+
+total: 4 PASS / 0 FAIL

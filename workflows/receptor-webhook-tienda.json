@@ -140,6 +140,30 @@
               },
               "renameOutput": true,
               "outputKey": "apartado.vencido"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ev-aviso-banco",
+                    "leftValue": "={{ $json.evento }}",
+                    "rightValue": "aviso.banco",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "aviso.banco"
             }
           ]
         },
@@ -184,6 +208,24 @@
           "mode": "id"
         }
       }
+    },
+    {
+      "id": "exec-flujo03",
+      "name": "Ejecutar Flujo 03",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        360
+      ],
+      "parameters": {
+        "mode": "once",
+        "workflowId": {
+          "__rl": true,
+          "value": "pFlujo03AbonosDistancia",
+          "mode": "id"
+        }
+      }
     }
   ],
   "connections": {
@@ -221,6 +263,15 @@
         [
           {
             "node": "Ejecutar Flujo 02",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [],
+        [
+          {
+            "node": "Ejecutar Flujo 03",
             "type": "main",
             "index": 0
           }

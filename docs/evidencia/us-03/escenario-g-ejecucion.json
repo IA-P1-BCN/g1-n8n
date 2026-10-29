@@ -1,0 +1,33 @@
+{
+  "id": "116",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "Modelo Groq",
+    "Extraer ordenante, importe y concepto",
+    "Normalizar datos del pago",
+    "Apartados activos",
+    "Decidir apartado",
+    "¿Registrar el abono?",
+    "Preguntar a Marisa"
+  ],
+  "camino": "preguntar",
+  "extraccion": {
+    "ordenante": "ANTONIO FERNANDEZ SOTO",
+    "importe": 25,
+    "concepto": "botas",
+    "apartadoId": null,
+    "conceptoVacio": false
+  },
+  "decision": {
+    "decision": "preguntar",
+    "motivo": "No hay ningún apartado activo para el ordenante.",
+    "ordenante": "ANTONIO FERNANDEZ SOTO",
+    "importe": 25,
+    "concepto": "botas",
+    "apartadoId": null,
+    "apartado": null
+  }
+}
