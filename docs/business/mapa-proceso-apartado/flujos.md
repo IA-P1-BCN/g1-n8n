@@ -76,7 +76,9 @@ flowchart LR
         f2m["Enviar correo «Recibo de tu Abono»"]
         f2u["Enviar correo «Último Abono recibido»"]
         f4["Flujo 04 · cierre diario (rama venta.registrada, reservada a US-09, sin conectar)"]
-        f6["Flujo 06 · vencimiento y Vale (rama apartado.vencido, reservada a US-07, sin conectar)"]
+        f6["Flujo 06 · Recordatorios de vencimiento (programado cada mañana: 7d y 1d sin duplicar)"]
+        f6m["Enviar correo «Tu apartado vence en 7 días» / «Mañana vence tu apartado»"]
+        f6v["Flujo 06 · vencimiento y Vale (rama apartado.vencido, reservada a US-07, sin conectar)"]
         fx["Rama evento desconocido: queda visible en Executions"]
         nm["Se registra y se acabó: sin correo"]
         f7["Flujo 07 · Informe mensual (programado día 1)"]
@@ -105,12 +107,16 @@ flowchart LR
     f2c -- "Sí: liquida" --> f2u
     f2u --> c4
     n3 -- "venta.registrada" --> f4
-    n3 -- "apartado.vencido" --> f6
+    n3 -- "apartado.vencido" --> f6v
+    a1 -- "GET /api/apartados?estado=activo" --> f6
+    f6 --> f6m
+    f6m --> c4
     f2u --> m3
     m3 --> c3
     a3 --> m2
     f1 -. "si un flujo falla" .-> f8
     f2 -.-> f8
+    f6 -.-> f8
     f7 -.-> f8
     f7 --> f7m
     f7m --> m4
