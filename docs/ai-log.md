@@ -178,6 +178,18 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - *Aceptar*: ajustar el apartado «por vencer» de `scripts/demo.py` de `hoy - 85 días` a `hoy - 83 días` (7 días restantes) para que `task demo` deje un escenario directo del Flujo 06.
 - **Resultado**: `specs/flujo-06-recordatorios-vencimiento.md`, `workflows/flujo-06-recordatorios-vencimiento.json` (validado con `n8n-mcp`: 9 nodos, 36 expresiones, 0 errores), `tests/us-06/` (11 PASS / 0 FAIL en los 3 escenarios) y evidencia versionada en `docs/evidencia/us-06/`.
 
+### US-07 · Flujo 06 · Apartados vencidos con su vale (2026-10-29)
+
+- **Tarea**: [#52](https://github.com/IA-P1-BCN/g1-n8n/issues/52) (sub-issues #53, #54, #55, #56) — `feat/us-07-apartados-vencidos-vale`
+- **Agente**: Antigravity (Claude Opus 4.6) + `n8n-mcp`
+- **Prompt inicial**: «pr mergueada, ahora la siguiente asignada a mi, la https://github.com/IA-P1-BCN/g1-n8n/issues/52»
+- **Decisiones**:
+  - *Aceptar*: ampliar el **Flujo 06 · Recordatorios de vencimiento** (`pFlujo06RecordatoriosVencimiento`, `workflows/flujo-06-recordatorios-vencimiento.json`) con una segunda rama paralela a partir de `Consultar apartados activos` (`GET /api/apartados?estado=activo`) que filtra los apartados fuera de plazo (`dias_restantes < 0`, `fecha_limite < hoy`).
+  - *Aceptar*: invocar `POST http://tienda:8000/api/apartados/{{ $json.id }}/vencer` con `X-API-Key: {{ $env.API_KEY }}` para que sea la propia app quien cambie el estado a `vencido` y genere el `vale` (`codigo`, `importe`), evitando recalcular importes en n8n y garantizando idempotencia por estado.
+  - *Aceptar*: desde la respuesta de `/vencer` ramificar en paralelo: (1) envío del correo con el código y el importe del vale a cada cliente afectado (o aviso a la tienda si no tiene email) y (2) agrupación en un único correo de resumen para Marisa (`cambia-esta-direccion@paso-firme.local`) con la tabla de pares de zapatos que vuelven a ponerse a la venta (`producto`, `talla`, `cliente`, `vale`).
+  - *Rechazar*: conectar un sub-workflow en la rama `apartado.vencido` del `Receptor · Webhook tienda`, ya que `POST /api/apartados/{id}/vencer` dispara el webhook y duplicaría los correos emitidos por el propio Flujo 06 (además de romper el contrato de `tests/us-17/escenario-e-apartado-vencido.py`).
+- **Resultado**: `specs/flujo-06-apartados-vencidos-vale.md`, actualización de `workflows/flujo-06-recordatorios-vencimiento.json` (16 nodos OK), `tests/us-07/` (12 PASS / 0 FAIL en los 3 escenarios) y evidencia versionada en `docs/evidencia/us-07/`.
+
 ### Tareas transversales (2026-10-22/28)
 
 - US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — scaffold en PRs #111/#118; spec, renombrado, fallback y evidencia en la PR #125.
