@@ -1,0 +1,6 @@
+PASS · venta-sobre-umbral · la app registra la venta grande · status 201, id 263
+PASS · venta-sobre-umbral · Marisa recibe el aviso en Mailpit · ID=1WUnSdXcmvNmoK9jN8kV4h
+PASS · venta-sobre-umbral · el aviso da los datos de la venta · concepto, 250 € y forma de pago en el correo
+PASS · venta-sobre-umbral · el aviso enseña el umbral aplicado · umbral 200 € en el correo
+
+total: 4 PASS / 0 FAIL

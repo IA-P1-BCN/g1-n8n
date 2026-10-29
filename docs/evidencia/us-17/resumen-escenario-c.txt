@@ -1,7 +1,7 @@
 PASS · abono-registrado · el webhook acepta el evento · Workflow was started
-PASS · abono-registrado · ejecución registrada en Executions · id 132
+PASS · abono-registrado · ejecución registrada en Executions · id 313
 PASS · abono-registrado · la ejecución termina bien · success
-PASS · abono-registrado · el Switch lo manda a su rama · abono.registrado · salidas=[0, 1, 0, 0, 0, 0]
+PASS · abono-registrado · el Switch lo manda a su rama · abono.registrado · salidas=[0, 1, 0, 0, 0]
 PASS · abono-registrado · la rama lleva el evento abono.registrado · abono.registrado
 PASS · abono-registrado · la rama ejecuta el Flujo 02 · ['Webhook tienda', 'Evento y datos', 'Repartir por evento', 'Ejecutar Flujo 02']
 

@@ -1,0 +1,33 @@
+{
+  "ID": "1WUnSdXcmvNmoK9jN8kV4h",
+  "MessageID": "fa0cb6dd-8bfc-fc18-bbb4-0ff1b005bef2@paso-firme.local",
+  "From": {
+    "Name": "",
+    "Address": "n8n@paso-firme.local"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "cambia-esta-direccion@paso-firme.local"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [],
+  "ReplyTo": [],
+  "ReturnPath": "n8n@paso-firme.local",
+  "Subject": "🧾 Venta grande · 250 € · Botín exótico edición limitada · 42",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2026-10-29T13:48:13Z",
+  "Tags": [],
+  "Username": "",
+  "Text": "--------------\n🧾 Venta grande\n--------------\n\nSe ha registrado en la app una venta por encima del umbral (200 €):\n\n*Concepto* Botín exótico edición limitada · 42 *Importe* 250 € *Forma de pago* tarjeta *Fecha* 29/10/2026 *Venta nº* 263\n\nPor si quieres retocar la caja a la vista. — Flujo 04\n\n---\nThis email was sent automatically with n8n ( https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_232d8ba210b1ea7626d60d9833ffb181d7fa260c1c580eaab2ac9f28f4fd81ed )",
+  "HTML": "\r\n\t\t\t\t\t<h2>🧾 Venta grande</h2><p>Se ha registrado en la app una venta por encima del umbral (200 €):</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Concepto</b></td><td>Botín exótico edición limitada · 42</td></tr><tr><td><b>Importe</b></td><td>250 €</td></tr><tr><td><b>Forma de pago</b></td><td>tarjeta</td></tr><tr><td><b>Fecha</b></td><td>29/10/2026</td></tr><tr><td><b>Venta nº</b></td><td>263</td></tr></table><p>Por si quieres retocar la caja a la vista. — Flujo 04</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_232d8ba210b1ea7626d60d9833ffb181d7fa260c1c580eaab2ac9f28f4fd81ed\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n",
+  "Size": 1629,
+  "Inline": [],
+  "Attachments": []
+}

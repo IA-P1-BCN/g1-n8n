@@ -1,8 +1,8 @@
 PASS · venta-registrada · el webhook acepta el evento · Workflow was started
-PASS · venta-registrada · ejecución registrada en Executions · id 134
+PASS · venta-registrada · ejecución registrada en Executions · id 315
 PASS · venta-registrada · la ejecución termina bien · success
-PASS · venta-registrada · el Switch lo manda a su rama · venta.registrada · salidas=[0, 0, 1, 0, 0, 0]
+PASS · venta-registrada · el Switch lo manda a su rama · venta.registrada · salidas=[0, 0, 1, 0, 0]
 PASS · venta-registrada · la rama lleva el evento venta.registrada · venta.registrada
-PASS · venta-registrada · la rama queda a la espera del Flujo 04 · ['Webhook tienda', 'Evento y datos', 'Repartir por evento']
+PASS · venta-registrada · solo la rama venta.registrada sale del Switch · ['Webhook tienda', 'Evento y datos', 'Repartir por evento', 'Ejecutar Flujo 04']
 
 total: 6 PASS / 0 FAIL
