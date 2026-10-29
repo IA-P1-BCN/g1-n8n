@@ -1,0 +1,268 @@
+{
+  "name": "Flujo 03 · Abonos a distancia",
+  "id": "pFlujo03AbonosDistancia",
+  "nodes": [
+    {
+      "id": "form-aviso",
+      "name": "Pegar aviso del banco",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [-520, 120],
+      "webhookId": "a3f1c0de-0003-4a10-9e21-aviso0banco01",
+      "parameters": {
+        "formTitle": "Aviso del banco (pegar)",
+        "formDescription": "Pega el asunto y el cuerpo del aviso del banco para procesarlo a mano durante el desarrollo.",
+        "formFields": {
+          "values": [
+            { "fieldLabel": "asunto", "fieldType": "text", "requiredField": false },
+            { "fieldLabel": "cuerpo", "fieldType": "textarea", "requiredField": true }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "trigger-flujo03",
+      "name": "Cuando el receptor llama",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [-520, -80],
+      "parameters": { "inputSource": "passthrough" }
+    },
+    {
+      "id": "code-normalizar",
+      "name": "Normalizar aviso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-300, 0],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const d = $json.datos || $json;\nreturn { asunto: String(d.asunto || $json.asunto || ''), cuerpo: String(d.cuerpo || $json.cuerpo || '') };"
+      }
+    },
+    {
+      "id": "if-pago",
+      "name": "¿Es un pago?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [-80, 0],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose", "version": 2 },
+          "conditions": [
+            { "id": "tiene-eur", "leftValue": "={{ $json.cuerpo }}", "rightValue": "EUR", "operator": { "type": "string", "operation": "contains" } },
+            { "id": "tiene-importe", "leftValue": "={{ $json.cuerpo }}", "rightValue": "Importe", "operator": { "type": "string", "operation": "contains" } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "noop-ignorar",
+      "name": "No es un pago · ignorar",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [160, 200],
+      "parameters": {}
+    },
+    {
+      "id": "groq-modelo",
+      "name": "Modelo Groq",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [160, -220],
+      "parameters": { "model": "llama-3.3-70b-versatile", "options": {} },
+      "credentials": {
+        "groqApi": { "id": "GROQABONOSDISTANCIA01", "name": "Groq (abonos a distancia)" }
+      }
+    },
+    {
+      "id": "extractor",
+      "name": "Extraer ordenante, importe y concepto",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [160, -20],
+      "parameters": {
+        "text": "={{ $json.cuerpo }}",
+        "schemaType": "fromAttributes",
+        "attributes": {
+          "attributes": [
+            { "name": "ordenante", "type": "string", "description": "Nombre completo de quien hace el pago (campo Ordenante del aviso), tal cual aparece", "required": true },
+            { "name": "importe", "type": "number", "description": "Importe del pago en euros como número (campo Importe; '10,00 EUR' -> 10.00)", "required": true },
+            { "name": "concepto", "type": "string", "description": "Concepto o descripción del pago; cadena vacía si el aviso no trae concepto" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "code-datos",
+      "name": "Normalizar datos del pago",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [380, -20],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const o = $json.output || $json;\nconst ordenante = String(o.ordenante || '').trim();\nlet importe = o.importe;\nif (typeof importe === 'string') { importe = parseFloat(importe.replace(/[^0-9,\\.]/g, '').replace(',', '.')); }\nimporte = Number(importe);\nconst concepto = String(o.concepto || '').trim();\nconst m = concepto.match(/apartado\\s*#?\\s*(\\d+)/i);\nreturn { ordenante, importe, concepto, apartadoId: m ? parseInt(m[1], 10) : null, conceptoVacio: concepto.length === 0 };"
+      }
+    },
+    {
+      "id": "http-activos",
+      "name": "Apartados activos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, -20],
+      "parameters": {
+        "url": "http://tienda:8000/api/apartados?estado=activo",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": { "response": { "response": { "fullResponse": true } } }
+      },
+      "credentials": {
+        "httpHeaderAuth": { "id": "APITIENDAXAPIKEY001", "name": "API tienda (X-API-Key)" }
+      }
+    },
+    {
+      "id": "code-decidir",
+      "name": "Decidir apartado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [820, -20],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const pago = $('Normalizar datos del pago').item.json;\nconst activos = Array.isArray($json.body) ? $json.body : (Array.isArray($json) ? $json : []);\nconst norm = s => String(s || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\\s+/).filter(Boolean);\nlet candidatos = [];\nif (pago.apartadoId) {\n  candidatos = activos.filter(a => Number(a.id) === Number(pago.apartadoId));\n} else {\n  const toks = norm(pago.ordenante);\n  candidatos = activos.filter(a => { const ct = norm(a.cliente); return toks.some(t => t.length >= 3 && ct.includes(t)); });\n}\nlet decision = 'registrar', motivo = '';\nif (candidatos.length === 0) { decision = 'preguntar'; motivo = 'No hay ningún apartado activo para el ordenante.'; }\nelse if (!pago.apartadoId && pago.conceptoVacio) { decision = 'preguntar'; motivo = 'Ordenante abreviado y sin concepto: no se puede confirmar el apartado.'; }\nelse if (candidatos.length > 1) { decision = 'preguntar'; motivo = 'Varios apartados activos posibles para el ordenante.'; }\nconst apartado = candidatos.length === 1 ? candidatos[0] : null;\nreturn { decision, motivo, ordenante: pago.ordenante, importe: pago.importe, concepto: pago.concepto, apartadoId: pago.apartadoId, apartado };"
+      }
+    },
+    {
+      "id": "if-registrar",
+      "name": "¿Registrar el abono?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [1040, -20],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            { "id": "es-registrar", "leftValue": "={{ $json.decision }}", "rightValue": "registrar", "operator": { "type": "string", "operation": "equals" } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "http-abono",
+      "name": "Registrar abono",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1260, -120],
+      "onError": "continueErrorOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "=http://tienda:8000/api/apartados/{{ $json.apartado.id }}/abonos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"importe\": {{ $json.importe }}, \"forma_pago\": \"bizum\" }",
+        "options": { "response": { "response": { "fullResponse": true } } }
+      },
+      "credentials": {
+        "httpHeaderAuth": { "id": "APITIENDAXAPIKEY001", "name": "API tienda (X-API-Key)" }
+      }
+    },
+    {
+      "id": "noop-registrado",
+      "name": "Abono registrado · recibo vía Flujo 02",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1480, -220],
+      "parameters": {}
+    },
+    {
+      "id": "code-motivo",
+      "name": "Motivo del rechazo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1480, -20],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const e = $json.error || $json;\nlet detalle = '';\ntry { detalle = (e.response && e.response.body && e.response.body.detail) || (e.response && e.response.data && e.response.data.detail) || e.message || ''; } catch (x) {}\nconst d = $('Decidir apartado').item.json;\nreturn Object.assign({}, d, { detalle: detalle || 'La app rechazó el abono (revisa la ejecución en n8n).', httpCode: e.httpCode || e.statusCode || '' });"
+      }
+    },
+    {
+      "id": "email-rechazo",
+      "name": "Avisar a Marisa · rechazo",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1700, -20],
+      "webhookId": "a3f1c0de-0003-4a10-9e21-rechazo000001",
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=⚠️ Pago por Bizum/transferencia rechazado · revísalo",
+        "emailFormat": "html",
+        "html": "=<h2>⚠️ Un pago no se pudo registrar</h2><p>Llegó un pago para <b>{{ $json.apartado ? $json.apartado.cliente : $json.ordenante }}</b> pero la app lo rechazó.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Ordenante del aviso</b></td><td>{{ $json.ordenante }}</td></tr><tr><td><b>Importe</b></td><td>{{ $json.importe }} €</td></tr><tr><td><b>Concepto</b></td><td>{{ $json.concepto || '—' }}</td></tr><tr><td><b>Apartado</b></td><td>{{ $json.apartado ? ('#' + $json.apartado.id + ' · ' + $json.apartado.producto) : '—' }}</td></tr><tr><td><b>Motivo</b></td><td>{{ $json.detalle }}</td></tr></table><p>No se ha registrado ningún abono. Revísalo a mano en la app.</p><p>Zapatería Paso Firme</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": { "id": "NJ0d4FNqNiljQZMU", "name": "SMTP Mailpit (pruebas)" }
+      }
+    },
+    {
+      "id": "email-preguntar",
+      "name": "Preguntar a Marisa",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1260, 200],
+      "webhookId": "a3f1c0de-0003-4a10-9e21-preguntar0001",
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=🤔 Pago por Bizum/transferencia sin identificar · ¿de quién es?",
+        "emailFormat": "html",
+        "html": "=<h2>🤔 Un pago que no sé a qué apartado va</h2><p>Llegó un pago por Bizum o transferencia y no está claro de quién es, así que <b>no he registrado nada</b>.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Ordenante del aviso</b></td><td>{{ $json.ordenante }}</td></tr><tr><td><b>Importe</b></td><td>{{ $json.importe }} €</td></tr><tr><td><b>Concepto</b></td><td>{{ $json.concepto || '—' }}</td></tr><tr><td><b>Motivo</b></td><td>{{ $json.motivo }}</td></tr></table><p>Míralo y, si procede, registra el abono a mano en la app.</p><p>Zapatería Paso Firme</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": { "id": "NJ0d4FNqNiljQZMU", "name": "SMTP Mailpit (pruebas)" }
+      }
+    }
+  ],
+  "connections": {
+    "Pegar aviso del banco": { "main": [[{ "node": "Normalizar aviso", "type": "main", "index": 0 }]] },
+    "Cuando el receptor llama": { "main": [[{ "node": "Normalizar aviso", "type": "main", "index": 0 }]] },
+    "Normalizar aviso": { "main": [[{ "node": "¿Es un pago?", "type": "main", "index": 0 }]] },
+    "¿Es un pago?": {
+      "main": [
+        [{ "node": "Extraer ordenante, importe y concepto", "type": "main", "index": 0 }],
+        [{ "node": "No es un pago · ignorar", "type": "main", "index": 0 }]
+      ]
+    },
+    "Modelo Groq": { "ai_languageModel": [[{ "node": "Extraer ordenante, importe y concepto", "type": "ai_languageModel", "index": 0 }]] },
+    "Extraer ordenante, importe y concepto": { "main": [[{ "node": "Normalizar datos del pago", "type": "main", "index": 0 }]] },
+    "Normalizar datos del pago": { "main": [[{ "node": "Apartados activos", "type": "main", "index": 0 }]] },
+    "Apartados activos": { "main": [[{ "node": "Decidir apartado", "type": "main", "index": 0 }]] },
+    "Decidir apartado": { "main": [[{ "node": "¿Registrar el abono?", "type": "main", "index": 0 }]] },
+    "¿Registrar el abono?": {
+      "main": [
+        [{ "node": "Registrar abono", "type": "main", "index": 0 }],
+        [{ "node": "Preguntar a Marisa", "type": "main", "index": 0 }]
+      ]
+    },
+    "Registrar abono": {
+      "main": [
+        [{ "node": "Abono registrado · recibo vía Flujo 02", "type": "main", "index": 0 }],
+        [{ "node": "Motivo del rechazo", "type": "main", "index": 0 }]
+      ]
+    },
+    "Motivo del rechazo": { "main": [[{ "node": "Avisar a Marisa · rechazo", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "pFlujo08AvisoFallo"
+  },
+  "active": false
+}
