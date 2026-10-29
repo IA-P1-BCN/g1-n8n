@@ -1,0 +1,302 @@
+{
+  "name": "Flujo 06 · Recordatorios de vencimiento",
+  "id": "pFlujo06RecordatoriosVencimiento",
+  "nodes": [
+    {
+      "id": "trigger-schedule-flujo06",
+      "name": "Cada mañana a las 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -520,
+        -100
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "trigger-manual-flujo06",
+      "name": "Al ejecutar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -520,
+        100
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "consultar-apartados-activos-flujo06",
+      "name": "Consultar apartados activos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -260,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "http://tienda:8000/api/apartados?estado=activo",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $env.API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "seleccionar-vencimientos-flujo06",
+      "name": "Seleccionar vencimientos a 7 y 1 día",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json).filter(ap => ap && ap.id && ap.estado === 'activo' && ap.fecha_limite);\nconst hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' }).format(new Date());\nconst msHoy = Date.parse(`${hoy}T00:00:00Z`);\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.enviados) {\n  staticData.enviados = {};\n}\n\nlet asuntosMailpit = [];\ntry {\n  const resp = await this.helpers.httpRequest({\n    method: 'GET',\n    url: 'http://mailpit:8025/api/v1/messages?limit=200',\n    json: true\n  });\n  asuntosMailpit = (resp?.messages || []).map(m => String(m.Subject || ''));\n} catch (_e) {\n  asuntosMailpit = [];\n}\n\nconst seleccionados = [];\nfor (const ap of items) {\n  const msLimite = Date.parse(`${ap.fecha_limite}T00:00:00Z`);\n  const diasRestantes = Math.round((msLimite - msHoy) / 86400000);\n  if (diasRestantes !== 7 && diasRestantes !== 1) {\n    continue;\n  }\n\n  const claveAviso = `apartado-${ap.id}-aviso-${diasRestantes}d-${ap.fecha_limite}`;\n  const marcaId = `apartado nº ${ap.id}`;\n  const marcaPlazo = diasRestantes === 7 ? '7 días' : 'Mañana vence';\n  const marcaSinEmail = `Recordatorio sin email (${diasRestantes}d) · apartado nº ${ap.id}`;\n\n  const yaEnBuzon = asuntosMailpit.some(asunto =>\n    (asunto.includes(marcaId) && asunto.includes(marcaPlazo)) || asunto.includes(marcaSinEmail)\n  );\n  const yaEnStatic = Boolean(staticData.enviados[claveAviso]) && (asuntosMailpit.length === 0 || yaEnBuzon);\n\n  if (yaEnBuzon || yaEnStatic) {\n    continue;\n  }\n\n  staticData.enviados[claveAviso] = hoy;\n  const fechaLimiteEs = String(ap.fecha_limite).split('-').reverse().join('/');\n  seleccionados.push({\n    json: {\n      ...ap,\n      dias_restantes: diasRestantes,\n      fecha_limite_es: fechaLimiteEs,\n      clave_aviso: claveAviso\n    }\n  });\n}\n\nreturn seleccionados;"
+      }
+    },
+    {
+      "id": "if-email-flujo06",
+      "name": "¿El cliente tiene email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-email-flujo06",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "if-plazo-flujo06",
+      "name": "¿Vence en 1 día o en 7 días?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        460,
+        -80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-1dia-flujo06",
+              "leftValue": "={{ $json.dias_restantes }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "email-1dia-flujo06",
+      "name": "Enviar recordatorio de 1 día al cliente",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -180
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "={{ $json.email }}",
+        "subject": "=⏰ Mañana vence tu apartado · Zapatería Paso Firme (apartado nº {{ $json.id }})",
+        "emailFormat": "html",
+        "html": "=<h2>⏰ Mañana termina el plazo de tu apartado</h2><p>Hola {{ $json.cliente }},</p><p>Te recordamos que <b>mañana ({{ $json.fecha_limite_es }})</b> vence el plazo de 90 días de tu apartado en Zapatería Paso Firme.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Producto</b></td><td>{{ $json.producto }} (talla {{ $json.talla }})</td></tr><tr><td><b>Precio</b></td><td>{{ $json.precio }} €</td></tr><tr><td><b>Ya abonado</b></td><td>{{ $json.abonado }} €</td></tr><tr><td><b>Pendiente por pagar</b></td><td><b>{{ $json.pendiente }} €</b></td></tr><tr><td><b>Fecha límite</b></td><td><b>{{ $json.fecha_limite_es }}</b> ({{ $json.fecha_limite }})</td></tr></table><p>Pásate por la tienda o realiza el abono pendiente antes de que finalice el plazo para no perder tus zapatos.</p><p>Zapatería Paso Firme · Ref: {{ $json.clave_aviso }}</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      }
+    },
+    {
+      "id": "email-7dias-flujo06",
+      "name": "Enviar recordatorio de 7 días al cliente",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "={{ $json.email }}",
+        "subject": "=👟 Tu apartado vence en 7 días · Zapatería Paso Firme (apartado nº {{ $json.id }})",
+        "emailFormat": "html",
+        "html": "=<h2>👟 Recordatorio de tu apartado (quedan 7 días)</h2><p>Hola {{ $json.cliente }},</p><p>Te escribimos para recordarte que quedan <b>7 días</b> para que termine el plazo de tu apartado.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Producto</b></td><td>{{ $json.producto }} (talla {{ $json.talla }})</td></tr><tr><td><b>Precio</b></td><td>{{ $json.precio }} €</td></tr><tr><td><b>Ya abonado</b></td><td>{{ $json.abonado }} €</td></tr><tr><td><b>Pendiente por pagar</b></td><td><b>{{ $json.pendiente }} €</b></td></tr><tr><td><b>Fecha límite</b></td><td><b>{{ $json.fecha_limite_es }}</b> ({{ $json.fecha_limite }})</td></tr></table><p>Recuerda liquidar el importe pendiente antes de la fecha límite para recoger tus zapatos.</p><p>Zapatería Paso Firme · Ref: {{ $json.clave_aviso }}</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      }
+    },
+    {
+      "id": "email-sin-correo-flujo06",
+      "name": "Avisar a la tienda (cliente sin email)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        460,
+        140
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=👟 Recordatorio sin email ({{ $json.dias_restantes }}d) · apartado nº {{ $json.id }}",
+        "emailFormat": "html",
+        "html": "=<p>El apartado <b>nº {{ $json.id }}</b> de <b>{{ $json.cliente }}</b> vence en <b>{{ $json.dias_restantes }} día(s)</b> ({{ $json.fecha_limite_es }}) pero el cliente no tiene email registrado.</p><p>Producto: {{ $json.producto }} (talla {{ $json.talla }}) · Pendiente: <b>{{ $json.pendiente }} €</b> · Teléfono: {{ $json.telefono ?? 'no disponible' }}</p><p>Avisadle por teléfono para que no se le pase el plazo. — Flujo 06</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Cada mañana a las 09:00": {
+      "main": [
+        [
+          {
+            "node": "Consultar apartados activos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Al ejecutar manualmente": {
+      "main": [
+        [
+          {
+            "node": "Consultar apartados activos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar apartados activos": {
+      "main": [
+        [
+          {
+            "node": "Seleccionar vencimientos a 7 y 1 día",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seleccionar vencimientos a 7 y 1 día": {
+      "main": [
+        [
+          {
+            "node": "¿El cliente tiene email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿El cliente tiene email?": {
+      "main": [
+        [
+          {
+            "node": "¿Vence en 1 día o en 7 días?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar a la tienda (cliente sin email)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Vence en 1 día o en 7 días?": {
+      "main": [
+        [
+          {
+            "node": "Enviar recordatorio de 1 día al cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar recordatorio de 7 días al cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "pFlujo08AvisoFallo"
+  },
+  "active": true
+}

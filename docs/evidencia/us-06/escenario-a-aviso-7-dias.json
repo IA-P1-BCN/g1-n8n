@@ -1,0 +1,50 @@
+{
+  "apartado_7d": {
+    "id": 1,
+    "fecha": "2026-08-07",
+    "cliente": "Elena Siete Días",
+    "telefono": null,
+    "email": "elena.7d@paso-firme.local",
+    "producto": "Botín piel marrón",
+    "talla": "38",
+    "precio": 89.9,
+    "fecha_limite": "2026-11-05",
+    "estado": "activo",
+    "abonado": 20.0,
+    "pendiente": 69.9
+  },
+  "apartado_control_20d": {
+    "id": 2,
+    "fecha": "2026-08-20",
+    "cliente": "Carlos Veinte Días",
+    "telefono": null,
+    "email": "carlos.20d@paso-firme.local",
+    "producto": "Mocasín ante",
+    "talla": "41",
+    "precio": 72.0,
+    "fecha_limite": "2026-11-18",
+    "estado": "activo",
+    "abonado": 15.0,
+    "pendiente": 57.0
+  },
+  "correo_recibido": {
+    "id": "1it4MTulxK1tnAOEQMqIhz",
+    "asunto": "👟 Tu apartado vence en 7 días · Zapatería Paso Firme (apartado nº 1)",
+    "to": [
+      {
+        "Name": "",
+        "Address": "elena.7d@paso-firme.local"
+      }
+    ],
+    "html": "\r\n\t\t\t\t\t<h2>👟 Recordatorio de tu apartado (quedan 7 días)</h2><p>Hola Elena Siete Días,</p><p>Te escribimos para recordarte que quedan <b>7 días</b> para que termine el plazo de tu apartado.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Producto</b></td><td>Botín piel marrón (talla 38)</td></tr><tr><td><b>Precio</b></td><td>89.9 €</td></tr><tr><td><b>Ya abonado</b></td><td>20 €</td></tr><tr><td><b>Pendiente por pagar</b></td><td><b>69.9 €</b></td></tr><tr><td><b>Fecha límite</b></td><td><b>05/11/2026</b> (2026-11-05)</td></tr></table><p>Recuerda liquidar el importe pendiente antes de la fecha límite para recoger tus zapatos.</p><p>Zapatería Paso Firme · Ref: apartado-1-aviso-7d-2026-11-05</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_2b450c1056ff4f9622ec0b31937381bef9fbd7d4b76cadd7ebf8798799ff58b8\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n"
+  },
+  "recordatorios_emitidos": [
+    {
+      "id": "1it4MTulxK1tnAOEQMqIhz",
+      "asunto": "👟 Tu apartado vence en 7 días · Zapatería Paso Firme (apartado nº 1)",
+      "to": [
+        "elena.7d@paso-firme.local"
+      ]
+    }
+  ]
+}

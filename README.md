@@ -137,6 +137,7 @@ Para habilitar la gestión activa de workflows desde opencode, añade tu API key
 |---|---|---|---|
 | **Flujo 01 · Confirmación de apartado** | `flujo-01-confirmacion-apartado.json` | Evento `apartado.creado` vía receptor | SMTP Mailpit (pruebas) |
 | **Flujo 02 · Recibo de cada abono** | `flujo-02-recibo-de-cada-abono.json` | Evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
+| **Flujo 06 · Recordatorios de vencimiento** | `flujo-06-recordatorios-vencimiento.json` | Programado cada mañana (09:00) o manual: avisa a 7 días y 1 día sin duplicar | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 07 · Informe mensual** | `flujo-07-informe-mensual.json` | Programado día 1 de mes (08:00) o manual | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 08 · Aviso de fallo** | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara automáticamente si cualquier flujo falla | SMTP Mailpit (pruebas) |
 | **Flujo 09 · Migración del Excel** | `flujo-09-migracion-excel.json` | *Manual Trigger*: lee `/data-fuentes/*.csv` (`./data:/data-fuentes:ro`), migra por API sin duplicar y envía informe de casos dudosos | SMTP Mailpit (pruebas), `API_KEY` (`.env`) |
@@ -161,16 +162,11 @@ Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la 
 
 | Credencial / variable | Tipo | Configuración requerida | Utilizada por |
 |---|---|---|---|
-| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 07 y 08 |
-| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 07 y 08 |
-| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n |
+| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 06, 07, 08 y 09 |
+| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 06, 07, 08 y 09 |
+| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n (Flujos 06, 07 y 09) |
 | `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
-| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 07 y 08 |
-| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 08 y 09 |
-| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 08 y 09 |
-| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n (y Flujo 09) |
-| `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
-| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 08 y 09 |
+| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 06, 07, 08 y 09 |
 
 ---
 
@@ -198,7 +194,8 @@ task demo -- --limpio # Vacía previamente la app y Mailpit para empezar de cero
 | **01 · Confirmación de apartado** | Apartado liquidado | Correo «Apartado confirmado» en Mailpit |
 | **02 · Recibo de cada abono** | Sus 3 abonos y el abono parcial del apartado «por vencer» | Correos «Recibo de tu abono» y «Último abono recibido» |
 | **04 · Cierre diario** *(pendiente)* | Ventas de hoy en efectivo, tarjeta y Bizum | Cuadre de caja |
-| **06 · Vencimiento y vale** *(pendiente)* | Apartado vencido con su vale | Emisión y archivo de vale |
+| **06 · Recordatorios de vencimiento** | Apartado «por vencer» (7 días) | Correo «Tu apartado vence en 7 días» en Mailpit (y «Mañana vence tu apartado» a 1 día) |
+| **06 · Vencimiento y vale** *(US-07 pendiente)* | Apartado vencido con su vale | Emisión y archivo de vale |
 | **08 · Aviso de fallo** | No depende de datos: se prueba forzando un error | Correo de aviso técnico a Marisa |
 | **09 · Migración del Excel** | CSV reales de `data/` (montados en `/data-fuentes:ro`) | 7 apartados, 3 abonos y 6 ventas en la app + correo «Informe de migración del Excel» en Mailpit |
 

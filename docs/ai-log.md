@@ -166,6 +166,18 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 - **Errores → correcciones**: ver tabla (E19 · conteo de abonos en el handoff, E20 · colisión del puerto 5679 del Task Broker al lanzar `n8n execute`, E21 · modo binario `filesystem-v2` en n8n 2.x).
 - **Resultado**: `specs/flujo-09-migracion-excel.md`, `workflows/flujo-09-migracion-excel.json`, `tests/us-10/` (17 PASS / 0 FAIL en los 3 escenarios) y evidencia versionada en `docs/evidencia/us-10/`.
 
+### US-06 · Flujo 06 · Recordatorios de vencimiento ([#47](https://github.com/IA-P1-BCN/g1-n8n/issues/47), 2026-10-29)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(29/10)* «ahora me toca hacer esta https://github.com/IA-P1-BCN/g1-n8n/issues/47»
+  2. *(29/10, respuestas a preguntas)* Alcance solo US-06 (#47 y sub-issues #48–#51) en `feat/us-06-recordatorios-vencimiento`; si el cliente no tiene email, avisar a la tienda por correo (como en Flujos 01 y 02) sin que el flujo falle.
+- **Decisiones**:
+  - *Aceptar*: doble disparador (`Cada mañana a las 09:00` con cron `0 9 * * *` + `Al ejecutar manualmente` para CLI/pruebas).
+  - *Aceptar*: consultar `GET /api/apartados?estado=activo` (`alwaysOutputData: true`) y filtrar en un nodo Code los apartados cuyo plazo vence en exactamente `7` días o `1` día (en zona `Europe/Madrid`), usando los importes (`pendiente`, `abonado`, `precio`) y `fecha_limite` de la app sin recalcularlos.
+  - *Aceptar*: deduplicación combinando `$getWorkflowStaticData('global').enviados` (persistente en ejecuciones programadas de n8n) y verificación de avisos ya emitidos en el buzón mediante la clave `apartado-{id}-aviso-{dias}d-{fecha_limite}`, garantizando `0` duplicados al re-ejecutar por CLI el mismo día (Escenario C).
+  - *Aceptar*: ajustar el apartado «por vencer» de `scripts/demo.py` de `hoy - 85 días` a `hoy - 83 días` (7 días restantes) para que `task demo` deje un escenario directo del Flujo 06.
+- **Resultado**: `specs/flujo-06-recordatorios-vencimiento.md`, `workflows/flujo-06-recordatorios-vencimiento.json` (validado con `n8n-mcp`: 9 nodos, 36 expresiones, 0 errores), `tests/us-06/` (11 PASS / 0 FAIL en los 3 escenarios) y evidencia versionada en `docs/evidencia/us-06/`.
+
 ### Tareas transversales (2026-10-22/28)
 
 - US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — scaffold en PRs #111/#118; spec, renombrado, fallback y evidencia en la PR #125.

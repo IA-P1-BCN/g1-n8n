@@ -165,10 +165,10 @@ def main():
           f"pendiente {liquidado['pendiente']:.2f} €")
     print("  abonos: " + " · ".join(f"{importe:.2f} € {forma}" for forma, importe in abonos))
 
-    # 2. Apartado a punto de vencer: nació hace 85 días, el plazo son 90.
+    # 2. Apartado a punto de vencer: nació hace 83 días, el plazo son 90 (vence en 7 días → Flujo 06).
     por_vencer = crear_apartado("Cliente Demo Por Vencer", "demo.porvencer@paso-firme.local",
                                 "Zapatilla running azul", "42", 64.50, 15.00, "efectivo",
-                                fecha=hoy - timedelta(days=85))
+                                fecha=hoy - timedelta(days=83))
     por_vencer = abonar(por_vencer["id"], 20.00, "tarjeta")
     dias = (date.fromisoformat(por_vencer["fecha_limite"]) - hoy).days
     print(f"· apartado por vencer: #{por_vencer['id']} · vence el {por_vencer['fecha_limite']} ({dias} días) · "
@@ -216,7 +216,7 @@ def main():
           f"{resumen.get('vencido')} vencidos · {resumen.get('total')} apartados")
     print("· Guía rápida de la demo:")
     print(f"    apartado #{liquidado['id']} · liquidado en 3 abonos · Flujo 01 (confirmación) y Flujo 02 (recibos) → Mailpit")
-    print(f"    apartado #{por_vencer['id']} · vence en {dias} días · recordatorio (flujo pendiente) + recibo de su abono (Flujo 02)")
+    print(f"    apartado #{por_vencer['id']} · vence en {dias} días · Flujo 06 (recordatorio de vencimiento) + recibo de su abono (Flujo 02)")
     print(f"    apartado #{vencido['id']} · vencido con vale {vale['codigo']} · escenario del vale (flujo pendiente)")
     print("    ventas #" + ", #".join(str(v["id"]) for v in ventas) +
           " · efectivo, tarjeta y bizum · escenario del cierre e informes (flujos pendientes)")
