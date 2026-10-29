@@ -1,0 +1,47 @@
+{
+  "id": "98",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "Modelo Groq",
+    "Extraer ordenante, importe y concepto",
+    "Normalizar datos del pago",
+    "Apartados activos",
+    "Decidir apartado",
+    "¿Registrar el abono?",
+    "Registrar abono",
+    "Abono registrado · recibo vía Flujo 02"
+  ],
+  "camino": "registrado",
+  "extraccion": {
+    "ordenante": "LUCIA GOMEZ PEREZ",
+    "importe": 12,
+    "concepto": "Liquidar mocasines",
+    "apartadoId": null,
+    "conceptoVacio": false
+  },
+  "decision": {
+    "decision": "registrar",
+    "motivo": "",
+    "ordenante": "LUCIA GOMEZ PEREZ",
+    "importe": 12,
+    "concepto": "Liquidar mocasines",
+    "apartadoId": null,
+    "apartado": {
+      "id": 1,
+      "fecha": "2026-10-29",
+      "cliente": "Lucía Gómez",
+      "telefono": null,
+      "email": "lucia.gomez@prueba.local",
+      "producto": "Mocasín ante",
+      "talla": "38",
+      "precio": 17,
+      "fecha_limite": "2027-01-27",
+      "estado": "activo",
+      "abonado": 5,
+      "pendiente": 12
+    }
+  }
+}

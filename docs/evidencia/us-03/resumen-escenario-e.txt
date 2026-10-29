@@ -1,0 +1,6 @@
+PASS · E-dudoso-sin-concepto · ejecución del Flujo 03 · success
+PASS · E-dudoso-sin-concepto · no se registra: se pregunta a Marisa · preguntar
+PASS · E-dudoso-sin-concepto · el apartado no cambia (solo su abono inicial) · pendiente=35.0 abonos=1
+PASS · E-dudoso-sin-concepto · Marisa recibe la pregunta · 🤔 Pago por Bizum/transferencia sin identificar · ¿de quién es?
+
+total: 4 PASS / 0 FAIL

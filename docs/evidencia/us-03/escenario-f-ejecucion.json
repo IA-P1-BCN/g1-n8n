@@ -1,0 +1,48 @@
+{
+  "id": "112",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "Modelo Groq",
+    "Extraer ordenante, importe y concepto",
+    "Normalizar datos del pago",
+    "Apartados activos",
+    "Decidir apartado",
+    "¿Registrar el abono?",
+    "Registrar abono",
+    "Motivo del rechazo",
+    "Avisar a Marisa · rechazo"
+  ],
+  "camino": "rechazo",
+  "extraccion": {
+    "ordenante": "PAULA RAMOS LEON",
+    "importe": 20,
+    "concepto": "zapatillas running perdón por el retraso",
+    "apartadoId": null,
+    "conceptoVacio": false
+  },
+  "decision": {
+    "decision": "registrar",
+    "motivo": "",
+    "ordenante": "PAULA RAMOS LEON",
+    "importe": 20,
+    "concepto": "zapatillas running perdón por el retraso",
+    "apartadoId": null,
+    "apartado": {
+      "id": 1,
+      "fecha": "2026-07-21",
+      "cliente": "Paula Ramos",
+      "telefono": null,
+      "email": "paula.ramos@prueba.local",
+      "producto": "Bota alta mujer",
+      "talla": "38",
+      "precio": 60,
+      "fecha_limite": "2026-10-19",
+      "estado": "activo",
+      "abonado": 5,
+      "pendiente": 55
+    }
+  }
+}

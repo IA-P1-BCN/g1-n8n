@@ -1,0 +1,47 @@
+{
+  "id": "82",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "Modelo Groq",
+    "Extraer ordenante, importe y concepto",
+    "Normalizar datos del pago",
+    "Apartados activos",
+    "Decidir apartado",
+    "¿Registrar el abono?",
+    "Registrar abono",
+    "Abono registrado · recibo vía Flujo 02"
+  ],
+  "camino": "registrado",
+  "extraccion": {
+    "ordenante": "CARMEN RUIZ GARCIA",
+    "importe": 10,
+    "concepto": "zuecos",
+    "apartadoId": null,
+    "conceptoVacio": false
+  },
+  "decision": {
+    "decision": "registrar",
+    "motivo": "",
+    "ordenante": "CARMEN RUIZ GARCIA",
+    "importe": 10,
+    "concepto": "zuecos",
+    "apartadoId": null,
+    "apartado": {
+      "id": 1,
+      "fecha": "2026-10-29",
+      "cliente": "Carmen Ruiz",
+      "telefono": null,
+      "email": "carmen.ruiz@prueba.local",
+      "producto": "Zueco sanitario",
+      "talla": "38",
+      "precio": 50,
+      "fecha_limite": "2027-01-27",
+      "estado": "activo",
+      "abonado": 5,
+      "pendiente": 45
+    }
+  }
+}

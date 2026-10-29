@@ -1,0 +1,7 @@
+PASS · C-pago-que-liquida · ejecución del Flujo 03 · success
+PASS · C-pago-que-liquida · el flujo registra el abono · registrado
+PASS · C-pago-que-liquida · el apartado queda liquidado · liquidado
+PASS · C-pago-que-liquida · pendiente a 0 € · pendiente=0.0
+PASS · C-pago-que-liquida · recibo final: puede recoger los zapatos · 👟 Último abono recibido · ¡puedes recoger tus zapatos!
+
+total: 5 PASS / 0 FAIL

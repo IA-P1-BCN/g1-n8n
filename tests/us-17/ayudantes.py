@@ -20,8 +20,8 @@ N8N_URL = os.environ.get("N8N_URL", "http://localhost:5678")
 RECEPTOR_ID = os.environ.get("N8N_RECEPTOR_ID", "HXZBeAF7TZrK4zfD")
 NOMBRE_RECEPTOR = "Receptor · Webhook tienda"
 NODO_SWITCH = "Repartir por evento"
-RAMAS = ["apartado.creado", "abono.registrado", "venta.registrada", "apartado.vencido"]
-INDICE_FALLBACK = 4
+RAMAS = ["apartado.creado", "abono.registrado", "venta.registrada", "apartado.vencido", "aviso.banco"]
+INDICE_FALLBACK = 5
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 SALIDA = RAIZ / "docs" / "evidencia" / "us-17"
 
