@@ -1,0 +1,35 @@
+{
+  "apartado": {
+    "id": 1,
+    "fecha": "2026-07-29",
+    "cliente": "Sofía Cliente Vale",
+    "telefono": null,
+    "email": "sofia.vale@paso-firme.local",
+    "producto": "Bota alta piel negra",
+    "talla": "39",
+    "precio": 110.0,
+    "fecha_limite": "2026-10-27",
+    "estado": "activo",
+    "abonado": 35.5,
+    "pendiente": 74.5
+  },
+  "vale": {
+    "id": 1,
+    "codigo": "VALE-00001",
+    "apartado_id": 1,
+    "fecha": "2026-10-29",
+    "importe": 35.5,
+    "usado": 0
+  },
+  "correo_cliente": {
+    "id": "0P3jA0BVLUuhmL3InpZzCj",
+    "asunto": "🎟️ Tu vale por apartado vencido (VALE-00001) · Zapatería Paso Firme",
+    "to": [
+      {
+        "Name": "",
+        "Address": "sofia.vale@paso-firme.local"
+      }
+    ],
+    "html": "\r\n\t\t\t\t\t<h2>🎟️ Tu vale en Zapatería Paso Firme</h2><p>Hola Sofía Cliente Vale,</p><p>El plazo de 90 días de tu apartado nº <b>1</b> (fecha límite 2026-10-27) ha vencido.</p><p>Para que no pierdas el dinero que habías adelantado, hemos generado un <b>vale</b> por el total abonado que puedes usar en cualquier compra en nuestra tienda:</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Código del vale</b></td><td><b>VALE-00001</b></td></tr><tr><td><b>Importe del vale</b></td><td><b>35.50 €</b> (35.5 €)</td></tr><tr><td><b>Producto apartado</b></td><td>Bota alta piel negra (talla 39)</td></tr></table><p>Presenta el código <b>VALE-00001</b> en tienda cuando quieras canjearlo.</p><p>Zapatería Paso Firme</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_2b450c1056ff4f9622ec0b31937381bef9fbd7d4b76cadd7ebf8798799ff58b8\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n"
+  }
+}

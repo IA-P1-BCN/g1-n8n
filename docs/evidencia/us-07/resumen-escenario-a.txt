@@ -1,0 +1,6 @@
+PASS · vencer-fuera-de-plazo · el Flujo 06 se ejecuta sin error · n8n execute OK
+PASS · vencer-fuera-de-plazo · el apartado fuera de plazo pasa a estado 'vencido' en la API · id=1 estado=vencido
+PASS · vencer-fuera-de-plazo · la app ha generado el vale del apartado vencido con el importe abonado · vale={'id': 1, 'codigo': 'VALE-00001', 'apartado_id': 1, 'fecha': '2026-10-29', 'importe': 25.0, 'usado': 0}
+PASS · vencer-fuera-de-plazo · el apartado dentro de plazo permanece en estado 'activo' · id=2 estado=activo
+
+total: 4 PASS / 0 FAIL
