@@ -16,7 +16,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 ## Registro por tarea
 
-### US-09 · Aviso de ventas grandes ([#62](https://github.com/IA-P1-BCN/g1-n8n/issues/62), rama `feat/us-09-aviso-ventas-grandes`, 2026-10-29)
+### US-09 · Aviso de ventas grandes ([#62](https://github.com/IA-P1-BCN/g1-n8n/issues/62), PR #134, 2026-10-29)
 
 - **Prompts (textuales de la sesión)**:
   1. *(29/10)* «continua con esta tarea: US-09 · Aviso de ventas grandes»
