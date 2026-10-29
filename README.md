@@ -31,7 +31,7 @@ El ciclo completo de apartado de la zapatería está modelado en **Mermaid** —
 | **Confirmación al cliente** | Verbal en mostrador; el cliente no conserva comprobante | Correo automático con datos del apartado (`apartado.creado` → Flujo 01) |
 | **Recibos de abonos** | Anotación manual en libreta y cálculo mental del saldo | Correo automático con saldo restante o aviso de liquidación (`abono.registrado` → Flujo 02) |
 | **Control de vencidos** | Repaso manual diario de fichas (frecuentes olvidos) | Detección automática y emisión del Vale para la tienda (Flujo 06, reservado) |
-| **Cierre diario** | Suma manual de caja, tickets y reconciliación con el banco | Reconciliación automática de ventas y formas de pago (Flujo 04, reservado) |
+| **Aviso de ventas grandes** | Marisa no se entera de las ventas grandes mientras no esté en la tienda | Correo automático cuando la venta pasa del umbral (`venta.registrada` → Flujo 04) |
 | **Gestión de incidencias** | Errores silenciosos que nadie nota | Flujo 08 captura fallos de ejecución y avisa de inmediato a Marisa (`errorWorkflow`) |
 | **Migración del Excel antiguo** | Pasar filas del Excel una a una a mano | Flujo 09 limpia fechas/importes/nombres de `data/*.csv`, carga por API sin duplicar y envía informe de casos dudosos |
 
@@ -69,10 +69,12 @@ Edita el fichero `.env` según tus necesidades:
 API_KEY=cambia-esta-clave
 N8N_WEBHOOK_URL=http://n8n:5678/webhook/tienda
 SEED=1
+UMBRAL_VENTA_GRANDE=200
 ```
 
 - `API_KEY`: Clave que se genera en la interfaz de n8n (**Settings > n8n API**). La suite de tests `tests/us-17/` y el flag `--esperar` de `task payload` la usan para consultar las ejecuciones en la API interna de n8n.
 - `N8N_WEBHOOK_URL`: URL interna de red Docker por la que la app notifica al receptor de n8n.
+- `UMBRAL_VENTA_GRANDE`: ventas por encima de este importe (€) avisan a Marisa por correo (Flujo 04); el escenario B de `tests/us-09/` lo cambia solo para probar que no hay que editar el flujo.
 - `SEED`: Con `SEED=1` la tienda se inicializa con historial de datos la primera vez. Usa `SEED=0` para arrancar con base de datos vacía.
 
 ### 3. Arrancar los servicios
@@ -139,6 +141,7 @@ Para habilitar la gestión activa de workflows desde opencode, añade tu API key
 | **Flujo 02 · Recibo de cada abono** | `flujo-02-recibo-de-cada-abono.json` | Evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
 | **Flujo 07 · Informe mensual** | `flujo-07-informe-mensual.json` | Programado día 1 de mes (08:00) o manual | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 08 · Aviso de fallo** | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara automáticamente si cualquier flujo falla | SMTP Mailpit (pruebas) |
+| **Flujo 04 · Aviso de ventas grandes** | `flujo-04-aviso-ventas-grandes.json` | Evento `venta.registrada` vía receptor | SMTP Mailpit (pruebas), `UMBRAL_VENTA_GRANDE` |
 | **Flujo 09 · Migración del Excel** | `flujo-09-migracion-excel.json` | *Manual Trigger*: lee `/data-fuentes/*.csv` (`./data:/data-fuentes:ro`), migra por API sin duplicar y envía informe de casos dudosos | SMTP Mailpit (pruebas), `API_KEY` (`.env`) |
 | **Receptor · Webhook tienda** | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (webhook único) | — |
 
@@ -150,7 +153,7 @@ Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la 
 |---|---|---|
 | `apartado.creado` | `apartado.creado` | **Flujo 01** · Confirmación de apartado |
 | `abono.registrado` | `abono.registrado` | **Flujo 02** · Recibo de cada abono |
-| `venta.registrada` | `venta.registrada` | Reservada para **Flujo 04** (Cierre diario · US-09) |
+| `venta.registrada` | `venta.registrada` | **Flujo 04** · Aviso de ventas grandes |
 | `apartado.vencido` | `apartado.vencido` | Reservada para **Flujo 06** (Vencimiento y Vale · US-07) |
 | *(cualquier otro)* | `evento desconocido` | Se registra en Executions de n8n sin perderse |
 
@@ -161,16 +164,12 @@ Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la 
 
 | Credencial / variable | Tipo | Configuración requerida | Utilizada por |
 |---|---|---|---|
-| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 07 y 08 |
-| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 07 y 08 |
-| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n |
+| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 04, 07, 08 y 09 |
+| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 04, 07, 08 y 09 |
+| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n (y Flujos 07 y 09) |
 | `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
-| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 07 y 08 |
-| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 08 y 09 |
-| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 08 y 09 |
-| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n (y Flujo 09) |
-| `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
-| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 08 y 09 |
+| `UMBRAL_VENTA_GRANDE` (`.env`) | Umbral (€) | Ventas por encima de este importe avisan a Marisa; por defecto `200` | Flujo 04 |
+| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 04, 07, 08 y 09 |
 
 ---
 

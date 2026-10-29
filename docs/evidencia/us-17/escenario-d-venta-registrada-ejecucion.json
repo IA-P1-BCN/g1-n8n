@@ -1,15 +1,16 @@
 {
-  "id": "153",
+  "id": "315",
   "workflowId": "HXZBeAF7TZrK4zfD",
   "status": "success",
   "mode": "webhook",
-  "startedAt": "2026-10-27T19:24:01.519Z",
-  "stoppedAt": "2026-10-27T19:24:01.527Z",
-  "lastNodeExecuted": "Repartir por evento",
+  "startedAt": "2026-10-29T13:53:07.505Z",
+  "stoppedAt": "2026-10-29T13:53:08.003Z",
+  "lastNodeExecuted": "Ejecutar Flujo 04",
   "nodos": [
     "Webhook tienda",
     "Evento y datos",
-    "Repartir por evento"
+    "Repartir por evento",
+    "Ejecutar Flujo 04"
   ],
   "salidasDelSwitch": {
     "apartado.creado": 0,

@@ -1,10 +1,10 @@
 {
-  "id": "149",
+  "id": "311",
   "workflowId": "HXZBeAF7TZrK4zfD",
   "status": "success",
   "mode": "webhook",
-  "startedAt": "2026-10-27T19:23:57.145Z",
-  "stoppedAt": "2026-10-27T19:23:57.247Z",
+  "startedAt": "2026-10-29T13:53:01.040Z",
+  "stoppedAt": "2026-10-29T13:53:01.747Z",
   "lastNodeExecuted": "Ejecutar Flujo 01",
   "nodos": [
     "Webhook tienda",

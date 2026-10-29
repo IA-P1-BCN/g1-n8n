@@ -3,7 +3,7 @@ PASS · fallo-provocado · aviso recibido en Mailpit · 🛠 Aviso de fallo · F
 PASS · fallo-provocado · nombra el flujo · Flujo 01 · Confirmación de apartado
 PASS · fallo-provocado · nombra el paso · Enviar resumen al cliente
 PASS · fallo-provocado · incluye el error · No recipients defined
-PASS · fallo-provocado · enlace a la ejecución · http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/139
+PASS · fallo-provocado · enlace a la ejecución · http://localhost:5678/workflow/pwLRoxMrKVfAR2XK/executions/255
 PASS · fallo-provocado · aviso del Receptor (padre) · 🛠 Aviso de fallo · Receptor · Webhook tienda
 PASS · fallo-provocado · paso del receptor · Ejecutar Flujo 01
 PASS · fallo-provocado · webhook acepta la petición · Workflow was started

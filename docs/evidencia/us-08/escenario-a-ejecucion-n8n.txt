@@ -2,9 +2,9 @@ n8n Task Broker ready on 127.0.0.1, port 5689
 Failed to start Python task runner in internal mode. because Python 3 is missing from this system. Launching a Python runner in internal mode is intended only for debugging and is not recommended for production. Users are encouraged to deploy in external mode. See: https://docs.n8n.io/hosting/configuration/task-runners/#setting-up-external-mode
 [license SDK] Skipping renewal on init: renewOnInit is disabled in config
 [license SDK] Skipping renewal on init: license cert is not initialized
-[runner:js] (node:115) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+[runner:js] (node:63) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
 (Use `node --trace-warnings ...` to show where the warning was created)
-Registered runner "JS Task Runner" (LMrc0l1UMGRCbnC0EGT4v) 
+Registered runner "JS Task Runner" (dMAIb8CUItOdumdCiQyse) 
 Execution was successful:
 ====================================
 {
@@ -15,11 +15,11 @@ Execution was successful:
       "runData": {
         "El día 1 de cada mes": [
           {
-            "startTime": 1793277947944,
+            "startTime": 1793281684825,
             "executionIndex": 0,
             "source": [],
             "hints": [],
-            "executionTime": 3,
+            "executionTime": 4,
             "executionStatus": "success",
             "data": {
               "main": [
@@ -37,7 +37,7 @@ Execution was successful:
         ],
         "Calcular periodo del informe": [
           {
-            "startTime": 1793277947949,
+            "startTime": 1793281684832,
             "executionIndex": 1,
             "source": [
               {
@@ -47,7 +47,7 @@ Execution was successful:
               }
             ],
             "hints": [],
-            "executionTime": 3409,
+            "executionTime": 4990,
             "executionStatus": "success",
             "data": {
               "main": [
@@ -69,7 +69,7 @@ Execution was successful:
         ],
         "Consultar datos de la app": [
           {
-            "startTime": 1793277951358,
+            "startTime": 1793281689823,
             "executionIndex": 2,
             "source": [
               {
@@ -79,7 +79,7 @@ Execution was successful:
               }
             ],
             "hints": [],
-            "executionTime": 181,
+            "executionTime": 285,
             "executionStatus": "success",
             "data": {
               "main": [
@@ -1876,7 +1876,7 @@ Execution was successful:
         ],
         "Calcular métricas del informe": [
           {
-            "startTime": 1793277951539,
+            "startTime": 1793281690108,
             "executionIndex": 3,
             "source": [
               {
@@ -1886,7 +1886,7 @@ Execution was successful:
               }
             ],
             "hints": [],
-            "executionTime": 63,
+            "executionTime": 116,
             "executionStatus": "success",
             "data": {
               "main": [
@@ -1918,7 +1918,7 @@ Execution was successful:
         ],
         "Enviar informe mensual a Marisa": [
           {
-            "startTime": 1793277951602,
+            "startTime": 1793281690225,
             "executionIndex": 4,
             "source": [
               {
@@ -1928,7 +1928,7 @@ Execution was successful:
               }
             ],
             "hints": [],
-            "executionTime": 278,
+            "executionTime": 354,
             "executionStatus": "success",
             "data": {
               "main": [
@@ -1945,17 +1945,17 @@ Execution was successful:
                         "8BITMIME",
                         "SMTPUTF8"
                       ],
-                      "envelopeTime": 13,
-                      "messageTime": 95,
+                      "envelopeTime": 18,
+                      "messageTime": 68,
                       "messageSize": 2221,
-                      "response": "250 2.0.0 Ok: queued as 6GW4bvrdET6KDHfewMvthO",
+                      "response": "250 2.0.0 Ok: queued as 1xDl4OHjf1KX2JSgaX9gXp",
                       "envelope": {
                         "from": "n8n@paso-firme.local",
                         "to": [
                           "cambia-esta-direccion@paso-firme.local"
                         ]
                       },
-                      "messageId": "<a74202d5-a1b8-3fac-b375-d1943f1aa6a2@paso-firme.local>"
+                      "messageId": "<c499b150-07ae-7e3a-f6f1-29bcc180451d@paso-firme.local>"
                     },
                     "pairedItem": {
                       "item": 0
@@ -1977,7 +1977,7 @@ Execution was successful:
       "waitingExecutionSource": {},
       "runtimeData": {
         "version": 1,
-        "establishedAt": 1793277947932,
+        "establishedAt": 1793281684811,
         "source": "cli",
         "triggerNode": {
           "name": "El día 1 de cada mes",
@@ -1985,11 +1985,11 @@ Execution was successful:
         }
       }
     },
-    "resumeToken": "a95ddd08b03c3bf0065d1963540e1046916dec43d8d4f7035887a19340a062ed"
+    "resumeToken": "d6d1848e4f9178de15fc157edd3579ae9a75dc21fd7543294a05db038a8900f0"
   },
   "mode": "cli",
-  "startedAt": "2026-10-29T12:45:47.895Z",
-  "stoppedAt": "2026-10-29T12:45:51.882Z",
+  "startedAt": "2026-10-29T13:48:04.790Z",
+  "stoppedAt": "2026-10-29T13:48:10.580Z",
   "storedAt": "db",
   "status": "success",
   "finished": true

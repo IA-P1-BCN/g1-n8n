@@ -1,10 +1,10 @@
 {
-  "id": "154",
+  "id": "317",
   "workflowId": "HXZBeAF7TZrK4zfD",
   "status": "success",
   "mode": "webhook",
-  "startedAt": "2026-10-27T19:24:03.717Z",
-  "stoppedAt": "2026-10-27T19:24:03.745Z",
+  "startedAt": "2026-10-29T13:53:10.769Z",
+  "stoppedAt": "2026-10-29T13:53:10.850Z",
   "lastNodeExecuted": "Repartir por evento",
   "nodos": [
     "Webhook tienda",
