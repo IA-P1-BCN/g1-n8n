@@ -144,7 +144,20 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - *Aceptar*: repartir los 9 `.eml` entre **tres bancos ficticios** (`Banco Peralta`, `Caja Rivera`, `Banco Castaño`) sobre dominios reservados `.example` (no imitan a ningún banco real); así el remitente del Flujo 03 no queda cableado a uno solo. Importes, ordenantes y conceptos intactos.
   - *Aceptar*: cargar por la API de Mailpit (`POST /api/v1/send`) en vez de SMTP, que no está publicado al host; `task correos` con `--limpio` (vacía el buzón) y `--solo` (prefijos), documentados en README y en el `desc` del task.
   - *Aplazar* (hasta la spec, sub-issue #12): el disparador del flujo (evento + Form Trigger vs IMAP real) y el modelo de IA para extraer ordenante/importe/concepto — se deciden en la spec SDD.
-- **Resultado**: `data/correos/*.eml` con remitentes de bancos ficticios, `scripts/correos-banco.py`, task `correos` y sección en README. **No ejecutado en esta sesión**: el host no tiene Python ni Docker CLI y el stack estaba apagado; validado por lectura. Pendiente lanzarlo (`task correos -- --limpio`) con el stack arriba y adjuntar la salida.
+- **Resultado**: `data/correos/*.eml` con remitentes de bancos ficticios, `scripts/correos-banco.py`, task `correos` y sección en README. Cargado por Docker (host sin Python; `python:3.12-alpine` en la red `g1-n8n_default`, `MAILPIT_URL=http://mailpit:8025`): **9/9 correos** en el buzón. Luego, instalado Python en el host (E16) y reejecutado `task correos -- --limpio` de forma nativa: **9/9**.
+
+### US-03 · Spec SDD + Flujo 03 · Abonos a distancia ([#11](https://github.com/IA-P1-BCN/g1-n8n/issues/11), 2026-10-29)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(29/10)* «ayudame con esta tarea https://github.com/IA-P1-BCN/g1-n8n/issues/11»
+  2. *(29/10)* decisiones elegidas por la tech lead: modelo **Groq** (gratis), disparador **evento `aviso.banco` + Form Trigger**, alcance **spec + flujo + tests** en esta sesión.
+- **Decisiones**:
+  - *Aceptar*: **la IA solo extrae** `{ordenante, importe, concepto}` (nodo `informationExtractor` + `lmChatGroq`); todas las decisiones (buscar apartado, reglas, registrar) viven en nodos **Code/IF**, no en el prompt.
+  - *Aceptar*: entrada doble a la misma lógica — rama `aviso.banco` del receptor único (para tests e2e por HTTP, como US-17) **y** Form Trigger para pegar el aviso en desarrollo; IMAP real documentado para producción.
+  - *Aceptar*: búsqueda por API con **comparación normalizada** (sin acentos/mayúsculas, por tokens) porque el banco escribe «CARMEN RUIZ GARCIA» y la app guarda «Carmen Ruiz»; regla de decisión: nº de apartado en el concepto > único candidato activo; 0 / concepto vacío / varios → preguntar a Marisa; `POST …/abonos` con **On Error → Continue** y el 422 (de más / plazo vencido) → avisar con el motivo.
+  - *Aceptar*: `forma_pago: "bizum"` también para transferencias — el enum de la app (`efectivo|tarjeta|bizum`) no tiene «transferencia»; limitación anotada en la spec.
+  - *Rechazar*: que la IA decida el apartado o el registro (el enunciado lo prohíbe: «la IA solo extrae»); que el flujo mande el recibo (lo manda el Flujo 02 al dispararse `abono.registrado`).
+- **Resultado**: `specs/flujo-03-abonos-a-distancia.md`, `workflows/flujo-03-abonos-a-distancia.json` (16 nodos; `valida_flujos` OK), rama `aviso.banco` + `Ejecutar Flujo 03` en el receptor, Mermaid de `flujos.md` y tablas del README actualizados. **Pendiente de verificación end-to-end**: requiere crear en n8n las credenciales `Groq (abonos a distancia)` y `API tienda (X-API-Key)` (secretos, fuera del repo); hasta entonces no hay `tests/us-03/` ni evidencia (no se fabrica: la evidencia son ejecuciones reales).
 
 ### Tareas transversales (2026-10-22/28)
 

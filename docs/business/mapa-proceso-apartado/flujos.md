@@ -55,6 +55,11 @@ flowchart LR
         m1["Registra el Apartado y cada Abono en la app"]
         m2["Descarga el Excel a mano"]
         m3["Entrega la mercancía y archiva el Vale (a mano)"]
+        m4["Revisa los avisos que le manda n8n (pagos dudosos o rechazados)"]
+    end
+
+    subgraph LaneBanco["Lane · Banco"]
+        bk["Aviso de Bizum o transferencia al correo de la tienda"]
     end
 
     subgraph LaneApp["Lane · App de la tienda"]
@@ -74,6 +79,10 @@ flowchart LR
         f2c{"¿El Abono lo liquida?"}
         f2m["Enviar correo «Recibo de tu Abono»"]
         f2u["Enviar correo «Último Abono recibido»"]
+        f3["Flujo 03 · Abonos a distancia"]
+        f3ia["IA (Groq): extrae ordenante, importe y concepto"]
+        f3d{"¿Apartado único y regla OK?"}
+        f3ask["Pregunta o avisa a Marisa (correo a la tienda)"]
         f4["Flujo 04 · cierre diario (rama venta.registrada, reservada a US-09, sin conectar)"]
         f6["Flujo 06 · vencimiento y Vale (rama apartado.vencido, reservada a US-07, sin conectar)"]
         fx["Rama evento desconocido: queda visible en Executions"]
@@ -101,6 +110,14 @@ flowchart LR
     f2u --> c4
     n3 -- "venta.registrada" --> f4
     n3 -- "apartado.vencido" --> f6
+    bk -- "Email Trigger / Form" --> n1
+    n3 -- "aviso.banco" --> f3
+    f3 --> f3ia
+    f3ia --> f3d
+    f3d -- "Sí: registra el Abono (dispara abono.registrado)" --> a1
+    f3d -- "No: dudoso o rechazado" --> f3ask
+    f3ask --> m4
+    f3 -. "si un flujo falla" .-> f8
     f2u --> m3
     m3 --> c3
     a3 --> m2
@@ -109,4 +126,4 @@ flowchart LR
     n3 -- "Cualquier otro evento" --> fx
 ```
 
-Bizum y transferencia se revisan aún a mano hasta el flujo de Abonos a distancia; el aviso de fallo (Flujo 08) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.
+El **Flujo 03 · Abonos a distancia** ya reconcilia Bizum y transferencia: la IA (Groq) solo extrae ordenante, importe y concepto, y el flujo decide con la API (registra el Abono —que dispara el recibo del Flujo 02— o pregunta/avisa a Marisa si es dudoso o lo rechaza la app). El aviso de fallo (Flujo 08) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.

@@ -136,6 +136,7 @@ Para habilitar la gestión activa de workflows desde opencode, añade tu API key
 |---|---|---|---|
 | **Flujo 01 · Confirmación de apartado** | `flujo-01-confirmacion-apartado.json` | Evento `apartado.creado` vía receptor | SMTP Mailpit (pruebas) |
 | **Flujo 02 · Recibo de cada abono** | `flujo-02-recibo-de-cada-abono.json` | Evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
+| **Flujo 03 · Abonos a distancia** | `flujo-03-abonos-a-distancia.json` | Evento `aviso.banco` vía receptor + *Form Trigger* (pegar aviso) | Groq (abonos a distancia), API tienda (X-API-Key), SMTP Mailpit (pruebas) |
 | **Flujo 08 · Aviso de fallo** | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara automáticamente si cualquier flujo falla | SMTP Mailpit (pruebas) |
 | **Receptor · Webhook tienda** | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (webhook único) | — |
 
@@ -147,6 +148,7 @@ Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la 
 |---|---|---|
 | `apartado.creado` | `apartado.creado` | **Flujo 01** · Confirmación de apartado |
 | `abono.registrado` | `abono.registrado` | **Flujo 02** · Recibo de cada abono |
+| `aviso.banco` | `aviso.banco` | **Flujo 03** · Abonos a distancia (aviso del banco: `{asunto, cuerpo}`) |
 | `venta.registrada` | `venta.registrada` | Reservada para **Flujo 04** (Cierre diario · US-09) |
 | `apartado.vencido` | `apartado.vencido` | Reservada para **Flujo 06** (Vencimiento y Vale · US-07) |
 | *(cualquier otro)* | `evento desconocido` | Se registra en Executions de n8n sin perderse |
@@ -158,8 +160,10 @@ Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la 
 
 | Credencial / variable | Tipo | Configuración requerida | Utilizada por |
 |---|---|---|---|
-| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02 y 08 |
-| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02 y 08 |
+| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 03 y 08 |
+| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 03 y 08 |
+| `Groq (abonos a distancia)` | Groq API | Clave gratuita de [console.groq.com](https://console.groq.com) (créala en n8n, **nunca** en el JSON) | Flujo 03 (solo extracción con IA) |
+| `API tienda (X-API-Key)` | Header Auth | Cabecera `X-API-Key` con el valor de `API_KEY` del `.env`; la usa n8n para llamar a la API de la app | Flujo 03 |
 | `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n |
 | `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
 | `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02 y 08 |
