@@ -85,10 +85,12 @@ flowchart LR
         f3d{"¿Apartado único y regla OK?"}
         f3ask["Pregunta o avisa a Marisa (correo a la tienda)"]
         f4["Flujo 04 · cierre diario (rama venta.registrada, reservada a US-09, sin conectar)"]
-        f6["Flujo 06 · Recordatorios de vencimiento (programado cada mañana: 7d y 1d sin duplicar)"]
+        f6["Flujo 06 · Recordatorios y vencimientos (programado cada mañana)"]
         f6m["Enviar correo «Tu apartado vence en 7 días» / «Mañana vence tu apartado»"]
-        f6v["Flujo 06 · vencimiento y Vale (rama apartado.vencido, reservada a US-07, sin conectar)"]
-        fx["Rama evento desconocido: queda visible en Executions"]
+        f6v["Vencer apartado fuera de plazo (POST /api/apartados/{id}/vencer)"]
+        f6vc["Enviar correo «Tu vale por apartado vencido» al cliente"]
+        f6vm["Enviar correo «Zapatos que vuelven a la venta» a Marisa"]
+        fx["Ramaapartado.vencido / evento desconocido: queda visible en Executions"]
         nm["Se registra y se acabó: sin correo"]
         f7["Flujo 07 · Informe mensual (programado día 1)"]
         f7m["Enviar correo «Informe mensual» a Marisa"]
@@ -116,10 +118,15 @@ flowchart LR
     f2c -- "Sí: liquida" --> f2u
     f2u --> c4
     n3 -- "venta.registrada" --> f4
-    n3 -- "apartado.vencido" --> f6v
+    n3 -- "apartado.vencido" --> fx
     a1 -- "GET /api/apartados?estado=activo" --> f6
-    f6 --> f6m
+    f6 -- "vence en 7d o 1d" --> f6m
     f6m --> c4
+    f6 -- "fecha_limite < hoy" --> f6v
+    f6v --> a1
+    f6v --> f6vc
+    f6vc --> c4
+    f6v --> f6vm
     bk -- "Email Trigger / Form" --> n1
     n3 -- "aviso.banco" --> f3
     f3 --> f3ia
@@ -143,4 +150,4 @@ flowchart LR
     n3 -- "Cualquier otro evento" --> fx
 ```
 
-El **Flujo 03 · Abonos a distancia** reconcilia Bizum y transferencia: la IA (Groq) solo extrae ordenante, importe y concepto, y el flujo decide con la API (registra el Abono —que dispara el recibo del Flujo 02— o pregunta/avisa a Marisa si es dudoso o lo rechaza la app). La migración puntual de las hojas antiguas (`data/*.csv`) corre en el **Flujo 09** y el informe mensual (**Flujo 07**) se ejecuta el día 1. El aviso de fallo (**Flujo 08**) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.
+El **Flujo 03 · Abonos a distancia** reconcilia Bizum y transferencia: la IA (Groq) solo extrae ordenante, importe y concepto, y el flujo decide con la API (registra el Abono —que dispara el recibo del Flujo 02— o pregunta/avisa a Marisa si es dudoso o lo rechaza la app). El **Flujo 06** envía cada mañana los recordatorios a 7 y 1 día y vence por API los apartados fuera de plazo (entregando el Vale al cliente y avisando a Marisa de los zapatos que vuelven a la venta). La migración puntual de las hojas antiguas (`data/*.csv`) corre en el **Flujo 09** y el informe mensual (**Flujo 07**) se ejecuta el día 1. El aviso de fallo (**Flujo 08**) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.

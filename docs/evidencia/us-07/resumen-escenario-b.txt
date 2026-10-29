@@ -1,0 +1,6 @@
+PASS · cliente-con-su-vale · el Flujo 06 se ejecuta sin error · n8n execute OK
+PASS · cliente-con-su-vale · el cliente recibe el correo de apartado vencido con su vale · 🎟️ Tu vale por apartado vencido (VALE-00001) · Zapatería Paso Firme
+PASS · cliente-con-su-vale · el mensaje incluye el código del vale generado por la app · codigo=VALE-00001
+PASS · cliente-con-su-vale · el mensaje incluye el importe del vale (igual a lo abonado) · importe=35.5 €
+
+total: 4 PASS / 0 FAIL

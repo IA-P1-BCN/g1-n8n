@@ -217,7 +217,7 @@ def main():
     print("· Guía rápida de la demo:")
     print(f"    apartado #{liquidado['id']} · liquidado en 3 abonos · Flujo 01 (confirmación) y Flujo 02 (recibos) → Mailpit")
     print(f"    apartado #{por_vencer['id']} · vence en {dias} días · Flujo 06 (recordatorio de vencimiento) + recibo de su abono (Flujo 02)")
-    print(f"    apartado #{vencido['id']} · vencido con vale {vale['codigo']} · escenario del vale (flujo pendiente)")
+    print(f"    apartado #{vencido['id']} · vencido con vale {vale['codigo']} · Flujo 06 (vencimiento por API, vale al cliente y zapatos que vuelven a la venta)")
     print("    ventas #" + ", #".join(str(v["id"]) for v in ventas) +
           " · efectivo, tarjeta y bizum · escenario del cierre e informes (flujos pendientes)")
     print("    CSV de data/ · migración del Excel antiguo · Flujo 09 (ejecución manual en n8n) → app + informe de dudosos en Mailpit")

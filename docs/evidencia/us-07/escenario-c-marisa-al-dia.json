@@ -1,0 +1,43 @@
+{
+  "apartados_vencidos": [
+    {
+      "id": 1,
+      "fecha": "2026-07-25",
+      "cliente": "Diego Par Uno",
+      "telefono": null,
+      "email": "diego.par1@paso-firme.local",
+      "producto": "Deportiva retro blanca",
+      "talla": "43",
+      "precio": 79.0,
+      "fecha_limite": "2026-10-23",
+      "estado": "activo",
+      "abonado": 20.0,
+      "pendiente": 59.0
+    },
+    {
+      "id": 2,
+      "fecha": "2026-07-30",
+      "cliente": "Clara Par Dos",
+      "telefono": null,
+      "email": "clara.par2@paso-firme.local",
+      "producto": "Bailarina charol roja",
+      "talla": "37",
+      "precio": 54.0,
+      "fecha_limite": "2026-10-28",
+      "estado": "activo",
+      "abonado": 15.0,
+      "pendiente": 39.0
+    }
+  ],
+  "correo_marisa": {
+    "id": "4v4nBbBFkgqg5wmB8SbgCN",
+    "asunto": "👟 Apartados vencidos hoy: 2 par(es) vuelven a la venta · Zapatería Paso Firme",
+    "to": [
+      {
+        "Name": "",
+        "Address": "cambia-esta-direccion@paso-firme.local"
+      }
+    ],
+    "html": "\r\n\t\t\t\t\t<h2>👟 Zapatos de apartados vencidos que vuelven a la venta</h2><p>Hola Marisa,</p><p>Hoy se han vencido <b>2</b> apartado(s) fuera de plazo. La app ya ha generado el vale de cada cliente y estos pares de zapatos pueden volver a ponerse a la venta en la tienda:</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><thead><tr><th>Apartado</th><th>Producto</th><th>Talla</th><th>Cliente</th><th>Vale generado</th><th>Fecha límite</th></tr></thead><tbody><tr><td>#1</td><td><b>Deportiva retro blanca</b></td><td>43</td><td>Diego Par Uno</td><td><code>VALE-00001</code> (20.00 €)</td><td>2026-10-23</td></tr><tr><td>#2</td><td><b>Bailarina charol roja</b></td><td>37</td><td>Clara Par Dos</td><td><code>VALE-00002</code> (15.00 €)</td><td>2026-10-28</td></tr></tbody></table><p>— Flujo 06 · Zapatería Paso Firme</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_2b450c1056ff4f9622ec0b31937381bef9fbd7d4b76cadd7ebf8798799ff58b8\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n"
+  }
+}

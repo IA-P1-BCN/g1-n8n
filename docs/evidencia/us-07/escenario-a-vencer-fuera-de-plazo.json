@@ -1,0 +1,81 @@
+{
+  "apartado_fuera_de_plazo_antes": {
+    "id": 1,
+    "fecha": "2026-07-26",
+    "cliente": "Raúl Fuera De Plazo",
+    "telefono": null,
+    "email": "raul.vencido@paso-firme.local",
+    "producto": "Zapato Oxford negro",
+    "talla": "42",
+    "precio": 95.0,
+    "fecha_limite": "2026-10-24",
+    "estado": "activo",
+    "abonado": 25.0,
+    "pendiente": 70.0
+  },
+  "apartado_fuera_de_plazo_despues": {
+    "id": 1,
+    "fecha": "2026-07-26",
+    "cliente": "Raúl Fuera De Plazo",
+    "telefono": null,
+    "email": "raul.vencido@paso-firme.local",
+    "producto": "Zapato Oxford negro",
+    "talla": "42",
+    "precio": 95.0,
+    "fecha_limite": "2026-10-24",
+    "estado": "vencido",
+    "abonado": 25.0,
+    "pendiente": 70.0,
+    "abonos": [
+      {
+        "id": 1,
+        "apartado_id": 1,
+        "fecha": "2026-07-26",
+        "importe": 25.0,
+        "forma_pago": "efectivo"
+      }
+    ],
+    "vale": {
+      "id": 1,
+      "codigo": "VALE-00001",
+      "apartado_id": 1,
+      "fecha": "2026-10-29",
+      "importe": 25.0,
+      "usado": 0
+    }
+  },
+  "apartado_en_plazo_despues": {
+    "id": 2,
+    "fecha": "2026-09-29",
+    "cliente": "Marta En Plazo",
+    "telefono": null,
+    "email": "marta.enplazo@paso-firme.local",
+    "producto": "Sandalia cuña esparto",
+    "talla": "38",
+    "precio": 59.9,
+    "fecha_limite": "2026-12-28",
+    "estado": "activo",
+    "abonado": 15.0,
+    "pendiente": 44.9,
+    "abonos": [
+      {
+        "id": 2,
+        "apartado_id": 2,
+        "fecha": "2026-09-29",
+        "importe": 15.0,
+        "forma_pago": "efectivo"
+      }
+    ],
+    "vale": null
+  },
+  "vales_en_api": [
+    {
+      "id": 1,
+      "codigo": "VALE-00001",
+      "apartado_id": 1,
+      "fecha": "2026-10-29",
+      "importe": 25.0,
+      "usado": 0
+    }
+  ]
+}

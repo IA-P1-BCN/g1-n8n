@@ -1,0 +1,6 @@
+PASS · marisa-al-dia · el Flujo 06 se ejecuta sin error · n8n execute OK
+PASS · marisa-al-dia · Marisa recibe el aviso en el correo de la tienda · 👟 Apartados vencidos hoy: 2 par(es) vuelven a la venta · Zapatería Paso Firme
+PASS · marisa-al-dia · el aviso incluye el primer par de zapatos (producto, talla, cliente y vale) que vuelve a la venta · Deportiva retro blanca (talla 43) · VALE-00001
+PASS · marisa-al-dia · el aviso incluye el segundo par de zapatos (producto, talla, cliente y vale) que vuelve a la venta · Bailarina charol roja (talla 37) · VALE-00002
+
+total: 4 PASS / 0 FAIL
