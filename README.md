@@ -140,7 +140,8 @@ Para habilitar la gestiÃ³n activa de workflows desde opencode, aÃ±ade tu API
 |---|---|---|---|
 | **Flujo 01 Â· ConfirmaciÃ³n de apartado** | `flujo-01-confirmacion-apartado.json` | Evento `apartado.creado` vÃ­a receptor | SMTP Mailpit (pruebas) |
 | **Flujo 02 Â· Recibo de cada abono** | `flujo-02-recibo-de-cada-abono.json` | Evento `abono.registrado` vÃ­a receptor | SMTP Mailpit (pruebas) |
-| **Flujo 03 Â· Abonos a distancia** | `flujo-03-abonos-a-distancia.json` | Evento `aviso.banco` vÃ­a receptor + *Form Trigger* (pegar aviso) | Groq (abonos a distancia), API tienda (X-API-Key), SMTP Mailpit (pruebas) |
+| **Flujo 03 Â· Abonos a distancia** | `flujo-03-abonos-a-distancia.json` | Evento `aviso.banco` vÃ­a receptor + *Form Trigger* (pegar aviso) | Groq (abonos a distancia), API tienda (X-API-Key), SMTP Mailpit (pruebas) |
+| **Flujo 05 · Cierre diario** | `flujo-05-cierre-diario.json` | Programado cada noche (22:00) o manual: resume lo cobrado del día por forma de pago | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 06 Â· Recordatorios de vencimiento** | `flujo-06-recordatorios-vencimiento.json` | Programado cada maÃ±ana (09:00) o manual: avisa a 7 dÃ­as y 1 dÃ­a sin duplicar; vence por API los fuera de plazo, envÃ­a el Vale al cliente y avisa a Marisa de los zapatos que vuelven a la venta | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 07 Â· Informe mensual** | `flujo-07-informe-mensual.json` | Programado dÃ­a 1 de mes (08:00) o manual | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 08 Â· Aviso de fallo** | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara automÃ¡ticamente si cualquier flujo falla | SMTP Mailpit (pruebas) |
@@ -169,19 +170,19 @@ Un Ãºnico endpoint publicado (`/webhook/tienda`) recibe todos los eventos de l
 | Credencial / variable | Tipo | ConfiguraciÃ³n requerida | Utilizada por |
 |---|---|---|---|
 
-| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticaciÃ³n ni TLS | Flujos 01, 02, 03, 06, 07, 08 y 09 |
+| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticaciÃ³n ni TLS | Flujos 01, 02, 03, 05, 06, 07, 08 y 09 |
 
-| Credencial SMTP producciÃ³n | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 03, 06, 07, 08 y 09 |
+| Credencial SMTP producciÃ³n | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 03, 05, 06, 07, 08 y 09 |
 
 | `Groq (abonos a distancia)` | Groq API | Clave gratuita de [console.groq.com](https://console.groq.com) (crÃ©ala en n8n, **nunca** en el JSON) | Flujo 03 (solo extracciÃ³n con IA) |
 
 | `API tienda (X-API-Key)` | Header Auth | Cabecera `X-API-Key` con el valor de `API_KEY` del `.env`; la usa n8n para llamar a la API de la app | Flujo 03 |
 
-| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | ComunicaciÃ³n app â n8n (Flujos 03, 06, 07 y 09) |
+| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | ComunicaciÃ³n app â n8n (Flujos 03, 05, 06, 07 y 09) |
 
 | `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | DirecciÃ³n del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
 
-| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producciÃ³n | Flujos 01, 02, 03, 06, 07, 08 y 09 |
+| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producciÃ³n | Flujos 01, 02, 03, 05, 06, 07, 08 y 09 |
 
 | `UMBRAL_VENTA_GRANDE` (`.env`) | Umbral (â¬) | Ventas por encima de este importe avisan a Marisa; por defecto `200` | Flujo 04 |
 
@@ -211,7 +212,7 @@ task demo -- --limpio # VacÃ­a previamente la app y Mailpit para empezar de ce
 |---|---|---|
 | **01 Â· ConfirmaciÃ³n de apartado** | Apartado liquidado | Correo Â«Apartado confirmadoÂ» en Mailpit |
 | **02 Â· Recibo de cada abono** | Sus 3 abonos y el abono parcial del apartado Â«por vencerÂ» | Correos Â«Recibo de tu abonoÂ» y Â«Ãltimo abono recibidoÂ» |
-| **04 Â· Cierre diario** *(pendiente)* | Ventas de hoy en efectivo, tarjeta y Bizum | Cuadre de caja |
+| **05 Â· Cierre diario** | Ventas y abonos de hoy en efectivo, tarjeta y Bizum | Correo «Cierre de caja» con el total del día por forma de pago |
 | **06 Â· Recordatorios de vencimiento** | Apartado Â«por vencerÂ» (7 dÃ­as) | Correo Â«Tu apartado vence en 7 dÃ­asÂ» en Mailpit (y Â«MaÃ±ana vence tu apartadoÂ» a 1 dÃ­a) |
 | **06 Â· Vencimiento y vale** | Apartado fuera de plazo (`fecha_limite < hoy`) | `POST /api/apartados/{id}/vencer`, correo Â«Tu vale por apartado vencidoÂ» al cliente y correo Â«Apartados vencidos hoy: â¦ vuelven a la ventaÂ» a Marisa |
 | **08 Â· Aviso de fallo** | No depende de datos: se prueba forzando un error | Correo de aviso tÃ©cnico a Marisa |

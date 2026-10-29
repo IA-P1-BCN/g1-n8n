@@ -179,6 +179,18 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 - **Errores → correcciones**: ver tabla (E19 · conteo de abonos en el handoff, E20 · colisión del puerto 5679 del Task Broker al lanzar `n8n execute`, E21 · modo binario `filesystem-v2` en n8n 2.x).
 - **Resultado**: `specs/flujo-09-migracion-excel.md`, `workflows/flujo-09-migracion-excel.json`, `tests/us-10/` (17 PASS / 0 FAIL en los 3 escenarios) y evidencia versionada en `docs/evidencia/us-10/`.
 
+### US-04 · Flujo 05 · Cierre diario ([#16](https://github.com/IA-P1-BCN/g1-n8n/issues/16), 2026-10-29)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(29/10)* «ayudame con esta tarea https://github.com/IA-P1-BCN/g1-n8n/issues/16»
+- **Decisiones**:
+  - *Aceptar*: **mismo patrón que los Flujos 06/07** (programados): `scheduleTrigger` (cron `0 22 * * *`) + `manualTrigger` → nodos Code que consultan la API con `this.helpers.httpRequest` y **`$env.API_KEY`** (no la credencial `API tienda` del Flujo 03), suman y envían el correo (SMTP Mailpit).
+  - *Aceptar*: consultar **filtrando por fecha en la API** (`GET /api/ventas?desde=HOY&hasta=HOY` y `/api/abonos` igual); el día es hoy por defecto, sobre-escribible con `fecha` de entrada.
+  - *Aceptar*: **ventas del día = ventas + abonos** (incluido el inicial), agrupadas por forma de pago con total por forma y total del día; día sin movimientos → correo que lo dice, sin fallar (Escenario B).
+  - *Aceptar*: numerarlo **Flujo 05** (no «04») siguiendo el enunciado (flujo 5 = cierre diario); corregidas de paso las etiquetas del README que llamaban «Flujo 04» al cierre.
+  - *Rechazar*: dispararlo por el evento `venta.registrada` del receptor — el cierre es nocturno y agregado (esa rama es del Flujo 04 · Venta grande).
+- **Resultado**: `specs/flujo-05-cierre-diario.md`, `workflows/flujo-05-cierre-diario.json` (6 nodos; `valida_flujos` OK), `tests/us-04/` (A con movimientos + B sin movimientos) **12 PASS / 0 FAIL** con evidencia en `docs/evidencia/us-04/` (ventas 35,50 € + abonos 23,00 € = 58,50 €; efectivo 25,00 €, tarjeta 28,50 €, bizum 5,00 €). README, Mermaid de `flujos.md` y guía de `scripts/demo.py` actualizados. `task test` entero en verde.
+
 ### Tareas transversales (2026-10-22/28)
 
 - US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — scaffold en PRs #111/#118; spec, renombrado, fallback y evidencia en la PR #125.

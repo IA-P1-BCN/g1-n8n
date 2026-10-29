@@ -1,0 +1,232 @@
+n8n Task Broker ready on 127.0.0.1, port 5689
+Failed to start Python task runner in internal mode. because Python 3 is missing from this system. Launching a Python runner in internal mode is intended only for debugging and is not recommended for production. Users are encouraged to deploy in external mode. See: https://docs.n8n.io/hosting/configuration/task-runners/#setting-up-external-mode
+[license SDK] Skipping renewal on init: renewOnInit is disabled in config
+[license SDK] Skipping renewal on init: license cert is not initialized
+[runner:js] (node:209) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Registered runner "JS Task Runner" (gUodiQXACmUTv5KbpsO3V) 
+Execution was successful:
+====================================
+{
+  "data": {
+    "version": 1,
+    "startData": {},
+    "resultData": {
+      "runData": {
+        "Al ejecutar manualmente": [
+          {
+            "startTime": 1793284850306,
+            "executionIndex": 0,
+            "source": [],
+            "hints": [],
+            "executionTime": 2,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {},
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Calcular el día del cierre": [
+          {
+            "startTime": 1793284850308,
+            "executionIndex": 1,
+            "source": [
+              {
+                "previousNode": "Al ejecutar manualmente",
+                "previousNodeOutput": 0,
+                "previousNodeRun": 0
+              }
+            ],
+            "hints": [],
+            "executionTime": 762,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "fecha": "2026-10-29"
+                    },
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Consultar cobros del día": [
+          {
+            "startTime": 1793284851070,
+            "executionIndex": 2,
+            "source": [
+              {
+                "previousNode": "Calcular el día del cierre",
+                "previousNodeOutput": 0,
+                "previousNodeRun": 0
+              }
+            ],
+            "hints": [],
+            "executionTime": 26,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "fecha": "2026-10-29",
+                      "ventas": [],
+                      "abonos": []
+                    },
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Calcular el cierre del día": [
+          {
+            "startTime": 1793284851096,
+            "executionIndex": 3,
+            "source": [
+              {
+                "previousNode": "Consultar cobros del día",
+                "previousNodeOutput": 0,
+                "previousNodeRun": 0
+              }
+            ],
+            "hints": [],
+            "executionTime": 9,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "fecha": "2026-10-29",
+                      "fecha_texto": "29/10/2026",
+                      "sin_movimientos": true,
+                      "total_ventas": 0,
+                      "total_abonos": 0,
+                      "total_dia": 0,
+                      "por_forma": {
+                        "efectivo": {
+                          "ventas": 0,
+                          "abonos": 0,
+                          "total": 0
+                        },
+                        "tarjeta": {
+                          "ventas": 0,
+                          "abonos": 0,
+                          "total": 0
+                        },
+                        "bizum": {
+                          "ventas": 0,
+                          "abonos": 0,
+                          "total": 0
+                        }
+                      },
+                      "ventas_count": 0,
+                      "abonos_count": 0,
+                      "html": "<h2>🧾 Cierre de caja · 29/10/2026</h2><p>Hola Marisa,</p><p><b>Hoy no hubo movimientos</b>: ni ventas ni abonos registrados el 29/10/2026. La caja queda igual.</p><p>Zapatería Paso Firme · Gestión automatizada</p>"
+                    },
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Enviar el cierre a Marisa": [
+          {
+            "startTime": 1793284851105,
+            "executionIndex": 4,
+            "source": [
+              {
+                "previousNode": "Calcular el cierre del día",
+                "previousNodeOutput": 0,
+                "previousNodeRun": 0
+              }
+            ],
+            "hints": [],
+            "executionTime": 102,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "accepted": [
+                        "cambia-esta-direccion@paso-firme.local"
+                      ],
+                      "rejected": [],
+                      "ehlo": [
+                        "SIZE 52428800",
+                        "ENHANCEDSTATUSCODES",
+                        "8BITMIME",
+                        "SMTPUTF8"
+                      ],
+                      "envelopeTime": 3,
+                      "messageTime": 49,
+                      "messageSize": 988,
+                      "response": "250 2.0.0 Ok: queued as 7kJT1fIsr8nXQX8vumDDWO",
+                      "envelope": {
+                        "from": "n8n@paso-firme.local",
+                        "to": [
+                          "cambia-esta-direccion@paso-firme.local"
+                        ]
+                      },
+                      "messageId": "<3af97c0d-25e1-88eb-091f-ca8d2e0e7f53@paso-firme.local>"
+                    },
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "lastNodeExecuted": "Enviar el cierre a Marisa"
+    },
+    "executionData": {
+      "contextData": {},
+      "nodeExecutionStack": [],
+      "metadata": {},
+      "waitingExecution": {},
+      "waitingExecutionSource": {},
+      "runtimeData": {
+        "version": 1,
+        "establishedAt": 1793284850303,
+        "source": "cli",
+        "triggerNode": {
+          "name": "Al ejecutar manualmente",
+          "type": "n8n-nodes-base.manualTrigger"
+        }
+      }
+    },
+    "resumeToken": "296cb8351b69b8b144fca1f495148ab8171241db980a44e9d72601bae332ad66"
+  },
+  "mode": "cli",
+  "startedAt": "2026-10-29T14:40:50.300Z",
+  "stoppedAt": "2026-10-29T14:40:51.207Z",
+  "storedAt": "db",
+  "status": "success",
+  "finished": true
+}

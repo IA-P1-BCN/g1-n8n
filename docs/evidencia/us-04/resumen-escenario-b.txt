@@ -1,0 +1,6 @@
+PASS · B-sin-movimientos · el flujo NO falla sin movimientos · }
+PASS · B-sin-movimientos · llega el correo del cierre · 🧾 Cierre de caja del 29/10/2026 · Zapatería Paso Firme
+PASS · B-sin-movimientos · el asunto lleva la fecha del día · 🧾 Cierre de caja del 29/10/2026 · Zapatería Paso Firme
+PASS · B-sin-movimientos · el cuerpo avisa de que no hubo movimientos · mensaje de día vacío presente
+
+total: 4 PASS / 0 FAIL
