@@ -1,0 +1,14 @@
+{
+  "periodo_texto": "septiembre de 2026",
+  "desde": "2026-09-01",
+  "hasta": "2026-09-30",
+  "total_ventas": 3868.75,
+  "ventas_count": 110,
+  "total_abonos": 289.0,
+  "abonos_count": 21,
+  "total_recaudacion": 4157.75,
+  "total_pendiente": 847.15,
+  "nuevos_count": 6,
+  "liquidados_count": 2,
+  "vencidos_count": 0
+}

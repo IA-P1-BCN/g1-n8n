@@ -1,0 +1,8 @@
+PASS · casos-dudosos · el Flujo 09 se ejecuta y genera el informe · n8n execute OK
+PASS · casos-dudosos · Lucía Gómez (abono inicial 4 € < 5 €) NO se carga en apartados · clientes=['Carmen Ruiz', 'Jorge Martín', 'Ana Torres', 'Pedro Sanz', 'Rosa Díaz', 'Miguel Ángel López', 'Sofía Navarro']
+PASS · casos-dudosos · las filas de 4 € (03/09) y 41 € (20/09) de Lucía Gómez NO están en abonos · abonos_lucia=[]
+PASS · casos-dudosos · llega el correo con el informe de casos dudosos a Mailpit · 📋 Informe de migración del Excel · casos dudosos para revisar
+PASS · casos-dudosos · el informe lista a Lucía Gómez y el producto Sandalia tacón negra · Lucía Gómez · Sandalia tacón negra presentes en HTML
+PASS · casos-dudosos · el informe explica el motivo (abono inicial 4 € menor del mínimo de 5 €) y la fila del 20/09 · motivo (< 5 €) y fila asociada (20/09/2026) presentes
+
+total: 6 PASS / 0 FAIL

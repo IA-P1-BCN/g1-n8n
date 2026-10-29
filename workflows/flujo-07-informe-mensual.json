@@ -1,0 +1,161 @@
+{
+  "name": "Flujo 07 · Informe mensual",
+  "id": "pFlujo07InformeMensual",
+  "nodes": [
+    {
+      "id": "trigger-schedule-flujo07",
+      "name": "El día 1 de cada mes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -100
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 1 * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "trigger-manual-flujo07",
+      "name": "Al ejecutar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        100
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "calcular-periodo-flujo07",
+      "name": "Calcular periodo del informe",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const input = $input.first()?.json || {};\nlet desde = input.desde;\nlet hasta = input.hasta;\nlet periodoTexto = input.periodo_texto;\n\nconst MESES = [\n  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',\n  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'\n];\n\nif (!desde || !hasta) {\n  const hoy = new Date();\n  const anioActual = hoy.getFullYear();\n  const mesActual = hoy.getMonth();\n  const fechaMesAnterior = new Date(anioActual, mesActual - 1, 1);\n  const anioPrev = fechaMesAnterior.getFullYear();\n  const mesPrev = fechaMesAnterior.getMonth();\n  const ultimoDiaMesPrev = new Date(anioActual, mesActual, 0).getDate();\n\n  const pad = (n) => String(n).padStart(2, '0');\n  desde = `${anioPrev}-${pad(mesPrev + 1)}-01`;\n  hasta = `${anioPrev}-${pad(mesPrev + 1)}-${pad(ultimoDiaMesPrev)}`;\n  periodoTexto = `${MESES[mesPrev]} de ${anioPrev}`;\n}\n\nif (!periodoTexto) {\n  periodoTexto = `${desde} al ${hasta}`;\n}\n\nreturn [{\n  json: {\n    desde,\n    hasta,\n    periodo_texto: periodoTexto\n  }\n}];"
+      }
+    },
+    {
+      "id": "consultar-datos-app-flujo07",
+      "name": "Consultar datos de la app",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const periodo = $input.first().json;\nconst apiKey = $env.API_KEY;\nconst baseUrl = 'http://tienda:8000';\nconst headers = {\n  'X-API-Key': apiKey,\n  'Content-Type': 'application/json'\n};\n\nconst ventas = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `${baseUrl}/api/ventas?desde=${periodo.desde}&hasta=${periodo.hasta}`,\n  headers,\n  json: true\n});\n\nconst abonos = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `${baseUrl}/api/abonos`,\n  headers,\n  json: true\n});\n\nconst apartados = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `${baseUrl}/api/apartados`,\n  headers,\n  json: true\n});\n\nconst vales = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `${baseUrl}/api/vales`,\n  headers,\n  json: true\n});\n\nreturn [{\n  json: {\n    periodo,\n    ventas: Array.isArray(ventas) ? ventas : [],\n    abonos: Array.isArray(abonos) ? abonos : [],\n    apartados: Array.isArray(apartados) ? apartados : [],\n    vales: Array.isArray(vales) ? vales : []\n  }\n}];"
+      }
+    },
+    {
+      "id": "calcular-metricas-flujo07",
+      "name": "Calcular métricas del informe",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const datos = $input.first().json;\nconst { periodo, ventas, abonos, apartados, vales } = datos;\nconst { desde, hasta, periodo_texto } = periodo;\n\nconst totalVentas = ventas.reduce((acc, v) => acc + Number(v.importe || 0), 0);\n\nconst abonosMes = abonos.filter(a => a.fecha >= desde && a.fecha <= hasta);\nconst totalAbonos = abonosMes.reduce((acc, a) => acc + Number(a.importe || 0), 0);\n\nconst totalRecaudacion = totalVentas + totalAbonos;\n\nconst apartadosActivos = apartados.filter(a => a.estado === 'activo');\nconst totalPendiente = apartadosActivos.reduce((acc, a) => acc + Number(a.pendiente || 0), 0);\n\nconst apartadosNuevos = apartados.filter(a => a.fecha >= desde && a.fecha <= hasta);\nconst valesMes = vales.filter(v => v.fecha >= desde && v.fecha <= hasta);\n\nconst abonosPorApartado = {};\nfor (const ab of abonos) {\n  if (!abonosPorApartado[ab.apartado_id]) {\n    abonosPorApartado[ab.apartado_id] = [];\n  }\n  abonosPorApartado[ab.apartado_id].push(ab);\n}\n\nconst apartadosLiquidados = apartados.filter(ap => {\n  if (ap.estado !== 'liquidado') return false;\n  const listaAbonos = abonosPorApartado[ap.id] || [];\n  if (listaAbonos.length === 0) return false;\n  listaAbonos.sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '') || (a.id - b.id));\n  const ultimoAbono = listaAbonos[listaAbonos.length - 1];\n  return ultimoAbono.fecha >= desde && ultimoAbono.fecha <= hasta;\n});\n\nconst round2 = (num) => Math.round((num + Number.EPSILON) * 100) / 100;\nconst fmtEuro = (num) => round2(num).toFixed(2);\n\nconst resumen = {\n  periodo_texto,\n  desde,\n  hasta,\n  total_ventas: round2(totalVentas),\n  total_abonos: round2(totalAbonos),\n  total_recaudacion: round2(totalRecaudacion),\n  total_pendiente: round2(totalPendiente),\n  nuevos_count: apartadosNuevos.length,\n  liquidados_count: apartadosLiquidados.length,\n  vencidos_count: valesMes.length,\n  ventas_count: ventas.length,\n  abonos_count: abonosMes.length\n};\n\nconst html = `<h2>📊 Informe mensual · Zapatería Paso Firme</h2>\n<p>Hola Marisa,</p>\n<p>Aquí tienes el resumen del negocio correspondiente a <b>${periodo_texto}</b> (${desde} al ${hasta}):</p>\n\n<h3>💰 Recaudación del mes anterior</h3>\n<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse; width: 100%; max-width: 500px;\">\n  <tr><td><b>Ventas directas (${resumen.ventas_count})</b></td><td style=\"text-align: right;\"><b>${fmtEuro(resumen.total_ventas)} €</b></td></tr>\n  <tr><td><b>Abonos de apartados (${resumen.abonos_count})</b></td><td style=\"text-align: right;\"><b>${fmtEuro(resumen.total_abonos)} €</b></td></tr>\n  <tr style=\"background-color: #f2f2f2;\"><td><b>Recaudación total mensual</b></td><td style=\"text-align: right;\"><b>${fmtEuro(resumen.total_recaudacion)} €</b></td></tr>\n</table>\n\n<h3>📦 Estado de los apartados</h3>\n<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse; width: 100%; max-width: 500px;\">\n  <tr><td><b>Total pendiente de cobro (lo que deben)</b></td><td style=\"text-align: right;\"><b>${fmtEuro(resumen.total_pendiente)} €</b></td></tr>\n  <tr><td><b>Apartados nuevos del mes</b></td><td style=\"text-align: right;\">${resumen.nuevos_count}</td></tr>\n  <tr><td><b>Apartados liquidados del mes</b></td><td style=\"text-align: right;\">${resumen.liquidados_count}</td></tr>\n  <tr><td><b>Apartados vencidos del mes</b></td><td style=\"text-align: right;\">${resumen.vencidos_count}</td></tr>\n</table>\n\n<br>\n<p>Zapatería Paso Firme · Gestión automatizada</p>`;\n\nreturn [{\n  json: {\n    ...resumen,\n    html\n  }\n}];"
+      }
+    },
+    {
+      "id": "email-informe-marisa-flujo07",
+      "name": "Enviar informe mensual a Marisa",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=📊 Informe mensual de {{ $json.periodo_texto }} · Zapatería Paso Firme",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "El día 1 de cada mes": {
+      "main": [
+        [
+          {
+            "node": "Calcular periodo del informe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Al ejecutar manualmente": {
+      "main": [
+        [
+          {
+            "node": "Calcular periodo del informe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular periodo del informe": {
+      "main": [
+        [
+          {
+            "node": "Consultar datos de la app",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar datos de la app": {
+      "main": [
+        [
+          {
+            "node": "Calcular métricas del informe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular métricas del informe": {
+      "main": [
+        [
+          {
+            "node": "Enviar informe mensual a Marisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "pFlujo08AvisoFallo"
+  }
+}
