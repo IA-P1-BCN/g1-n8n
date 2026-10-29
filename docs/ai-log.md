@@ -67,6 +67,21 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 
 
+### US-08 · Informe mensual ([#57](https://github.com/IA-P1-BCN/g1-n8n/issues/57), 2026-10-29)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(29/10)* «Siguiente tarea: US-08 · Informe mensual»
+- **Decisiones**:
+  - *Aceptar*: diseño con Spec-Driven Development (`specs/flujo-07-informe-mensual.md`), definiendo el disparador programado (día 1 de mes a las 08:00) y manual, entradas vía API de la tienda, salidas estructuradas por correo a Marisa y gestión de fallos mediante Flujo 08.
+  - *Aceptar*: implementación de `Flujo 07 · Informe mensual` (`workflows/flujo-07-informe-mensual.json`) con llamadas HTTP autenticadas con `API_KEY` leída del entorno (`$env.API_KEY`).
+  - *Aceptar*: cálculo exacto de recaudación mensual (ventas directas y abonos por separado), total pendiente de cobro (apartados activos) y conteos de apartados nuevos, liquidados y vencidos en el mes de referencia.
+  - *Aceptar*: suite e2e en `tests/us-08/` (`ayudantes.py` y `escenario-a-informe-dia-1.py`) comparando las métricas de la app de la tienda contra el correo generado en Mailpit, y versionado de la evidencia en `docs/evidencia/us-08/`.
+  - *Aceptar*: actualización del mapa de procesos en Mermaid (`docs/business/mapa-proceso-apartado/flujos.md`) y del catálogo de flujos en `README.md`.
+- **Errores → correcciones**: ninguno en esta tarea.
+- **Resultado**: Spec SDD, workflow JSON validado con `scripts/valida_flujos.py`, suite e2e automatizada con evidencia adjunta, y documentación/mapas actualizados.
+
+
+
 ### US-20 · Mapa del proceso de apartado ([#38](https://github.com/IA-P1-BCN/g1-n8n/issues/38), PR #128, 2026-10-28)
 
 - **Prompts (textuales de la sesión)**:
