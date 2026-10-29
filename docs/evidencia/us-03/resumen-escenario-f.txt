@@ -1,0 +1,8 @@
+PASS · F-fuera-de-plazo · precondición: apartado activo fuera de plazo · estado=activo limite=2026-10-19
+PASS · F-fuera-de-plazo · ejecución del Flujo 03 · success
+PASS · F-fuera-de-plazo · la app rechaza el abono (no se registra) · rechazo
+PASS · F-fuera-de-plazo · no se registró nada (solo el abono inicial) · abonos=1
+PASS · F-fuera-de-plazo · Marisa recibe el aviso de rechazo · ⚠️ Pago por Bizum/transferencia rechazado · revísalo
+PASS · F-fuera-de-plazo · el aviso trae el motivo (plazo vencido) · motivo presente
+
+total: 6 PASS / 0 FAIL

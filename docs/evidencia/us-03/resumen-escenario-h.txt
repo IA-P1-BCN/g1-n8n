@@ -1,0 +1,7 @@
+PASS · H-no-es-pago · ejecución del Flujo 03 · success
+PASS · H-no-es-pago · se ignora (rama «no es un pago») · ignorar
+PASS · H-no-es-pago · no llama a la IA ni a la app · Cuando el receptor llama, Normalizar aviso, ¿Es un pago?, No es un pago · ignorar
+PASS · H-no-es-pago · no se envía ningún correo · 0 correos en el buzón
+PASS · H-no-es-pago · no se crea ni toca ningún apartado · total apartados=0
+
+total: 5 PASS / 0 FAIL

@@ -1,0 +1,48 @@
+{
+  "id": "104",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "Modelo Groq",
+    "Extraer ordenante, importe y concepto",
+    "Normalizar datos del pago",
+    "Apartados activos",
+    "Decidir apartado",
+    "¿Registrar el abono?",
+    "Registrar abono",
+    "Motivo del rechazo",
+    "Avisar a Marisa · rechazo"
+  ],
+  "camino": "rechazo",
+  "extraccion": {
+    "ordenante": "LAURA O.",
+    "importe": 15,
+    "concepto": "deportivas",
+    "apartadoId": null,
+    "conceptoVacio": false
+  },
+  "decision": {
+    "decision": "registrar",
+    "motivo": "",
+    "ordenante": "LAURA O.",
+    "importe": 15,
+    "concepto": "deportivas",
+    "apartadoId": null,
+    "apartado": {
+      "id": 1,
+      "fecha": "2026-10-29",
+      "cliente": "Laura Ortega",
+      "telefono": null,
+      "email": "laura.ortega@prueba.local",
+      "producto": "Deportiva blanca",
+      "talla": "38",
+      "precio": 20,
+      "fecha_limite": "2027-01-27",
+      "estado": "activo",
+      "abonado": 10,
+      "pendiente": 10
+    }
+  }
+}

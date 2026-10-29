@@ -1,7 +1,7 @@
 PASS · apartado-vencido · el webhook acepta el evento · Workflow was started
-PASS · apartado-vencido · ejecución registrada en Executions · id 154
+PASS · apartado-vencido · ejecución registrada en Executions · id 135
 PASS · apartado-vencido · la ejecución termina bien · success
-PASS · apartado-vencido · el Switch lo manda a su rama · apartado.vencido · salidas=[0, 0, 0, 1, 0]
+PASS · apartado-vencido · el Switch lo manda a su rama · apartado.vencido · salidas=[0, 0, 0, 1, 0, 0]
 PASS · apartado-vencido · la rama lleva el evento apartado.vencido · apartado.vencido
 PASS · apartado-vencido · la rama queda a la espera del Flujo 06 · ['Webhook tienda', 'Evento y datos', 'Repartir por evento']
 

@@ -1,0 +1,47 @@
+{
+  "id": "86",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "Modelo Groq",
+    "Extraer ordenante, importe y concepto",
+    "Normalizar datos del pago",
+    "Apartados activos",
+    "Decidir apartado",
+    "¿Registrar el abono?",
+    "Registrar abono",
+    "Abono registrado · recibo vía Flujo 02"
+  ],
+  "camino": "registrado",
+  "extraccion": {
+    "ordenante": "SILVIA CORTES",
+    "importe": 5,
+    "concepto": "abono sandalias",
+    "apartadoId": null,
+    "conceptoVacio": false
+  },
+  "decision": {
+    "decision": "registrar",
+    "motivo": "",
+    "ordenante": "SILVIA CORTES",
+    "importe": 5,
+    "concepto": "abono sandalias",
+    "apartadoId": null,
+    "apartado": {
+      "id": 2,
+      "fecha": "2026-10-29",
+      "cliente": "Silvia Cortés",
+      "telefono": null,
+      "email": "silvia.cortes@prueba.local",
+      "producto": "Sandalia playa",
+      "talla": "38",
+      "precio": 30,
+      "fecha_limite": "2027-01-27",
+      "estado": "activo",
+      "abonado": 5,
+      "pendiente": 25
+    }
+  }
+}
