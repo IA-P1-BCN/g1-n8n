@@ -1,0 +1,33 @@
+{
+  "ID": "6GW4bvrdET6KDHfewMvthO",
+  "MessageID": "a74202d5-a1b8-3fac-b375-d1943f1aa6a2@paso-firme.local",
+  "From": {
+    "Name": "",
+    "Address": "n8n@paso-firme.local"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "cambia-esta-direccion@paso-firme.local"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [],
+  "ReplyTo": [],
+  "ReturnPath": "n8n@paso-firme.local",
+  "Subject": "📊 Informe mensual de septiembre de 2026 · Zapatería Paso Firme",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2026-10-29T12:45:51Z",
+  "Tags": [],
+  "Username": "",
+  "Text": "----------------------------------------\n📊 Informe mensual · Zapatería Paso Firme\n----------------------------------------\n\nHola Marisa,\n\nAquí tienes el resumen del negocio correspondiente a *septiembre de 2026* (2026-09-01 al 2026-09-30):\n\n💰 Recaudación del mes anterior\n------------------------------\n\n*Ventas directas (110)* *3868.75 €* *Abonos de apartados (21)* *289.00 €* *Recaudación total mensual* *4157.75 €*\n\n📦 Estado de los apartados\n-------------------------\n\n*Total pendiente de cobro (lo que deben)* *847.15 €* *Apartados nuevos del mes* 6 *Apartados liquidados del mes* 2 *Apartados vencidos del mes* 0\n\nZapatería Paso Firme · Gestión automatizada\n\n---\nThis email was sent automatically with n8n ( https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_232d8ba210b1ea7626d60d9833ffb181d7fa260c1c580eaab2ac9f28f4fd81ed )",
+  "HTML": "\r\n\t\t\t\t\t<h2>📊 Informe mensual · Zapatería Paso Firme</h2>\r\n<p>Hola Marisa,</p>\r\n<p>Aquí tienes el resumen del negocio correspondiente a <b>septiembre de 2026</b> (2026-09-01 al 2026-09-30):</p>\r\n\r\n<h3>💰 Recaudación del mes anterior</h3>\r\n<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse; width: 100%; max-width: 500px;\">\r\n  <tr><td><b>Ventas directas (110)</b></td><td style=\"text-align: right;\"><b>3868.75 €</b></td></tr>\r\n  <tr><td><b>Abonos de apartados (21)</b></td><td style=\"text-align: right;\"><b>289.00 €</b></td></tr>\r\n  <tr style=\"background-color: #f2f2f2;\"><td><b>Recaudación total mensual</b></td><td style=\"text-align: right;\"><b>4157.75 €</b></td></tr>\r\n</table>\r\n\r\n<h3>📦 Estado de los apartados</h3>\r\n<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse; width: 100%; max-width: 500px;\">\r\n  <tr><td><b>Total pendiente de cobro (lo que deben)</b></td><td style=\"text-align: right;\"><b>847.15 €</b></td></tr>\r\n  <tr><td><b>Apartados nuevos del mes</b></td><td style=\"text-align: right;\">6</td></tr>\r\n  <tr><td><b>Apartados liquidados del mes</b></td><td style=\"text-align: right;\">2</td></tr>\r\n  <tr><td><b>Apartados vencidos del mes</b></td><td style=\"text-align: right;\">0</td></tr>\r\n</table>\r\n\r\n<br>\r\n<p>Zapatería Paso Firme · Gestión automatizada</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_232d8ba210b1ea7626d60d9833ffb181d7fa260c1c580eaab2ac9f28f4fd81ed\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n",
+  "Size": 2473,
+  "Inline": [],
+  "Attachments": []
+}
