@@ -1,4 +1,4 @@
-﻿# Bitácora de IA
+# Bitácora de IA
 
 > Entregable 8 (US-21, [issue #41](https://github.com/IA-P1-BCN/g1-n8n/issues/41)) · trazabilidad de prompts y decisiones con el agente.
 > Convención: cada tarea del nivel Esencial añade una entrada en «Registro por tarea» (prompts textuales cuando la sesión los conservó; marcados *(reconstruido)* cuando se recuperan de issues/PRs) y todo error del agente va a la tabla de errores, con su corrección. Regla de equipo en [`AGENTS.md`](../AGENTS.md) («Trazabilidad»).
@@ -65,6 +65,29 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 - **Errores → correcciones**: ver tabla (E11 · buffered bajo task, E12 · carrera de arranque en frío).
 - **Resultado**: `task importar` probado end-to-end (importa 1 credencial + 4 flujos, 4 activados y rearranca); documentación nueva en README (`task install` → `task arrancar` → `task importar`, tabla de flujos y credenciales sin valores); stack sencillo de levantar de cero.
 
+
+
+### US-20 · Mapa del proceso de apartado ([#38](https://github.com/IA-P1-BCN/g1-n8n/issues/38), PR #128, 2026-10-28)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(28/10)* «Hagamos esta tarea: Mapa BPMN del proceso de apartado [US-20 #38]»
+  2. *(28/10)* «Quiero visualizar los dos diagramas… o dime la ruta exacta para abrirlos en bpmn.io. No modifiques nada ni hagas push»
+  3. *(28/10)* «Tenemos un error al intentar abrir los diagramas en bpmn.io: unsupported bpmnElement for BPMNPlane: …»
+  4. *(28/10)* «Haz PR» → PR #128 abierta; commit posterior del nº real en la bitácora
+  5. *(28/10)* «Haz pull de la main para traer los cambios» → entran US-17/#125 (receptor sin scaffold + fallback), US-18/#127 (`task demo`); conflicto de `AGENTS.md` resuelto en el PR (merge de main en la rama)
+  6. *(28/10)* «Elimina el readme.md … dentro de mapa-proceso-apartado. En el readme.md del proyecto añade solo los links para visualizar los diagramas»
+  7. *(28/10)* «Haz los flujos con mermaid, que en readme.md del proyecto esté el link para ver los flujos sin tener que arrastrar ficheros. No los hagas en BPMN. En el readme haz que el título sea legible, haz visibilidad de apartado»
+  8. *(29/10)* «clean the readme.md. Make it look polish and more readable.»
+- **Decisiones**:
+  - *Rechazar* (iteración final del equipo): los `.bpmn` y su «arrastrar a bpmn.io» — se sustituyen por **Mermaid** en `flujos.md`, que GitHub pinta al abrir la página; el README solo enlaza.
+  - *Rechazar*: README dedicado del mapa (2.ª iteración) — quedó sustituido por `flujos.md` como única página del mapa.
+  - *Aceptar*: el apartado del mapa pasa a **sección propia del README** (`### Mapa del proceso: hoy vs automatizado`, título legible y visible, no una subsección enterrada en los flujos).
+  - *Aceptar*: diagramas generados/editables con un script Python (temporal), dibujados solo con **lo construido** (Receptor · Webhook tienda, Flujos 01/02/08); ramas `venta.registrada`/`apartado.vencido` reservadas (04 · US-09, 06 · US-07, sin conectar) y Bizum a mano como notas honestas.
+  - *Aceptar*: tras el sync con main, la nota del Switch cita los flujos reservados con su número real (04 · venta, US-09; 06 · vencido, US-07).
+  - *Aceptar*: `task importar` tras traer cambios de main cuando toquen `workflows/` — el n8n local seguía con el Receptor viejo y `task test` fallaba de nombre/fallback (carrera de «executions» post-rearranque, un solo rerun y en verde).
+  - *Aceptar*: reestructuración y pulido del `README.md` (servicios con Swagger, mapa de proceso con tabla comparativa de valor de negocio, puesta en marcha secuencial en 5 pasos con callouts GitHub, catálogo de flujos, comandos de prueba con flags explícitos e inclusión de `task test`).
+- **Errores → correcciones**: ver tabla (E13 · inline de jq, E14 · namespaces y plane del BPMN, E15 · «Switchán»).
+- **Resultado**: `README.md` reestructurado y pulido sin pérdida de información; `docs/business/mapa-proceso-apartado/flujos.md` con los 2 bloques Mermaid (validados con `mermaid-cli`: 2/2 renderizan), link desde el README y regla actualizada en AGENTS.md; los `.bpmn` eliminados del repo.
 
 
 ### Dev · `task payload` para probar el receptor con payloads propios (2026-10-28)
@@ -137,6 +160,9 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 | E10 | 26/10 | `AGENTS.md` decía `docker exec g1-n8n-n8n-1` y el contenedor real es `paso-firme-n8n-1` (el compose se llama así) | «No such container» al exportar el flujo | Se usó el nombre real en toda la sesión; fichero corregido en esta PR | La documentación desactualizada del AGENTS.md guía al error (lo avisa el propio AGENTS.md) |
 | E11 | 28/10 | `task importar` colgado sin salida durante minutos: Python `stdout` va buffered en tuberías y el progreso de docker no se veía (el abort del usuario cortó una corrida que funcionaba) | Timeout de 5 min sin output | `python -u scripts/n8n-importar.py` en el task y salida paso a paso (`-u` + `print` con `·`) que ya existía | Con task/pipes, forzar unbuffered (`-u`) o se queda ciego qué está ejecutando |
 | E12 | 28/10 | La suite e2e falló justo tras `task importar` (n8n recién rearrancado): el webhook devolvía error de conexión (status 0) durante el arranque de n8n | 2 FAIL — «webhook acepta el evento» y «aviso recibido» | `webhook_datos` reintenta (ventana ~30 s) también ante error de conexión, no solo 404/200 | Tras un rearranque de n8n, espera a que el webhook responda: integrar el warm-up en los tests |
+| E13 | 28/10 | Consultas jq con comillas dentro de PowerShell se rompían («accepts 1 arg(s)») al ver sub-issues de la #38 | Fallos y salidas vacías del CLI | Inspeccionar la estructura real del JSON y procesarla con `ConvertFrom-Json` de PowerShell, sin jq | Ante un salido raro de `gh`, inspeccionar el JSON bruto y adaptar el recorrido, no repetir el mismo comando |
+| E14 | 28/10 | Los BPMN no abrían en bpmn.io: namespaces `dc`/`di` equivocados (20100923/20100924 en vez de los estándar DD/20100524) y el `BPMNPlane` apuntaba al Participant y no a la Collaboration | «unsupported bpmnElement for BPMNPlane» del usuario |_NS corregidos a `http://www.omg.org/spec/DD/20100524/{DC,DI}` y plane → `collab_*`; validación a nivel moddle (0 warnings) e importación del viewer | Los namespaces DI del BPMN 2.0 son exactos: BPMN/20100524/DI + DD/20100524/{DC,DI}; probar el fichero antes de darlo por bueno |
+| E15 | 28/10 | Nota del diagrama automatizado con texto corrupto («El Switchán») y `ConvertTo-Json` envolviendo el XML como objeto en la vista | Capturas del visor (texto y error «required args») | Texto corregido; vista regenerada con `json.dumps` de Python | Volver a pasar captura de pantalla antes de dar un diagrama por versionado |
 | E13 | 28/10 | `task importar` decía «Successfully imported» pero la instancia seguía con el nombre/opciones viejos: el script montaba el volumen `paso-firme_n8n_data` (nombre del proyecto anterior) mientras el stack usa `g1-n8n_n8n_data` | Comparar la API de n8n después de importar: `versionId` sin cambiar y el Switch sin `fallbackOutput` | El importador usa `docker compose run` del servicio `n8n` (misma imagen y volumen del compose, sin nombres a mano); se quitan `IMAGEN_N8N`/`VOLUMEN_N8N` del Taskfile | Un import que no falla no es un import que aplica: verifica el estado en la instancia, no el exit code |
 | E14 | 28/10 | El paso de activación fallaba con `EACCES: permission denied, open '/out/export.json'`: el CLI corre como `node` (uid 1000) y no puede escribir en el `mkdtemp` del host (0700, uid 501); `chmod 777` tampoco basta en macOS | Error del `export:workflow` dentro de `task importar` | Se exporta con `export:workflow --all --stdout` y se captura la salida en Python: sin fichero ni montaje `/out` | Para leer datos de un contenedor, `--stdout` + parseo en el host evita permisos de volúmenes |
 | E15 | 28/10 | `scripts/demo.py` calculaba `RAIZ` con `parents[2]` (fuera del repo): no encontraría el `.env` y la clave saldría vacía (`401`) | Revisión del script antes de ejecutarlo | `parents[1]` (la raíz del repo es el padre de `scripts/`) | Ruta de un fichero de `scripts/`: `parents[1]`, no `parents[2]`; revisar antes del primer run |

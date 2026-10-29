@@ -1,14 +1,48 @@
 # Paso Firme
 
-Orquestación de n8n sobre la API de la tienda: flujos de confirmación de apartados, ventas y notificaciones. Infrastructure local via docker-compose (tienda + n8n + MailPit).
+> Sistema de automatización y orquestación con **n8n** sobre la API de la zapatería Paso Firme. Automatiza el ciclo de vida de los apartados (confirmaciones, recibos de abonos y avisos) y la gestión de notificaciones a clientes y dependientes.
 
-## Instalación
+Infraestructura local orquestada mediante Docker Compose (`tienda` + `n8n` + `mailpit`).
 
-### Requisitos
+---
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Task](https://taskfile.dev/) (v3.54 o superior — el runner de `task install`, `task arrancar`, `task importar` y `task test`)
-- [Python](https://www.python.org/) (v3.11 o superior — scripts de la carpeta `scripts/`)
+## Servicios disponibles
+
+Una vez arrancado el stack, los siguientes servicios quedan disponibles en local:
+
+| Servicio | URL local | Descripción |
+|---|---|---|
+| **App de la tienda** | [http://localhost:8000](http://localhost:8000) | API de la tienda (SQLite en volumen persistente) y exportación a Excel |
+| **Documentación API** | [http://localhost:8000/docs](http://localhost:8000/docs) | Explorador interactivo Swagger para probar endpoints y webhooks |
+| **Editor de n8n** | [http://localhost:5678](http://localhost:5678) | Interfaz visual para construir, importar y monitorizar flujos |
+| **Mailpit** | [http://localhost:8025](http://localhost:8025) | Buzón de pruebas para inspeccionar los correos enviados por los flujos |
+
+---
+
+## Mapa del proceso: hoy vs automatizado
+
+El ciclo completo de apartado de la zapatería está modelado en **Mermaid** — [ver los flujos del proceso](docs/business/mapa-proceso-apartado/flujos.md): GitHub renderiza los diagramas directamente al abrir la página, sin necesidad de visores externos ni importar ficheros.
+
+### ¿Qué cambia con n8n?
+
+| Aspecto | Proceso actual (a mano) | Proceso automatizado (n8n) |
+|---|---|---|
+| **Registro del apartado** | Libreta de papel, post-its y calculadora | App web de la tienda con persistencia en base de datos |
+| **Confirmación al cliente** | Verbal en mostrador; el cliente no conserva comprobante | Correo automático con datos del apartado (`apartado.creado` → Flujo 01) |
+| **Recibos de abonos** | Anotación manual en libreta y cálculo mental del saldo | Correo automático con saldo restante o aviso de liquidación (`abono.registrado` → Flujo 02) |
+| **Control de vencidos** | Repaso manual diario de fichas (frecuentes olvidos) | Detección automática y emisión del Vale para la tienda (Flujo 06, reservado) |
+| **Cierre diario** | Suma manual de caja, tickets y reconciliación con el banco | Reconciliación automática de ventas y formas de pago (Flujo 04, reservado) |
+| **Gestión de incidencias** | Errores silenciosos que nadie nota | Flujo 08 captura fallos de ejecución y avisa de inmediato a Marisa (`errorWorkflow`) |
+
+---
+
+## Puesta en marcha
+
+### Requisitos previos
+
+- [Docker Desktop](https://docs.docker.com/get-docker/) (o daemon de Docker equivalente)
+- [Task](https://taskfile.dev/) (v3.54 o superior — runner de tareas del proyecto)
+- [Python](https://www.python.org/) (v3.11 o superior — para scripts de utilidades y suites de pruebas)
 
 ### 1. Clonar el repositorio
 
@@ -19,11 +53,16 @@ cd g1-n8n
 
 ### 2. Configurar el `.env`
 
+Genera el fichero de variables de entorno a partir de la plantilla:
+
 ```bash
 task install
 ```
 
-(Copia `.env.example` a `.env`; si ya existía, no lo sobreescribe.) Edita `.env`:
+> [!NOTE]
+> `task install` copia `.env.example` a `.env` únicamente si este no existe previamente; nunca sobreescribe tu configuración actual.
+
+Edita el fichero `.env` según tus necesidades:
 
 ```env
 API_KEY=cambia-esta-clave
@@ -31,160 +70,54 @@ N8N_WEBHOOK_URL=http://n8n:5678/webhook/tienda
 SEED=1
 ```
 
-> **Nota:** la clave `API_KEY` se obtiene dentro de la interfaz de n8n: **Settings > n8n API** (en el paso 5 verás cómo usarla en opencode). La suite `tests/us-17/` usa esa misma clave para leer las **executions** de n8n y comprobar a qué rama fue cada evento.
+- `API_KEY`: Clave que se genera en la interfaz de n8n (**Settings > n8n API**). La suite de tests `tests/us-17/` y el flag `--esperar` de `task payload` la usan para consultar las ejecuciones en la API interna de n8n.
+- `N8N_WEBHOOK_URL`: URL interna de red Docker por la que la app notifica al receptor de n8n.
+- `SEED`: Con `SEED=1` la tienda se inicializa con historial de datos la primera vez. Usa `SEED=0` para arrancar con base de datos vacía.
 
 ### 3. Arrancar los servicios
+
+Levanta los contenedores en segundo plano:
 
 ```bash
 task arrancar
 ```
 
-Después de la primera arrancada (o tras el `down -v`), importa flujos y credenciales: `task importar` (ver [paso 4](#4-flujos-de-n8n-importar-y-credenciales)).
+### 4. Importar flujos y credenciales en n8n
 
-| Servicio | URL                       | Descripción                                        |
-| -------- | ------------------------- | -------------------------------------------------- |
-| tienda   | http://localhost:8000     | API de la tienda (SQLite en volumen persistente)   |
-| n8n      | http://localhost:5678     | Editor de n8n                                      |
-| mailpit  | http://localhost:8025     | Buzón de pruebas: correos enviados por los flujos  |
-
-Con `SEED=1` la tienda se arranca con datos la primera vez (usa `SEED=0` para arrancar vacía).
-
-#### Datos frescos para la demo
-
-```bash
-task demo             # añade un juego de datos al que ya haya
-task demo -- --limpio # vacía antes la app y Mailpit: empieza de cero
-```
-
-`scripts/demo.py` crea por API (nada de SQL a mano) lo que hace falta para enseñar la tienda:
-
-- un **apartado nuevo** con su abono inicial y abonos parciales **hasta liquidarlo**;
-- uno **a punto de vencer** y otro **vencido con su vale**;
-- **ventas de hoy** por efectivo, tarjeta y bizum.
-
-Al final comprueba con `GET` que la API devuelve lo creado, y si algo falla sale con error. La salida termina con la **guía rápida de los escenarios**: qué apartado o venta prueba cada flujo y dónde mirarlo.
-
-`--limpio` (solo con el stack de docker compose) vacía apartados, abonos, ventas, vales y el buzón de Mailpit; **no toca n8n**, así que los flujos y las credenciales siguen donde estaban. Sin el flag, cada ejecución **añade** datos nuevos.
-
-| Flujo | Escenario de `task demo` | Qué mirar |
-|---|---|---|
-| 01 · Confirmación de apartado | el apartado liquidado | correo «Apartado confirmado» en Mailpit |
-| 02 · Recibo de cada abono | sus 3 abonos y el abono parcial del «por vencer» | correos «Recibo de tu abono» y «Último abono recibido» |
-| 04 · Cierre diario (pendiente) | ventas de hoy en efectivo, tarjeta y bizum | — |
-| 06 · Vencimiento y vale (pendiente) | el apartado vencido con su vale | — |
-| 08 · Aviso de fallo | no es un escenario de datos: se prueba forzando un fallo | — |
-
-Para probar un evento a mano (retocar algo o añadir un caso), duplica un fichero de `payloads/`, edítalo y lánzalo igual:
-
-```bash
-task payload -- payloads/venta-registrada.json --esperar
-```
-
-- `API_URL` (por defecto `http://localhost:8000`) para apuntar a otra app; `API_KEY` se lee del entorno o del `.env`.
-- Diferencia con `SEED=1`: el seed llena la tienda **una sola vez** al arrancar, con meses de historial; `task demo` añade un juego fresco **a demanda** sobre la app que ya está en marcha.
-
-### 4. Flujos de n8n: importar y credenciales
-
-Los flujos viven en `workflows/` y las credenciales que usan van en `credentials/` (en claro en el repo; n8n las cifra al importarlas). La importación **no es automática**: se lanza a voluntad con:
+Los flujos y credenciales del repositorio **no se cargan automáticamente** en el contenedor; deben importarse explícitamente:
 
 ```bash
 task importar
 ```
 
-(`scripts/n8n-importar.py`: para n8n, sube credenciales y flujos al CLI de n8n en contenedores one-shot del propio servicio `n8n` —misma imagen y mismo volumen de datos—, activa los flujos y rearranca n8n.) Lánzalo **al levantar el stack por primera vez** y **tras editar o añadir** cualquier JSON. En local el SMTP apunta a Mailpit (`mailpit:1025`, sin TLS), así que cualquier correo que envía un flujo se ve en http://localhost:8025.
-Si haces cambios en el editor de n8n, expórtalos al fichero exacto de `workflows/`:
+Este comando (`scripts/n8n-importar.py`):
+1. Detiene momentáneamente la instancia de n8n para evitar bloqueos en SQLite.
+2. Ejecuta un contenedor *one-shot* con el CLI oficial de n8n compartiendo el volumen de datos.
+3. Importa las credenciales desde `credentials/` y los flujos desde `workflows/`.
+4. Activa todos los flujos importados.
+5. Rearranca el servicio de n8n.
+
+> [!TIP]
+> Ejecuta `task importar` siempre tras levantar el stack por primera vez (o tras un `docker compose down -v`), así como cada vez que edites o descargues cambios en ficheros de `workflows/` o `credentials/`.
+
+Si modificas flujos desde la interfaz web de n8n, expórtalos al fichero correspondiente del repositorio:
 
 ```bash
 docker exec paso-firme-n8n-1 n8n export:workflow --all --stdout > workflows/flujo-nn-nombre.json
 ```
 
-#### Flujos incluidos
-
-| Flujo | Fichero en `workflows/` | Disparador | Credenciales / variables |
-|---|---|---|---|
-| Flujo 01 · Confirmación de apartado | `flujo-01-confirmacion-apartado.json` | evento `apartado.creado` vía receptor | SMTP Mailpit (pruebas) |
-| Flujo 02 · Recibo de cada abono | `flujo-02-recibo-de-cada-abono.json` | evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
-| Flujo 08 · Aviso de fallo | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara solo si otro flujo falla (el resto lo apuntan en sus ajustes) | SMTP Mailpit (pruebas) |
-| Receptor · Webhook tienda | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (la app avisa aquí) | — |
-
-#### Eventos del receptor
-
-Un único webhook publicado reparte los eventos de la app con un Switch (`Repartir por evento`); su spec está en [`specs/receptor-webhook-tienda.md`](specs/receptor-webhook-tienda.md).
-
-| Evento | Rama del Switch | Destino |
-|---|---|---|
-| `apartado.creado` | `apartado.creado` | Flujo 01 · Confirmación de apartado |
-| `abono.registrado` | `abono.registrado` | Flujo 02 · Recibo de cada abono |
-| `venta.registrada` | `venta.registrada` | reservada para el Flujo 04 (US-09) |
-| `apartado.vencido` | `apartado.vencido` | reservada para el Flujo 06 (US-07) |
-| *(cualquier otro)* | `evento desconocido` | no se pierde: queda visible en Executions |
-
-
-#### Credenciales y variables (lista completa, sin valores)
-
-| Credencial / variable | Tipo | Qué hay que configurar (valores en tu entorno, no en el repo) | La usan los flujos |
-|---|---|---|---|
-| `SMTP Mailpit (pruebas)` | SMTP | servidor (`mailpit` en la red de Docker), puerto, usuario y contraseña (Mailpit no los pide en local) y TLS desactivado | 01, 02 y 08 |
-| credencial SMTP real (producción) | SMTP u OAuth2 de Gmail | asignarla a los nodos de correo en lugar de la de Mailpit | 01, 02 y 08 |
-| `API_KEY` (`.env`) | variable de la app | clave que exige la API de la tienda; la generas en n8n con **Settings > n8n API** | app ↔ n8n |
-| `N8N_WEBHOOK_URL` (`.env`) | variable de la app | URL del receptor de n8n para los eventos de la tienda | todos los eventos |
-| `cambia-esta-direccion@paso-firme.local` | `toEmail` de los avisos a la tienda | **sustituir por el correo real de la tienda** antes de pasar a producción | 01, 02 y 08 |
-
-Ninguna credencial pide valores dentro de los JSON de `workflows/`: se referencian por id/nombre y los valores viven en `credentials/` (o en n8n) — nunca los subas al repo.
-
-Más documentación: [guía de la app](docs/guia-de-la-app.md) (para qué sirve cada endpoint y cómo probarlo) y [glosario del dominio](GLOSSARY.md) (Abono, Pendiente, Liquidado, Vale…, el vocabulario de flujos y mensajes) — o sigue abajo para probar el receptor con un payload propio.
-
-#### Probar el receptor con un payload propio
-
-En vez de escribir el JSON a mano en la terminal (se escapa mal, sobre todo en PowerShell), guárdalo en un fichero y lánzalo:
-
-```bash
-task payload -- payloads/venta-registrada.json
-```
-
-```
-· payload: payloads/venta-registrada.json
-· evento: venta.registrada
-· destino: http://localhost:5678/webhook/tienda
-· respuesta: 200 · {"message": "Workflow was started"}
-```
-
-Añade `--esperar` para ver en la terminal la ejecución y a qué rama del Switch fue (necesita la clave `API_KEY` del `.env`):
-
-```bash
-task payload -- payloads/abono-registrado.json --esperar
-```
-
-```
-· ejecución: 154 · success · último paso: Repartir por evento
-· rama: abono.registrado · 1 item(s)
-```
-
-Hay ejemplos listos para copiar y retocar en `payloads/` (`apartado-creado.json`, `abono-registrado.json`, `venta-registrada.json`, `apartado-vencido.json`). El mínimo es un objeto con `evento` y `datos`:
-
-```json
-{
-  "evento": "venta.registrada",
-  "datos": { "id": 501, "fecha": "2026-10-27", "concepto": "Botín piel marrón · 38", "importe": 89.9, "forma_pago": "efectivo" }
-}
-```
-
-- Destino: variable `N8N_URL` (por defecto `http://localhost:5678`) o `--url`. Ojo: el `.env` guarda `http://n8n:5678/...`, que es la URL interna de Docker para la app; desde el host usa la de por defecto.
-- `--esperar` espera la ejecución como máximo `--timeout` segundos (30 por defecto).
-- Códigos de salida: `0` bien · `1` fichero, JSON o `evento` inválido (o respuesta distinta de 200) · `2` uso. Al lanzarlo con `task`, cualquier fallo termina con el código 201 del propio task.
-
 ### 5. Configurar el MCP de n8n en opencode
 
-El proyecto ya incluye la configuración del MCP en `opencode.json` (`.opencode/mcp/n8n-mcp.cjs`). El arranque es cross-platform:
+El repositorio incluye la configuración lista para usar en `.opencode/mcp/n8n-mcp.cjs` y `opencode.json`:
 
-- **macOS**: no requiere instalación adicional (usa `npx` como fallback).
-- **Windows**: instala el paquete una única vez:
+- **macOS**: Funciona de forma automática vía `npx`.
+- **Windows**: Requiere instalar el paquete globalmente una sola vez:
 
   ```bash
   npm install -g n8n-mcp
   ```
 
-Después, abre el proyecto con opencode y el servidor MCP de n8n estará disponible. Las herramientas de documentación de nodos funcionan ya; si además quieres que gestione los workflows de tu n8n real, crea un token en n8n (Settings > n8n API) y añádelo al environment del MCP en `opencode.json`:
+Para habilitar la gestión activa de workflows desde opencode, añade tu API key de n8n en `opencode.json`:
 
 ```json
 "environment": {
@@ -192,3 +125,135 @@ Después, abre el proyecto con opencode y el servidor MCP de n8n estará disponi
   "N8N_API_KEY": "tu-clave"
 }
 ```
+
+---
+
+## Flujos de n8n
+
+### Catálogo de flujos incluidos
+
+| Flujo | Fichero en `workflows/` | Disparador | Credenciales / variables |
+|---|---|---|---|
+| **Flujo 01 · Confirmación de apartado** | `flujo-01-confirmacion-apartado.json` | Evento `apartado.creado` vía receptor | SMTP Mailpit (pruebas) |
+| **Flujo 02 · Recibo de cada abono** | `flujo-02-recibo-de-cada-abono.json` | Evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
+| **Flujo 08 · Aviso de fallo** | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara automáticamente si cualquier flujo falla | SMTP Mailpit (pruebas) |
+| **Receptor · Webhook tienda** | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (webhook único) | — |
+
+### Eventos del receptor y ramas del Switch
+
+Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la app y los distribuye mediante un nodo Switch (`Repartir por evento`). Su especificación formal está en [`specs/receptor-webhook-tienda.md`](specs/receptor-webhook-tienda.md).
+
+| Evento recibido | Rama del Switch | Destino / Tratamiento |
+|---|---|---|
+| `apartado.creado` | `apartado.creado` | **Flujo 01** · Confirmación de apartado |
+| `abono.registrado` | `abono.registrado` | **Flujo 02** · Recibo de cada abono |
+| `venta.registrada` | `venta.registrada` | Reservada para **Flujo 04** (Cierre diario · US-09) |
+| `apartado.vencido` | `apartado.vencido` | Reservada para **Flujo 06** (Vencimiento y Vale · US-07) |
+| *(cualquier otro)* | `evento desconocido` | Se registra en Executions de n8n sin perderse |
+
+### Credenciales y variables
+
+> [!IMPORTANT]
+> Los ficheros JSON de `workflows/` nunca contienen contraseñas ni claves en claro: solo referencian credenciales por identificador. Los valores sensibles residen en `credentials/` (o se configuran en n8n) y nunca deben subirse al repositorio.
+
+| Credencial / variable | Tipo | Configuración requerida | Utilizada por |
+|---|---|---|---|
+| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02 y 08 |
+| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02 y 08 |
+| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n |
+| `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
+| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02 y 08 |
+
+---
+
+## Pruebas y desarrollo
+
+### Datos frescos para la demo (`task demo`)
+
+Genera de forma limpia y por API los escenarios de prueba para demostrar el funcionamiento del sistema:
+
+```bash
+task demo             # Añade un juego de datos de prueba sobre el estado actual
+task demo -- --limpio # Vacía previamente la app y Mailpit para empezar de cero
+```
+
+- `--limpio`: Vacía apartados, abonos, ventas, vales y correos de Mailpit; **no altera n8n ni borra flujos/credenciales**.
+- Escenarios creados:
+  1. Un apartado nuevo con abonos sucesivos **hasta liquidarlo**.
+  2. Un apartado **a punto de vencer** y otro **vencido con su vale emitido**.
+  3. **Ventas del día** en efectivo, tarjeta y Bizum.
+
+#### Guía rápida de escenarios de demo
+
+| Flujo | Escenario de `task demo` | Dónde comprobar el resultado |
+|---|---|---|
+| **01 · Confirmación de apartado** | Apartado liquidado | Correo «Apartado confirmado» en Mailpit |
+| **02 · Recibo de cada abono** | Sus 3 abonos y el abono parcial del apartado «por vencer» | Correos «Recibo de tu abono» y «Último abono recibido» |
+| **04 · Cierre diario** *(pendiente)* | Ventas de hoy en efectivo, tarjeta y Bizum | Cuadre de caja |
+| **06 · Vencimiento y vale** *(pendiente)* | Apartado vencido con su vale | Emisión y archivo de vale |
+| **08 · Aviso de fallo** | No depende de datos: se prueba forzando un error | Correo de aviso técnico a Marisa |
+
+### Probar el receptor con un payload propio (`task payload`)
+
+Envía un evento simulado al receptor de n8n leyendo un fichero JSON:
+
+```bash
+task payload -- payloads/venta-registrada.json
+```
+
+```text
+· payload: payloads/venta-registrada.json
+· evento: venta.registrada
+· destino: http://localhost:5678/webhook/tienda
+· respuesta: 200 · {"message": "Workflow was started"}
+```
+
+Añade `--esperar` para inspeccionar la ejecución y la rama del Switch alcanzada (requiere `API_KEY` en `.env`):
+
+```bash
+task payload -- payloads/abono-registrado.json --esperar
+```
+
+```text
+· ejecución: 154 · success · último paso: Repartir por evento
+· rama: abono.registrado · 1 item(s)
+```
+
+- **Flags disponibles**:
+  - `--esperar`: Consulta la API de n8n hasta que termine la ejecución (o venza el timeout).
+  - `--url <URL>`: Destino alternativo (por defecto `http://localhost:5678`).
+  - `--timeout <segundos>`: Tiempo máximo de espera (30 s por defecto).
+- **Ficheros de ejemplo en `payloads/`**: `apartado-creado.json`, `abono-registrado.json`, `venta-registrada.json`, `apartado-vencido.json`. Estructura mínima requerida:
+
+  ```json
+  {
+    "evento": "venta.registrada",
+    "datos": {
+      "id": 501,
+      "fecha": "2026-10-27",
+      "concepto": "Botín piel marrón · 38",
+      "importe": 89.9,
+      "forma_pago": "efectivo"
+    }
+  }
+  ```
+
+### Ejecución de pruebas de aceptación (`task test`)
+
+Ejecuta las suites de pruebas de aceptación automatizadas de extremo a extremo:
+
+```bash
+task test             # Ejecuta todas las suites en tests/
+task test -- us-17    # Ejecuta únicamente la suite de una historia de usuario
+```
+
+---
+
+## Documentación del proyecto
+
+- [Glosario del dominio](GLOSSARY.md) — Términos y definiciones oficiales (*Apartado*, *Abono*, *Liquidado*, *Vale*…).
+- [Reglas del negocio](docs/business/business-rules.md) — Plazos, importes mínimos, políticas de vencimiento y vales.
+- [Datos de partida](docs/business/business-data.md) — Estructura del Excel histórico y notificaciones bancarias.
+- [Guía técnica de la app](docs/guia-de-la-app.md) — Detalle de endpoints, autenticación y base de datos.
+- [Mapa de flujos del proceso](docs/business/mapa-proceso-apartado/flujos.md) — Diagramas Mermaid de los flujos actual y automatizado.
+- [Bitácora de IA](docs/ai-log.md) — Trazabilidad de decisiones de diseño, prompts y resolución de incidencias.
