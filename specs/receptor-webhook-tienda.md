@@ -36,7 +36,7 @@ El Switch `Repartir por evento` compara `{{ $json.evento }}` con una regla por e
 |---|---|---|
 | `apartado.creado` | `Ejecutar Flujo 01` · Confirmación de apartado | conectada |
 | `abono.registrado` | `Ejecutar Flujo 02` · Recibo de cada abono | conectada |
-| `venta.registrada` | — | reservada para el Flujo 04 (US-09) |
+| `venta.registrada` | `Ejecutar Flujo 04` · Aviso de ventas grandes | conectada |
 | `apartado.vencido` | — | reservada para el Flujo 06 (US-07) |
 | `evento desconocido` (fallback) | — | el evento no se pierde: queda visible en la ejecución |
 
@@ -59,7 +59,7 @@ Los de la historia (issue #26), verificados por `tests/us-17/` y su evidencia en
 1. **Publicación** — el flujo está activo y atiende su Production URL `/webhook/tienda` (y no el webhook de pruebas): `escenario-a-publicacion.py`.
 2. **`apartado.creado`** — el Switch lo manda a su rama y esa rama ejecuta el Flujo 01: `escenario-b-apartado-creado.py`.
 3. **`abono.registrado`** — su rama, que ejecuta el Flujo 02: `escenario-c-abono-registrado.py`. El evento se lee del cuerpo (`$json.body.evento`, normalizado a `$json.evento` por `Evento y datos`).
-4. **`venta.registrada`** — su rama (sin destino aún): `escenario-d-venta-registrada.py`.
+4. **`venta.registrada`** — su rama, que ejecuta el Flujo 04 (US-09): `escenario-d-venta-registrada.py`.
 5. **`apartado.vencido`** — su rama (sin destino aún): `escenario-e-apartado-vencido.py`.
 
 La evidencia se lee en **Executions** (`GET /api/v1/executions/{id}`): el Switch guarda sus items por salida, así que el test comprueba que solo la rama esperada lleva el evento.

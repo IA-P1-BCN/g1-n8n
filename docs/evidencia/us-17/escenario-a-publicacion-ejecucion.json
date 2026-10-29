@@ -1,10 +1,10 @@
 {
-  "id": "129",
+  "id": "310",
   "workflowId": "HXZBeAF7TZrK4zfD",
   "status": "success",
   "mode": "webhook",
-  "startedAt": "2026-10-29T14:03:22.237Z",
-  "stoppedAt": "2026-10-29T14:03:22.255Z",
+  "startedAt": "2026-10-29T13:52:59.247Z",
+  "stoppedAt": "2026-10-29T13:52:59.443Z",
   "lastNodeExecuted": "Repartir por evento",
   "nodos": [
     "Webhook tienda",
@@ -16,7 +16,6 @@
     "abono.registrado": 0,
     "venta.registrada": 0,
     "apartado.vencido": 0,
-    "aviso.banco": 0,
     "fallback": 1
   },
   "eventoPorRama": {
@@ -24,7 +23,6 @@
     "abono.registrado": null,
     "venta.registrada": null,
     "apartado.vencido": null,
-    "aviso.banco": null,
     "fallback": "sonda.receptor"
   }
 }
