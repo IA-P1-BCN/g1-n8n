@@ -1,0 +1,13 @@
+{
+  "id": "118",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "No es un pago · ignorar"
+  ],
+  "camino": "ignorar",
+  "extraccion": null,
+  "decision": null
+}

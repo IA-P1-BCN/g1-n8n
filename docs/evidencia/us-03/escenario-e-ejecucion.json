@@ -1,0 +1,46 @@
+{
+  "id": "108",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "Modelo Groq",
+    "Extraer ordenante, importe y concepto",
+    "Normalizar datos del pago",
+    "Apartados activos",
+    "Decidir apartado",
+    "¿Registrar el abono?",
+    "Preguntar a Marisa"
+  ],
+  "camino": "preguntar",
+  "extraccion": {
+    "ordenante": "ROMERO D",
+    "importe": 10,
+    "concepto": "",
+    "apartadoId": null,
+    "conceptoVacio": true
+  },
+  "decision": {
+    "decision": "preguntar",
+    "motivo": "Ordenante abreviado y sin concepto: no se puede confirmar el apartado.",
+    "ordenante": "ROMERO D",
+    "importe": 10,
+    "concepto": "",
+    "apartadoId": null,
+    "apartado": {
+      "id": 1,
+      "fecha": "2026-10-29",
+      "cliente": "David Romero",
+      "telefono": null,
+      "email": "david.romero@prueba.local",
+      "producto": "Bailarina roja",
+      "talla": "38",
+      "precio": 40,
+      "fecha_limite": "2027-01-27",
+      "estado": "activo",
+      "abonado": 5,
+      "pendiente": 35
+    }
+  }
+}

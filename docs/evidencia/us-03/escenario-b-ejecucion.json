@@ -1,0 +1,47 @@
+{
+  "id": "92",
+  "status": "success",
+  "nodos": [
+    "Cuando el receptor llama",
+    "Normalizar aviso",
+    "¿Es un pago?",
+    "Modelo Groq",
+    "Extraer ordenante, importe y concepto",
+    "Normalizar datos del pago",
+    "Apartados activos",
+    "Decidir apartado",
+    "¿Registrar el abono?",
+    "Registrar abono",
+    "Abono registrado · recibo vía Flujo 02"
+  ],
+  "camino": "registrado",
+  "extraccion": {
+    "ordenante": "JORGE M.",
+    "importe": 20,
+    "concepto": "apartado 1 bota",
+    "apartadoId": 1,
+    "conceptoVacio": false
+  },
+  "decision": {
+    "decision": "registrar",
+    "motivo": "",
+    "ordenante": "JORGE M.",
+    "importe": 20,
+    "concepto": "apartado 1 bota",
+    "apartadoId": 1,
+    "apartado": {
+      "id": 1,
+      "fecha": "2026-10-29",
+      "cliente": "Jorge Martín",
+      "telefono": null,
+      "email": "jorge.martin@prueba.local",
+      "producto": "Bota montaña",
+      "talla": "38",
+      "precio": 60,
+      "fecha_limite": "2027-01-27",
+      "estado": "activo",
+      "abonado": 5,
+      "pendiente": 55
+    }
+  }
+}

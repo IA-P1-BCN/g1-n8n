@@ -1,0 +1,12 @@
+PASS · A-pago-claro · 01_bizum_carmen: ejecución del Flujo 03 · success
+PASS · A-pago-claro · 01_bizum_carmen: el flujo registra el abono · registrado
+PASS · A-pago-claro · 01_bizum_carmen: pendiente baja a 35.0 € · pendiente=35.0
+PASS · A-pago-claro · 01_bizum_carmen: el apartado sigue activo · activo
+PASS · A-pago-claro · 01_bizum_carmen: el cliente recibe su recibo (Flujo 02) · 👟 Recibo de tu abono · Zapatería Paso Firme
+PASS · A-pago-claro · 09_bizum_silvia: ejecución del Flujo 03 · success
+PASS · A-pago-claro · 09_bizum_silvia: el flujo registra el abono · registrado
+PASS · A-pago-claro · 09_bizum_silvia: pendiente baja a 20.0 € · pendiente=20.0
+PASS · A-pago-claro · 09_bizum_silvia: el apartado sigue activo · activo
+PASS · A-pago-claro · 09_bizum_silvia: el cliente recibe su recibo (Flujo 02) · 👟 Recibo de tu abono · Zapatería Paso Firme
+
+total: 10 PASS / 0 FAIL

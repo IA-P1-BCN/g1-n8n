@@ -1,0 +1,7 @@
+{
+  "evento": "aviso.banco",
+  "datos": {
+    "asunto": "Aviso de transferencia recibida",
+    "cuerpo": "Le informamos de que se ha abonado una transferencia en su cuenta ES** **** **** **** **** 4821.\n\nOrdenante ........ LUCIA GOMEZ PEREZ\nImporte .......... 12,00 EUR\nConcepto ......... Liquidar mocasines\nFecha valor ...... la de este aviso\n\nEste mensaje se ha generado automáticamente. Por favor, no responda.\n\nBanco Castaño"
+  }
+}
