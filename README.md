@@ -107,6 +107,15 @@ docker exec paso-firme-n8n-1 n8n export:workflow --all --stdout > workflows/fluj
 | Flujo 08 · Aviso de fallo | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara solo si otro flujo falla (el resto lo apuntan en sus ajustes) | SMTP Mailpit (pruebas) |
 | Receptor · Webhook tienda | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (la app avisa aquí) | — |
 
+#### Mapa del proceso (hoy vs automatizado)
+
+Los diagramas BPMN del proceso viven en [`docs/business/mapa-proceso-apartado/`](docs/business/mapa-proceso-apartado/):
+
+- [proceso-hoy.bpmn](docs/business/mapa-proceso-apartado/proceso-hoy.bpmn) — el proceso a mano (libreta, Excel, calculadora).
+- [proceso-automatizado.bpmn](docs/business/mapa-proceso-apartado/proceso-automatizado.bpmn) — el proceso con n8n.
+
+Para visualizarlos, arrastra el fichero a [bpmn.io](https://demo.bpmn.io) o importa el BPMN en Miro/Excalidraw.
+
 #### Eventos del receptor
 
 Un único webhook publicado reparte los eventos de la app con un Switch (`Repartir por evento`); su spec está en [`specs/receptor-webhook-tienda.md`](specs/receptor-webhook-tienda.md).

@@ -73,9 +73,15 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   1. *(28/10)* «Hagamos esta tarea: Mapa BPMN del proceso de apartado [US-20 #38]»
   2. *(28/10)* «Quiero visualizar los dos diagramas… o dime la ruta exacta para abrirlos en bpmn.io. No modifiques nada ni hagas push»
   3. *(28/10)* «Tenemos un error al intentar abrir los diagramas en bpmn.io: unsupported bpmnElement for BPMNPlane: …»
+  4. *(28/10)* «Haz PR» → PR #128 abierta; commit posterior del nº real en la bitácora
+  5. *(28/10)* «Haz pull de la main para traer los cambios» → entran US-17/#125 (receptor sin scaffold + fallback), US-18/#127 (`task demo`); conflicto de `AGENTS.md` resuelto en el PR (merge de main en la rama)
+  6. *(28/10)* «Elimina el readme.md … dentro de mapa-proceso-apartado. En el readme.md del proyecto añade solo los links para visualizar los diagramas»
 - **Decisiones**:
   - *Aceptar*: diagramas **BPMN 2.0** ficheros versionados (`proceso-hoy.bpmn`, `proceso-automatizado.bpmn` en `docs/business/mapa-proceso-apartado/`) generados con un script Python (temporal, no versionado) — el criterio pide BPMN/Miro/Excalidraw y así queda editable y exportable.
   - *Aceptar*: automatizado dibujado solo con **lo construido** (Receptor · Webhook tienda, Flujos 01/02/08); las ramas `venta.registrada`/`apartado.vencido` del Switch y los abonos a distancia van como **notas** de pendientes, no como flujos inventados.
+  - *Rechazar*: README dedicado del mapa y los bloques Mermaid duplicados (3.ª iteración del equipo): los `.bpmn` versionados + links en el README del proyecto bastan; sin doble mantenimiento.
+  - *Aceptar*: tras el sync con main, la nota del Switch cita los flujos reservados con su número real (04 · venta, US-09; 06 · vencido, US-07).
+  - *Aceptar*: `task importar` tras traer cambios de main cuando toquen `workflows/` — el n8n local seguía con el Receptor viejo y `task test` fallaba de nombre/fallback (carrera de «executions» post-rearranque, un solo rerun y en verde).
 - **Errores → correcciones**: ver tabla (E13 · inline de jq, E14 · namespaces y plane del BPMN, E15 · «Switchán»).
 - **Resultado**: los dos diagramas abren en bpmn.io y en las vistas locales (bpmn-js); validación con `bpmn-moddle` (0 warnings) e importación del viewer OK.
 

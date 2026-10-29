@@ -61,7 +61,7 @@
     </textAnnotation>
     <association id="assoc_nt_err" sourceRef="f08" targetRef="nt_err"/>
     <textAnnotation id="nt_recep">
-      <text>El Switch «Repartir por evento» también tiene salidas venta.registrada y apartado.vencido: aún sin conectar (US-03/US-04 pendientes).</text>
+      <text>El Switch «Repartir por evento» también tiene salidas venta.registrada (Flujo 04, US-09) y apartado.vencido (Flujo 06, US-07): aún sin conectar.</text>
     </textAnnotation>
     <association id="assoc_nt_recep" sourceRef="n_recep" targetRef="nt_recep"/>
     <textAnnotation id="nt_pago">
