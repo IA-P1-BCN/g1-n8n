@@ -184,6 +184,24 @@
           "mode": "id"
         }
       }
+    },
+    {
+      "id": "exec-flujo04",
+      "name": "Ejecutar Flujo 04",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        320
+      ],
+      "parameters": {
+        "mode": "once",
+        "workflowId": {
+          "__rl": true,
+          "value": "pFlujo04AvisoVentaGrande",
+          "mode": "id"
+        }
+      }
     }
   ],
   "connections": {
@@ -221,6 +239,13 @@
         [
           {
             "node": "Ejecutar Flujo 02",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ejecutar Flujo 04",
             "type": "main",
             "index": 0
           }

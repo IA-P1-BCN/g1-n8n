@@ -21,6 +21,7 @@ services:
       - GENERIC_TIMEZONE=Europe/Madrid
       - API_KEY=${API_KEY}
       - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - UMBRAL_VENTA_GRANDE=${UMBRAL_VENTA_GRANDE:-200}
       - N8N_RESTRICT_FILE_ACCESS_TO=/data-fuentes
       - N8N_DEFAULT_BINARY_DATA_MODE=default
     volumes:
