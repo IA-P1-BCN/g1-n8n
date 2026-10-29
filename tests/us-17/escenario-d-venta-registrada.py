@@ -2,7 +2,8 @@
 """Escenario D — `venta.registrada` (US-17, criterio 4).
 
 Envía el evento con el payload que manda la app al registrar una venta y comprueba en Executions que
-el Switch lo lleva a la rama `venta.registrada` (todavía sin sub-flujo: llegará con el Flujo 04, US-09).
+el Switch lo lleva a la rama `venta.registrada` sin que quiero toque los flujos 01/02 (el destino
+de la rama es el Flujo 04 · Aviso de ventas grandes, US-09).
 
 Uso:  python tests/us-17/escenario-d-venta-registrada.py
       (requiere n8n en N8N_URL, por defecto localhost, y la clave de n8n en API_KEY/.env)
@@ -39,7 +40,7 @@ def main():
     a.apuntar(PRUEBA, "la ejecución termina bien", ejecucion.get("status") == "success", str(ejecucion.get("status")))
 
     a.comprobar_reparto(PRUEBA, ejecucion, 2)
-    a.apuntar(PRUEBA, "la rama queda a la espera del Flujo 04", "Ejecutar Flujo 01" not in a.nodos(ejecucion) and "Ejecutar Flujo 02" not in a.nodos(ejecucion), str(a.nodos(ejecucion)))
+    a.apuntar(PRUEBA, "solo la rama venta.registrada sale del Switch", "Ejecutar Flujo 01" not in a.nodos(ejecucion) and "Ejecutar Flujo 02" not in a.nodos(ejecucion), str(a.nodos(ejecucion)))
 
     sys.exit(a.finalizar("resumen-escenario-d.txt"))
 
