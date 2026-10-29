@@ -67,7 +67,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 
 
-### US-08 · Informe mensual ([#57](https://github.com/IA-P1-BCN/g1-n8n/issues/57), 2026-10-29)
+### US-08 · Informe mensual ([#57](https://github.com/IA-P1-BCN/g1-n8n/issues/57), PR #130, 2026-10-29)
 
 - **Prompts (textuales de la sesión)**:
   1. *(29/10)* «Siguiente tarea: US-08 · Informe mensual»
