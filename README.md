@@ -33,6 +33,7 @@ El ciclo completo de apartado de la zapatería está modelado en **Mermaid** —
 | **Control de vencidos** | Repaso manual diario de fichas (frecuentes olvidos) | Detección automática y emisión del Vale para la tienda (Flujo 06, reservado) |
 | **Cierre diario** | Suma manual de caja, tickets y reconciliación con el banco | Reconciliación automática de ventas y formas de pago (Flujo 04, reservado) |
 | **Gestión de incidencias** | Errores silenciosos que nadie nota | Flujo 08 captura fallos de ejecución y avisa de inmediato a Marisa (`errorWorkflow`) |
+| **Migración del Excel antiguo** | Pasar filas del Excel una a una a mano | Flujo 09 limpia fechas/importes/nombres de `data/*.csv`, carga por API sin duplicar y envía informe de casos dudosos |
 
 ---
 
@@ -138,6 +139,7 @@ Para habilitar la gestión activa de workflows desde opencode, añade tu API key
 | **Flujo 02 · Recibo de cada abono** | `flujo-02-recibo-de-cada-abono.json` | Evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
 | **Flujo 07 · Informe mensual** | `flujo-07-informe-mensual.json` | Programado día 1 de mes (08:00) o manual | SMTP Mailpit (pruebas), `API_KEY` |
 | **Flujo 08 · Aviso de fallo** | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara automáticamente si cualquier flujo falla | SMTP Mailpit (pruebas) |
+| **Flujo 09 · Migración del Excel** | `flujo-09-migracion-excel.json` | *Manual Trigger*: lee `/data-fuentes/*.csv` (`./data:/data-fuentes:ro`), migra por API sin duplicar y envía informe de casos dudosos | SMTP Mailpit (pruebas), `API_KEY` (`.env`) |
 | **Receptor · Webhook tienda** | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (webhook único) | — |
 
 ### Eventos del receptor y ramas del Switch
@@ -164,6 +166,11 @@ Un único endpoint publicado (`/webhook/tienda`) recibe todos los eventos de la 
 | `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n |
 | `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
 | `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 07 y 08 |
+| `SMTP Mailpit (pruebas)` | SMTP | Host `mailpit`, puerto `1025`, sin autenticación ni TLS | Flujos 01, 02, 08 y 09 |
+| Credencial SMTP producción | SMTP / Gmail OAuth2 | Credenciales reales del servidor de correo de la tienda | Flujos 01, 02, 08 y 09 |
+| `API_KEY` (`.env`) | Token de API | Token generado en n8n (**Settings > n8n API**) | Comunicación app ↔ n8n (y Flujo 09) |
+| `N8N_WEBHOOK_URL` (`.env`) | URL HTTP | Dirección del receptor (`http://n8n:5678/webhook/tienda`) | Notificaciones de la app |
+| `cambia-esta-direccion@paso-firme.local` | Email destino | Sustituir por el correo real de Marisa antes de ir a producción | Flujos 01, 02, 08 y 09 |
 
 ---
 
@@ -193,6 +200,7 @@ task demo -- --limpio # Vacía previamente la app y Mailpit para empezar de cero
 | **04 · Cierre diario** *(pendiente)* | Ventas de hoy en efectivo, tarjeta y Bizum | Cuadre de caja |
 | **06 · Vencimiento y vale** *(pendiente)* | Apartado vencido con su vale | Emisión y archivo de vale |
 | **08 · Aviso de fallo** | No depende de datos: se prueba forzando un error | Correo de aviso técnico a Marisa |
+| **09 · Migración del Excel** | CSV reales de `data/` (montados en `/data-fuentes:ro`) | 7 apartados, 3 abonos y 6 ventas en la app + correo «Informe de migración del Excel» en Mailpit |
 
 ### Probar el receptor con un payload propio (`task payload`)
 

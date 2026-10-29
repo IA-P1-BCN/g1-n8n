@@ -1,0 +1,15 @@
+{
+  "id": "4nzlJt7BoBtfrw6LAy9Cn4",
+  "asunto": "📋 Informe de migración del Excel · casos dudosos para revisar",
+  "from": {
+    "Name": "",
+    "Address": "n8n@paso-firme.local"
+  },
+  "to": [
+    {
+      "Name": "",
+      "Address": "cambia-esta-direccion@paso-firme.local"
+    }
+  ],
+  "html": "\r\n\t\t\t\t\t<h2>📋 Informe de migración del Excel · Zapatería Paso Firme</h2><p>Hola Marisa, se ha ejecutado la migración de los ficheros CSV de la tienda.</p><h3>Resumen de la ejecución</h3><ul><li><b>Apartados creados ahora:</b> 0 (omitidos por existir ya: 7)</li><li><b>Abonos posteriores registrados ahora:</b> 0 (omitidos por existir ya: 3)</li><li><b>Ventas registradas ahora:</b> 0 (omitidas por existir ya: 6)</li><li><b>Casos dudosos NO cargados:</b> 2 fila(s)</li></ul><h3>⚠️ Casos dudosos de apartados/abonos (no cargados — pendientes de tu decisión)</h3><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Precio</th><th>Abono</th><th>Motivo</th></tr><tr><td>03/09/2026 (2026-09-03)</td><td><b>Lucía Gómez</b></td><td>Sandalia tacón negra (T37)</td><td>45 €</td><td>4 €</td><td>Abono inicial de 4 € inferior al mínimo permitido de 5 € · Nota: dijo que paga el resto el viernes</td></tr><tr><td>20/09/2026 (2026-09-20)</td><td><b>Lucía Gómez</b></td><td>Sandalia tacón negra (T37)</td><td>45 €</td><td>41 €</td><td>Abono posterior (41 €) dependiente del apartado dudoso de Lucía Gómez (abono inicial < 5 €) · Nota: LIQUIDADO - recogió</td></tr></table><h3>ℹ️ Filas excluidas de la hoja de ventas (totales a mano y abonos ya incluidos en apartados)</h3><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>Fecha</th><th>Concepto</th><th>Importe</th><th>Motivo</th></tr><tr><td>01/10/2026</td><td>Deportiva blanca T44 (abono inicial apartado)</td><td>5</td><td>Apunte de abono de apartado en hoja de ventas (se registra en su apartado para no duplicar)</td></tr><tr><td>03/10/2026</td><td>Abono Ana Torres mocasin</td><td>20</td><td>Apunte de abono de apartado en hoja de ventas (se registra en su apartado para no duplicar)</td></tr><tr><td>06/10/2026</td><td>Bailarina roja T36 (apartado)</td><td>10</td><td>Apunte de abono de apartado en hoja de ventas (se registra en su apartado para no duplicar)</td></tr><tr><td>TOTAL SEPTIEMBRE (a mano)</td><td>TOTAL SEPTIEMBRE (a mano)</td><td>1.842,30</td><td>Fila de suma manual o sin fecha válida</td></tr></table><p>Revisa los casos dudosos y regístralos manualmente en la app si procede. — Flujo 09</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_2b450c1056ff4f9622ec0b31937381bef9fbd7d4b76cadd7ebf8798799ff58b8\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n"
+}
