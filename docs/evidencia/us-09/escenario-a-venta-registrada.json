@@ -1,0 +1,10 @@
+{
+  "status": 201,
+  "respuesta": {
+    "id": 263,
+    "fecha": "2026-10-29",
+    "concepto": "Botín exótico edición limitada · 42",
+    "importe": 250.0,
+    "forma_pago": "tarjeta"
+  }
+}

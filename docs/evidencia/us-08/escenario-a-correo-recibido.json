@@ -1,6 +1,6 @@
 {
-  "ID": "6GW4bvrdET6KDHfewMvthO",
-  "MessageID": "a74202d5-a1b8-3fac-b375-d1943f1aa6a2@paso-firme.local",
+  "ID": "1xDl4OHjf1KX2JSgaX9gXp",
+  "MessageID": "c499b150-07ae-7e3a-f6f1-29bcc180451d@paso-firme.local",
   "From": {
     "Name": "",
     "Address": "n8n@paso-firme.local"
@@ -22,7 +22,7 @@
     "Errors": "",
     "HeaderPost": ""
   },
-  "Date": "2026-10-29T12:45:51Z",
+  "Date": "2026-10-29T13:48:10Z",
   "Tags": [],
   "Username": "",
   "Text": "----------------------------------------\n📊 Informe mensual · Zapatería Paso Firme\n----------------------------------------\n\nHola Marisa,\n\nAquí tienes el resumen del negocio correspondiente a *septiembre de 2026* (2026-09-01 al 2026-09-30):\n\n💰 Recaudación del mes anterior\n------------------------------\n\n*Ventas directas (110)* *3868.75 €* *Abonos de apartados (21)* *289.00 €* *Recaudación total mensual* *4157.75 €*\n\n📦 Estado de los apartados\n-------------------------\n\n*Total pendiente de cobro (lo que deben)* *847.15 €* *Apartados nuevos del mes* 6 *Apartados liquidados del mes* 2 *Apartados vencidos del mes* 0\n\nZapatería Paso Firme · Gestión automatizada\n\n---\nThis email was sent automatically with n8n ( https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_232d8ba210b1ea7626d60d9833ffb181d7fa260c1c580eaab2ac9f28f4fd81ed )",

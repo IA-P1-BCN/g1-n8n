@@ -65,7 +65,7 @@
       "typeVersion": 2,
       "position": [
         -20,
-        0
+        -140
       ],
       "parameters": {
         "jsCode": "const items = $input.all().map(i => i.json).filter(ap => ap && ap.id && ap.estado === 'activo' && ap.fecha_limite);\nconst hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' }).format(new Date());\nconst msHoy = Date.parse(`${hoy}T00:00:00Z`);\n\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.enviados) {\n  staticData.enviados = {};\n}\n\nlet asuntosMailpit = [];\ntry {\n  const resp = await this.helpers.httpRequest({\n    method: 'GET',\n    url: 'http://mailpit:8025/api/v1/messages?limit=200',\n    json: true\n  });\n  asuntosMailpit = (resp?.messages || []).map(m => String(m.Subject || ''));\n} catch (_e) {\n  asuntosMailpit = [];\n}\n\nconst seleccionados = [];\nfor (const ap of items) {\n  const msLimite = Date.parse(`${ap.fecha_limite}T00:00:00Z`);\n  const diasRestantes = Math.round((msLimite - msHoy) / 86400000);\n  if (diasRestantes !== 7 && diasRestantes !== 1) {\n    continue;\n  }\n\n  const claveAviso = `apartado-${ap.id}-aviso-${diasRestantes}d-${ap.fecha_limite}`;\n  const marcaId = `apartado nº ${ap.id}`;\n  const marcaPlazo = diasRestantes === 7 ? '7 días' : 'Mañana vence';\n  const marcaSinEmail = `Recordatorio sin email (${diasRestantes}d) · apartado nº ${ap.id}`;\n\n  const yaEnBuzon = asuntosMailpit.some(asunto =>\n    (asunto.includes(marcaId) && asunto.includes(marcaPlazo)) || asunto.includes(marcaSinEmail)\n  );\n  const yaEnStatic = Boolean(staticData.enviados[claveAviso]) && (asuntosMailpit.length === 0 || yaEnBuzon);\n\n  if (yaEnBuzon || yaEnStatic) {\n    continue;\n  }\n\n  staticData.enviados[claveAviso] = hoy;\n  const fechaLimiteEs = String(ap.fecha_limite).split('-').reverse().join('/');\n  seleccionados.push({\n    json: {\n      ...ap,\n      dias_restantes: diasRestantes,\n      fecha_limite_es: fechaLimiteEs,\n      clave_aviso: claveAviso\n    }\n  });\n}\n\nreturn seleccionados;"
@@ -78,7 +78,7 @@
       "typeVersion": 2.4,
       "position": [
         220,
-        0
+        -140
       ],
       "parameters": {
         "conditions": {
@@ -112,7 +112,7 @@
       "typeVersion": 2.4,
       "position": [
         460,
-        -80
+        -220
       ],
       "parameters": {
         "conditions": {
@@ -145,7 +145,7 @@
       "typeVersion": 2.1,
       "position": [
         720,
-        -180
+        -300
       ],
       "parameters": {
         "fromEmail": "n8n@paso-firme.local",
@@ -169,7 +169,7 @@
       "typeVersion": 2.1,
       "position": [
         720,
-        0
+        -140
       ],
       "parameters": {
         "fromEmail": "n8n@paso-firme.local",
@@ -193,7 +193,7 @@
       "typeVersion": 2.1,
       "position": [
         460,
-        140
+        -20
       ],
       "parameters": {
         "fromEmail": "n8n@paso-firme.local",
@@ -201,6 +201,162 @@
         "subject": "=👟 Recordatorio sin email ({{ $json.dias_restantes }}d) · apartado nº {{ $json.id }}",
         "emailFormat": "html",
         "html": "=<p>El apartado <b>nº {{ $json.id }}</b> de <b>{{ $json.cliente }}</b> vence en <b>{{ $json.dias_restantes }} día(s)</b> ({{ $json.fecha_limite_es }}) pero el cliente no tiene email registrado.</p><p>Producto: {{ $json.producto }} (talla {{ $json.talla }}) · Pendiente: <b>{{ $json.pendiente }} €</b> · Teléfono: {{ $json.telefono ?? 'no disponible' }}</p><p>Avisadle por teléfono para que no se le pase el plazo. — Flujo 06</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      }
+    },
+    {
+      "id": "seleccionar-fuera-de-plazo-flujo06",
+      "name": "Seleccionar apartados fuera de plazo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        220
+      ],
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json).filter(ap => ap && ap.id && ap.estado === 'activo' && ap.fecha_limite);\nconst hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' }).format(new Date());\nconst msHoy = Date.parse(`${hoy}T00:00:00Z`);\n\nconst fueraDePlazo = [];\nfor (const ap of items) {\n  const msLimite = Date.parse(`${ap.fecha_limite}T00:00:00Z`);\n  const diasRestantes = Math.round((msLimite - msHoy) / 86400000);\n  if (diasRestantes < 0) {\n    const fechaLimiteEs = String(ap.fecha_limite).split('-').reverse().join('/');\n    fueraDePlazo.push({\n      json: {\n        ...ap,\n        dias_restantes: diasRestantes,\n        fecha_limite_es: fechaLimiteEs\n      }\n    });\n  }\n}\n\nreturn fueraDePlazo;"
+      }
+    },
+    {
+      "id": "vencer-apartado-api-flujo06",
+      "name": "Vencer apartado por API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        220
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "=http://tienda:8000/api/apartados/{{ $json.id }}/vencer",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $env.API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "if-email-vencido-flujo06",
+      "name": "¿El cliente del apartado vencido tiene email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        460,
+        180
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-email-vencido-flujo06",
+              "leftValue": "={{ $json.apartado.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "email-vale-cliente-flujo06",
+      "name": "Enviar vale por apartado vencido al cliente",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        120
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "={{ $json.apartado.email }}",
+        "subject": "=🎟️ Tu vale por apartado vencido ({{ $json.vale.codigo }}) · Zapatería Paso Firme",
+        "emailFormat": "html",
+        "html": "=<h2>🎟️ Tu vale en Zapatería Paso Firme</h2><p>Hola {{ $json.apartado.cliente }},</p><p>El plazo de 90 días de tu apartado nº <b>{{ $json.apartado.id }}</b> (fecha límite {{ $json.apartado.fecha_limite }}) ha vencido.</p><p>Para que no pierdas el dinero que habías adelantado, hemos generado un <b>vale</b> por el total abonado que puedes usar en cualquier compra en nuestra tienda:</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Código del vale</b></td><td><b>{{ $json.vale.codigo }}</b></td></tr><tr><td><b>Importe del vale</b></td><td><b>{{ Number($json.vale.importe).toFixed(2) }} €</b> ({{ $json.vale.importe }} €)</td></tr><tr><td><b>Producto apartado</b></td><td>{{ $json.apartado.producto }} (talla {{ $json.apartado.talla }})</td></tr></table><p>Presenta el código <b>{{ $json.vale.codigo }}</b> en tienda cuando quieras canjearlo.</p><p>Zapatería Paso Firme</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      }
+    },
+    {
+      "id": "email-vale-sin-correo-flujo06",
+      "name": "Avisar a la tienda (vale sin email)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        280
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=🎟️ Vale generado sin email ({{ $json.vale.codigo }}) · apartado nº {{ $json.apartado.id }}",
+        "emailFormat": "html",
+        "html": "=<p>El apartado <b>nº {{ $json.apartado.id }}</b> de <b>{{ $json.apartado.cliente }}</b> ha vencido y se ha generado el vale <b>{{ $json.vale.codigo }}</b> por <b>{{ Number($json.vale.importe).toFixed(2) }} €</b>, pero el cliente no tiene email registrado.</p><p>Teléfono: {{ $json.apartado.telefono ?? 'no disponible' }} · Producto: {{ $json.apartado.producto }} (talla {{ $json.apartado.talla }})</p><p>Avisadle por teléfono de su vale. — Flujo 06</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      }
+    },
+    {
+      "id": "agrupar-zapatos-venta-flujo06",
+      "name": "Agrupar zapatos que vuelven a la venta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        420
+      ],
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json).filter(x => x && x.apartado && x.vale);\nif (items.length === 0) {\n  return [];\n}\n\nconst filas = items.map(({ apartado, vale }) => {\n  const importe = Number(vale.importe || 0).toFixed(2);\n  return `<tr><td>#${apartado.id}</td><td><b>${apartado.producto}</b></td><td>${apartado.talla}</td><td>${apartado.cliente}</td><td><code>${vale.codigo}</code> (${importe} €)</td><td>${apartado.fecha_limite}</td></tr>`;\n}).join('');\n\nconst tablaHtml = `<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><thead><tr><th>Apartado</th><th>Producto</th><th>Talla</th><th>Cliente</th><th>Vale generado</th><th>Fecha límite</th></tr></thead><tbody>${filas}</tbody></table>`;\n\nreturn [\n  {\n    json: {\n      total_vencidos: items.length,\n      tabla_html: tablaHtml,\n      vencidos: items\n    }\n  }\n];"
+      }
+    },
+    {
+      "id": "email-marisa-zapatos-venta-flujo06",
+      "name": "Avisar a Marisa de zapatos que vuelven a la venta",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        420
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=👟 Apartados vencidos hoy: {{ $json.total_vencidos }} par(es) vuelven a la venta · Zapatería Paso Firme",
+        "emailFormat": "html",
+        "html": "=<h2>👟 Zapatos de apartados vencidos que vuelven a la venta</h2><p>Hola Marisa,</p><p>Hoy se han vencido <b>{{ $json.total_vencidos }}</b> apartado(s) fuera de plazo. La app ya ha generado el vale de cada cliente y estos pares de zapatos pueden volver a ponerse a la venta en la tienda:</p>{{ $json.tabla_html }}<p>— Flujo 06 · Zapatería Paso Firme</p>",
         "options": {}
       },
       "credentials": {
@@ -239,6 +395,11 @@
         [
           {
             "node": "Seleccionar vencimientos a 7 y 1 día",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Seleccionar apartados fuera de plazo",
             "type": "main",
             "index": 0
           }
@@ -286,6 +447,62 @@
         [
           {
             "node": "Enviar recordatorio de 7 días al cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seleccionar apartados fuera de plazo": {
+      "main": [
+        [
+          {
+            "node": "Vencer apartado por API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vencer apartado por API": {
+      "main": [
+        [
+          {
+            "node": "¿El cliente del apartado vencido tiene email?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Agrupar zapatos que vuelven a la venta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿El cliente del apartado vencido tiene email?": {
+      "main": [
+        [
+          {
+            "node": "Enviar vale por apartado vencido al cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar a la tienda (vale sin email)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agrupar zapatos que vuelven a la venta": {
+      "main": [
+        [
+          {
+            "node": "Avisar a Marisa de zapatos que vuelven a la venta",
             "type": "main",
             "index": 0
           }

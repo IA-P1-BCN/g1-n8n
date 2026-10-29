@@ -1,0 +1,150 @@
+{
+  "name": "Flujo 04 · Aviso de ventas grandes",
+  "id": "pFlujo04AvisoVentaGrande",
+  "nodes": [
+    {
+      "id": "trigger-flujo04",
+      "name": "Cuando el receptor llama",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -260,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    },
+    {
+      "id": "umbral-flujo04",
+      "name": "Umbral de venta grande",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// El umbral vive en la variable UMBRAL_VENTA_GRANDE (no en el flujo): si su valor no\n// se puede usar, cae al 200 por defecto en vez de romper el aviso.\nconst crudo = String($env.UMBRAL_VENTA_GRANDE ?? '').trim();\nlet umbral = Number(crudo);\nif (!Number.isFinite(umbral) || umbral <= 0) {\n  umbral = 200;\n}\n\nconst datos = $input.first().json.datos ?? {};\nconst importe = Number(datos.importe);\nconst es_venta_grande = Number.isFinite(importe) && importe > umbral;\nreturn [{ json: { evento: $input.first().json.evento, datos, umbral, es_venta_grande } }];"
+      }
+    },
+    {
+      "id": "if-umbral-flujo04",
+      "name": "¿Supera el umbral?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "venta-grande",
+              "leftValue": "={{ $json.es_venta_grande }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "email-aviso-flujo04",
+      "name": "Enviar aviso a Marisa",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        460,
+        -120
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=🧾 Venta grande · {{ $json.datos.importe }} € · {{ $json.datos.concepto }}",
+        "emailFormat": "html",
+        "html": "=<h2>🧾 Venta grande</h2><p>Se ha registrado en la app una venta por encima del umbral ({{ $json.umbral }} €):</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Concepto</b></td><td>{{ $json.datos.concepto }}</td></tr><tr><td><b>Importe</b></td><td>{{ $json.datos.importe }} €</td></tr><tr><td><b>Forma de pago</b></td><td>{{ $json.datos.forma_pago }}</td></tr><tr><td><b>Fecha</b></td><td>{{ $json.datos.fecha.split(\"-\").reverse().join(\"/\") }}</td></tr><tr><td><b>Venta nº</b></td><td>{{ $json.datos.id }}</td></tr></table><p>Por si quieres retocar la caja a la vista. — Flujo 04</p>",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      },
+      "webhookId": "a417d94d-5d19-4fdc-8f75-21532d956b1c"
+    },
+    {
+      "id": "skip-flujo04",
+      "name": "Sin aviso (venta pequeña)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        460,
+        140
+      ],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Cuando el receptor llama": {
+      "main": [
+        [
+          {
+            "node": "Umbral de venta grande",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Umbral de venta grande": {
+      "main": [
+        [
+          {
+            "node": "¿Supera el umbral?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Supera el umbral?": {
+      "main": [
+        [
+          {
+            "node": "Enviar aviso a Marisa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sin aviso (venta pequeña)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "pFlujo08AvisoFallo"
+  },
+  "active": true
+}

@@ -1,0 +1,5 @@
+PASS · umbral-cambiado · cambiar el umbral en la variable sin editar el flujo · .env 300 € → n8n 300 €
+PASS · umbral-cambiado · una venta entre el umbral antiguo y el nuevo NO llega aviso · venta 260 € con umbral 300 €; sin aviso en 25 s
+PASS · umbral-cambiado · una venta sobre el nuevo umbral SÍ llega aviso · venta 340 € con umbral 300 €; aviso ID=4yQ6DQU8zji6AK9kdkA9YJ
+
+total: 3 PASS / 0 FAIL

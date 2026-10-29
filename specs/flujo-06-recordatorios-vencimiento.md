@@ -42,7 +42,7 @@ Flujo programado diario con soporte de ejecución manual para pruebas y demostra
    - Nodo: `Avisar a la tienda (cliente sin email)` (`toEmail: cambia-esta-direccion@paso-firme.local`).
    - Asunto: `👟 Recordatorio sin email ({dias_restantes}d) · apartado nº {id}`
    - Cuerpo (HTML): avisa a Marisa/Dependienta con el teléfono del cliente, el importe `pendiente` y la `fecha_limite` para que le avisen por teléfono, sin que el flujo falle.
-4. Ninguna rama de US-06 modifica el estado del apartado en la app (el vencimiento de apartados fuera de plazo con generación de **Vale** corresponde a US-07).
+4. Para los apartados cuyo plazo aún no ha vencido (`dias_restantes === 7` o `dias_restantes === 1`), no se modifica el estado en la app. Los apartados activos fuera de plazo (`dias_restantes < 0`) se vencen por API en una segunda rama del mismo flujo según [`specs/flujo-06-apartados-vencidos-vale.md`](flujo-06-apartados-vencidos-vale.md) (US-07).
 
 ## Casos de error
 
