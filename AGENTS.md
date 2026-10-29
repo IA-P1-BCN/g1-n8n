@@ -59,6 +59,7 @@ Usamos agente Opencode y MCP n8n-mcp. Trazabilidad de prompts, decisiones y erro
 
 ## Importar / exportar flujos
 - **Importar:** manual, a voluntad — `task importar` (`scripts/n8n-importar.py`, Python: para n8n, sube `credentials/` y `workflows/` al CLI de n8n en contenedores one-shot con el volumen de datos, activa los flujos y lo rearranca). Lánzalo al levantar el stack por primera vez y tras editar cualquier JSON.
+- **Cada nuevo flujo (o cambio de ramas del receptor):** actualiza los flujos en Mermaid de `docs/business/mapa-proceso-apartado/flujos.md` (y su link en el README) en la misma PR.
 - **Exportar:** desde el editor de n8n (Download) o CLI al fichero exacto de `workflows/`:
   `docker exec paso-firme-n8n-1 n8n export:workflow --id=<ID> --stdout > workflows/flujo-nn-nombre.json`
 - **Credenciales:** en el JSON solo se referencian por id/nombre; los valores van en `credentials/` (n8n las cifra al subirlas), nunca en claro dentro del workflow.
