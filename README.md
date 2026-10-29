@@ -193,6 +193,19 @@ task demo -- --limpio # Vacía previamente la app y Mailpit para empezar de cero
 | **06 · Vencimiento y vale** *(pendiente)* | Apartado vencido con su vale | Emisión y archivo de vale |
 | **08 · Aviso de fallo** | No depende de datos: se prueba forzando un error | Correo de aviso técnico a Marisa |
 
+### Avisos del banco en Mailpit (`task correos`)
+
+Carga en el buzón de Mailpit los avisos del banco de [`data/correos/`](data/correos/) (Bizum, transferencias y publicidad de **bancos ficticios** sobre dominios reservados `.example`), que es la entrada que leerá el **Flujo 03 · Abonos a distancia**:
+
+```bash
+task correos             # Entrega los 9 avisos a Mailpit (http://localhost:8025)
+task correos -- --limpio # Vacía antes el buzón para empezar de cero
+```
+
+- `--limpio`: Vacía el buzón de Mailpit antes de cargar (no toca la app ni n8n).
+- `--solo 01,03`: Carga solo esos avisos, por el prefijo del nombre del fichero.
+- Cada aviso conserva su importe, ordenante y concepto; el script comprueba al final que todos están en el buzón y lista remitente e importe. Los tres bancos ficticios (`Banco Peralta`, `Caja Rivera`, `Banco Castaño`) permiten verificar que el flujo no depende de un único remitente.
+
 ### Probar el receptor con un payload propio (`task payload`)
 
 Envía un evento simulado al receptor de n8n leyendo un fichero JSON:
