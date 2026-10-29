@@ -57,6 +57,7 @@ flowchart LR
         m3["Entrega la mercancía y archiva el Vale (a mano)"]
         m4["Recibe el Informe mensual por correo el día 1"]
         m5["Revisa los avisos que le manda n8n (pagos dudosos o rechazados)"]
+        m6["Recibe el cierre de caja cada noche"]
     end
 
     subgraph LaneBanco["Lane · Banco"]
@@ -95,6 +96,8 @@ flowchart LR
         f8["Flujo 08 · Aviso de fallo a Marisa"]
         f9["Flujo 09 · Migración del Excel antiguo (data/*.csv → API sin duplicados)"]
         f9m["Enviar correo «Informe de migración del Excel» (casos dudosos)"]
+        f5["Flujo 05 · Cierre diario (programado cada noche)"]
+        f5m["Enviar correo «Cierre de caja» a Marisa"]
     end
 
     c1 --> m1
@@ -136,6 +139,10 @@ flowchart LR
     f6 -.-> f8
     f7 -.-> f8
     f9 -.-> f8
+    f5 -.-> f8
+    a1 -- "GET /api/ventas y /api/abonos del día" --> f5
+    f5 --> f5m
+    f5m --> m6
     f7 --> f7m
     f7m --> m4
     f9 -- "POST /api/apartados · abonos · ventas" --> a1
@@ -143,4 +150,4 @@ flowchart LR
     n3 -- "Cualquier otro evento" --> fx
 ```
 
-El **Flujo 03 · Abonos a distancia** reconcilia Bizum y transferencia: la IA (Groq) solo extrae ordenante, importe y concepto, y el flujo decide con la API (registra el Abono —que dispara el recibo del Flujo 02— o pregunta/avisa a Marisa si es dudoso o lo rechaza la app). La migración puntual de las hojas antiguas (`data/*.csv`) corre en el **Flujo 09** y el informe mensual (**Flujo 07**) se ejecuta el día 1. El aviso de fallo (**Flujo 08**) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.
+El **Flujo 03 · Abonos a distancia** reconcilia Bizum y transferencia: la IA (Groq) solo extrae ordenante, importe y concepto, y el flujo decide con la API (registra el Abono —que dispara el recibo del Flujo 02— o pregunta/avisa a Marisa si es dudoso o lo rechaza la app). El **Flujo 05 · Cierre diario** se ejecuta cada noche y manda a Marisa lo cobrado del día (ventas + abonos) por forma de pago. La migración puntual de las hojas antiguas (`data/*.csv`) corre en el **Flujo 09** y el informe mensual (**Flujo 07**) se ejecuta el día 1. El aviso de fallo (**Flujo 08**) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.

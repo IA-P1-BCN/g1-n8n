@@ -1,0 +1,10 @@
+PASS · A-con-movimientos · el flujo se ejecuta sin error · }
+PASS · A-con-movimientos · el asunto lleva la fecha del día · 🧾 Cierre de caja del 29/10/2026 · Zapatería Paso Firme
+PASS · A-con-movimientos · separa por forma de pago (efectivo, tarjeta y bizum) · las tres formas en el cuerpo
+PASS · A-con-movimientos · total de ventas coincide con la app (35.50 €)
+PASS · A-con-movimientos · total de abonos coincide con la app (23.00 €)
+PASS · A-con-movimientos · total del día coincide con la app (58.50 €)
+PASS · A-con-movimientos · total en efectivo correcto (25.00 €)
+PASS · A-con-movimientos · total en tarjeta correcto (28.50 €)
+
+total: 8 PASS / 0 FAIL

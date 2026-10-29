@@ -1,0 +1,97 @@
+{
+  "name": "Flujo 05 · Cierre diario",
+  "id": "pFlujo05CierreDiario",
+  "nodes": [
+    {
+      "id": "trigger-schedule-flujo05",
+      "name": "Cada noche a las 22:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-400, -100],
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "0 22 * * *" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "trigger-manual-flujo05",
+      "name": "Al ejecutar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-400, 100],
+      "parameters": {}
+    },
+    {
+      "id": "calcular-dia-flujo05",
+      "name": "Calcular el día del cierre",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-160, 0],
+      "parameters": {
+        "jsCode": "const input = $input.first()?.json || {};\nlet fecha = input.fecha;\nif (!fecha) {\n  const hoy = new Date();\n  const pad = (n) => String(n).padStart(2, '0');\n  fecha = `${hoy.getFullYear()}-${pad(hoy.getMonth() + 1)}-${pad(hoy.getDate())}`;\n}\nreturn [{ json: { fecha } }];"
+      }
+    },
+    {
+      "id": "consultar-cobros-flujo05",
+      "name": "Consultar cobros del día",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [80, 0],
+      "parameters": {
+        "jsCode": "const fecha = $input.first().json.fecha;\nconst apiKey = $env.API_KEY;\nconst baseUrl = 'http://tienda:8000';\nconst headers = { 'X-API-Key': apiKey, 'Content-Type': 'application/json' };\nconst ventas = await this.helpers.httpRequest({ method: 'GET', url: `${baseUrl}/api/ventas?desde=${fecha}&hasta=${fecha}`, headers, json: true });\nconst abonos = await this.helpers.httpRequest({ method: 'GET', url: `${baseUrl}/api/abonos?desde=${fecha}&hasta=${fecha}`, headers, json: true });\nreturn [{ json: { fecha, ventas: Array.isArray(ventas) ? ventas : [], abonos: Array.isArray(abonos) ? abonos : [] } }];"
+      }
+    },
+    {
+      "id": "calcular-cierre-flujo05",
+      "name": "Calcular el cierre del día",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [320, 0],
+      "parameters": {
+        "jsCode": "const { fecha, ventas, abonos } = $input.first().json;\nconst FORMAS = ['efectivo', 'tarjeta', 'bizum'];\nconst ETIQUETA = { efectivo: 'Efectivo', tarjeta: 'Tarjeta', bizum: 'Bizum' };\nconst round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;\nconst fmt = (n) => round2(n).toFixed(2);\nconst porForma = {};\nfor (const f of FORMAS) porForma[f] = { ventas: 0, abonos: 0, total: 0 };\nlet totalVentas = 0, totalAbonos = 0;\nfor (const v of ventas) { const f = FORMAS.includes(v.forma_pago) ? v.forma_pago : 'efectivo'; const imp = Number(v.importe || 0); porForma[f].ventas += imp; totalVentas += imp; }\nfor (const a of abonos) { const f = FORMAS.includes(a.forma_pago) ? a.forma_pago : 'efectivo'; const imp = Number(a.importe || 0); porForma[f].abonos += imp; totalAbonos += imp; }\nfor (const f of FORMAS) porForma[f].total = porForma[f].ventas + porForma[f].abonos;\nconst totalDia = totalVentas + totalAbonos;\nconst sinMovimientos = ventas.length === 0 && abonos.length === 0;\nconst [aa, mm, dd] = fecha.split('-');\nconst fechaTexto = `${dd}/${mm}/${aa}`;\nlet html;\nif (sinMovimientos) {\n  html = `<h2>🧾 Cierre de caja · ${fechaTexto}</h2><p>Hola Marisa,</p><p><b>Hoy no hubo movimientos</b>: ni ventas ni abonos registrados el ${fechaTexto}. La caja queda igual.</p><p>Zapatería Paso Firme · Gestión automatizada</p>`;\n} else {\n  const filas = FORMAS.map((f) => `<tr><td>${ETIQUETA[f]}</td><td style=\"text-align:right\">${fmt(porForma[f].ventas)} €</td><td style=\"text-align:right\">${fmt(porForma[f].abonos)} €</td><td style=\"text-align:right\"><b>${fmt(porForma[f].total)} €</b></td></tr>`).join('');\n  html = `<h2>🧾 Cierre de caja · ${fechaTexto}</h2><p>Hola Marisa,</p><p>Esto es lo cobrado hoy (${ventas.length} venta(s) y ${abonos.length} abono(s)):</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><th>Forma de pago</th><th>Ventas</th><th>Abonos</th><th>Total</th></tr>${filas}<tr style=\"background-color:#f2f2f2\"><td><b>Total</b></td><td style=\"text-align:right\"><b>${fmt(totalVentas)} €</b></td><td style=\"text-align:right\"><b>${fmt(totalAbonos)} €</b></td><td style=\"text-align:right\"><b>${fmt(totalDia)} €</b></td></tr></table><p>Total cobrado del día: <b>${fmt(totalDia)} €</b>.</p><p>Zapatería Paso Firme · Gestión automatizada</p>`;\n}\nreturn [{ json: { fecha, fecha_texto: fechaTexto, sin_movimientos: sinMovimientos, total_ventas: round2(totalVentas), total_abonos: round2(totalAbonos), total_dia: round2(totalDia), por_forma: porForma, ventas_count: ventas.length, abonos_count: abonos.length, html } }];"
+      }
+    },
+    {
+      "id": "email-cierre-flujo05",
+      "name": "Enviar el cierre a Marisa",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [560, 0],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "=🧾 Cierre de caja del {{ $json.fecha_texto }} · Zapatería Paso Firme",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": { "id": "NJ0d4FNqNiljQZMU", "name": "SMTP Mailpit (pruebas)" }
+      }
+    }
+  ],
+  "connections": {
+    "Cada noche a las 22:00": {
+      "main": [[{ "node": "Calcular el día del cierre", "type": "main", "index": 0 }]]
+    },
+    "Al ejecutar manualmente": {
+      "main": [[{ "node": "Calcular el día del cierre", "type": "main", "index": 0 }]]
+    },
+    "Calcular el día del cierre": {
+      "main": [[{ "node": "Consultar cobros del día", "type": "main", "index": 0 }]]
+    },
+    "Consultar cobros del día": {
+      "main": [[{ "node": "Calcular el cierre del día", "type": "main", "index": 0 }]]
+    },
+    "Calcular el cierre del día": {
+      "main": [[{ "node": "Enviar el cierre a Marisa", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "pFlujo08AvisoFallo"
+  }
+}
