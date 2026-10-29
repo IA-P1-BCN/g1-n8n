@@ -1,4 +1,4 @@
-﻿# Bitácora de IA
+# Bitácora de IA
 
 > Entregable 8 (US-21, [issue #41](https://github.com/IA-P1-BCN/g1-n8n/issues/41)) · trazabilidad de prompts y decisiones con el agente.
 > Convención: cada tarea del nivel Esencial añade una entrada en «Registro por tarea» (prompts textuales cuando la sesión los conservó; marcados *(reconstruido)* cuando se recuperan de issues/PRs) y todo error del agente va a la tabla de errores, con su corrección. Regla de equipo en [`AGENTS.md`](../AGENTS.md) («Trazabilidad»).
@@ -77,6 +77,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   5. *(28/10)* «Haz pull de la main para traer los cambios» → entran US-17/#125 (receptor sin scaffold + fallback), US-18/#127 (`task demo`); conflicto de `AGENTS.md` resuelto en el PR (merge de main en la rama)
   6. *(28/10)* «Elimina el readme.md … dentro de mapa-proceso-apartado. En el readme.md del proyecto añade solo los links para visualizar los diagramas»
   7. *(28/10)* «Haz los flujos con mermaid, que en readme.md del proyecto esté el link para ver los flujos sin tener que arrastrar ficheros. No los hagas en BPMN. En el readme haz que el título sea legible, haz visibilidad de apartado»
+  8. *(29/10)* «clean the readme.md. Make it look polish and more readable.»
 - **Decisiones**:
   - *Rechazar* (iteración final del equipo): los `.bpmn` y su «arrastrar a bpmn.io» — se sustituyen por **Mermaid** en `flujos.md`, que GitHub pinta al abrir la página; el README solo enlaza.
   - *Rechazar*: README dedicado del mapa (2.ª iteración) — quedó sustituido por `flujos.md` como única página del mapa.
@@ -84,8 +85,9 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - *Aceptar*: diagramas generados/editables con un script Python (temporal), dibujados solo con **lo construido** (Receptor · Webhook tienda, Flujos 01/02/08); ramas `venta.registrada`/`apartado.vencido` reservadas (04 · US-09, 06 · US-07, sin conectar) y Bizum a mano como notas honestas.
   - *Aceptar*: tras el sync con main, la nota del Switch cita los flujos reservados con su número real (04 · venta, US-09; 06 · vencido, US-07).
   - *Aceptar*: `task importar` tras traer cambios de main cuando toquen `workflows/` — el n8n local seguía con el Receptor viejo y `task test` fallaba de nombre/fallback (carrera de «executions» post-rearranque, un solo rerun y en verde).
+  - *Aceptar*: reestructuración y pulido del `README.md` (servicios con Swagger, mapa de proceso con tabla comparativa de valor de negocio, puesta en marcha secuencial en 5 pasos con callouts GitHub, catálogo de flujos, comandos de prueba con flags explícitos e inclusión de `task test`).
 - **Errores → correcciones**: ver tabla (E13 · inline de jq, E14 · namespaces y plane del BPMN, E15 · «Switchán»).
-- **Resultado**: `docs/business/mapa-proceso-apartado/flujos.md` con los 2 bloques Mermaid (validados con `mermaid-cli`: 2/2 renderizan), link desde el README y regla actualizada en AGENTS.md; los `.bpmn` eliminados del repo.
+- **Resultado**: `README.md` reestructurado y pulido sin pérdida de información; `docs/business/mapa-proceso-apartado/flujos.md` con los 2 bloques Mermaid (validados con `mermaid-cli`: 2/2 renderizan), link desde el README y regla actualizada en AGENTS.md; los `.bpmn` eliminados del repo.
 
 
 ### Dev · `task payload` para probar el receptor con payloads propios (2026-10-28)
