@@ -81,7 +81,7 @@ Los de la issue (US-03), verificados por `tests/us-03/` y su evidencia en `docs/
 
 ## Notas de arquitectura
 
-- **IA solo extrae** (Groq, nodo `@n8n/n8n-nodes-langchain`): modelo gratuito y rápido, con nodo nativo. La clave va a una **credencial de n8n** (`credentials/`, cifrada), **nunca** en el JSON del flujo. Las decisiones viven en nodos del flujo (IF/Switch/Code), no en el prompt.
+- **IA solo extrae** (Groq, nodos `lmChatGroq` + `informationExtractor` de `@n8n/n8n-nodes-langchain`): modelo gratuito `openai/gpt-oss-20b` (rápido y con tool-calling; se elige del catálogo de la cuenta Groq). La clave va a una **credencial de n8n** cifrada, **nunca** en el JSON del flujo. Las decisiones viven en nodos del flujo (IF/Code), no en el prompt.
 - **Por qué buscar por API y no fiarse del nombre del aviso**: el banco escribe en mayúsculas, sin tildes y a veces abreviado; la app es la fuente de verdad. La comparación normaliza acentos y mayúsculas y exige **un único** candidato activo (o nº de apartado explícito) para registrar.
 - **`forma_pago: "bizum"`**: el enum de la app es `efectivo | tarjeta | bizum` (no hay «transferencia»). Los pagos a distancia (Bizum **y** transferencia) se registran como `bizum`, la única forma electrónica del enum. Limitación conocida: el cierre diario (Flujo 05) no distinguirá transferencia de Bizum.
 - **El recibo no lo manda este flujo**: al registrar el abono, la app dispara `abono.registrado` → Receptor → **Flujo 02**. Así no se duplica la plantilla del recibo (criterio US-03: «el cliente recibe su recibo (US-02)»).
