@@ -1,0 +1,4 @@
+PASS · sin-duplicados · la segunda ejecución del Flujo 06 el mismo día termina sin error · n8n execute OK
+PASS · sin-duplicados · nadie recibe el mismo aviso dos veces (0 recordatorios duplicados) · recordatorios_nuevos=0
+
+total: 2 PASS / 0 FAIL

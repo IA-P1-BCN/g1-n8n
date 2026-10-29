@@ -1,0 +1,7 @@
+PASS · aviso-7-dias · el Flujo 06 se ejecuta sin error · n8n execute OK
+PASS · aviso-7-dias · el cliente que vence en 7 días recibe el correo de recordatorio · 👟 Tu apartado vence en 7 días · Zapatería Paso Firme (apartado nº 1)
+PASS · aviso-7-dias · el mensaje incluye lo que falta por pagar (pendiente exacto de la app) · pendiente=69.9 €
+PASS · aviso-7-dias · el mensaje incluye la fecha límite del apartado · fecha_limite=05/11/2026 (2026-11-05)
+PASS · aviso-7-dias · un apartado que vence en 20 días NO recibe recordatorio · recordatorios_emitidos=1
+
+total: 5 PASS / 0 FAIL
