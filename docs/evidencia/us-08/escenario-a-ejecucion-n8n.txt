@@ -1,0 +1,1996 @@
+n8n Task Broker ready on 127.0.0.1, port 5689
+Failed to start Python task runner in internal mode. because Python 3 is missing from this system. Launching a Python runner in internal mode is intended only for debugging and is not recommended for production. Users are encouraged to deploy in external mode. See: https://docs.n8n.io/hosting/configuration/task-runners/#setting-up-external-mode
+[license SDK] Skipping renewal on init: renewOnInit is disabled in config
+[license SDK] Skipping renewal on init: license cert is not initialized
+[runner:js] (node:115) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Registered runner "JS Task Runner" (LMrc0l1UMGRCbnC0EGT4v) 
+Execution was successful:
+====================================
+{
+  "data": {
+    "version": 1,
+    "startData": {},
+    "resultData": {
+      "runData": {
+        "El día 1 de cada mes": [
+          {
+            "startTime": 1793277947944,
+            "executionIndex": 0,
+            "source": [],
+            "hints": [],
+            "executionTime": 3,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {},
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Calcular periodo del informe": [
+          {
+            "startTime": 1793277947949,
+            "executionIndex": 1,
+            "source": [
+              {
+                "previousNode": "El día 1 de cada mes",
+                "previousNodeOutput": 0,
+                "previousNodeRun": 0
+              }
+            ],
+            "hints": [],
+            "executionTime": 3409,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "desde": "2026-09-01",
+                      "hasta": "2026-09-30",
+                      "periodo_texto": "septiembre de 2026"
+                    },
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Consultar datos de la app": [
+          {
+            "startTime": 1793277951358,
+            "executionIndex": 2,
+            "source": [
+              {
+                "previousNode": "Calcular periodo del informe",
+                "previousNodeOutput": 0,
+                "previousNodeRun": 0
+              }
+            ],
+            "hints": [],
+            "executionTime": 181,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "periodo": {
+                        "desde": "2026-09-01",
+                        "hasta": "2026-09-30",
+                        "periodo_texto": "septiembre de 2026"
+                      },
+                      "ventas": [
+                        {
+                          "id": 83,
+                          "fecha": "2026-09-01",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 84,
+                          "fecha": "2026-09-01",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 85,
+                          "fecha": "2026-09-01",
+                          "concepto": "Botín piel negro T32",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 86,
+                          "fecha": "2026-09-02",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 87,
+                          "fecha": "2026-09-02",
+                          "concepto": "Botín piel negro T42",
+                          "importe": 92,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 88,
+                          "fecha": "2026-09-02",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 89,
+                          "fecha": "2026-09-02",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 90,
+                          "fecha": "2026-09-02",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 91,
+                          "fecha": "2026-09-03",
+                          "concepto": "Botín piel negro T31",
+                          "importe": 92,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 92,
+                          "fecha": "2026-09-03",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 93,
+                          "fecha": "2026-09-03",
+                          "concepto": "Botín piel negro T34",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 94,
+                          "fecha": "2026-09-03",
+                          "concepto": "Sandalia playa",
+                          "importe": 14.9,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 95,
+                          "fecha": "2026-09-03",
+                          "concepto": "Deportiva niño T44",
+                          "importe": 32,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 96,
+                          "fecha": "2026-09-03",
+                          "concepto": "Sandalia playa",
+                          "importe": 14.9,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 97,
+                          "fecha": "2026-09-04",
+                          "concepto": "Botín piel negro T35",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 98,
+                          "fecha": "2026-09-04",
+                          "concepto": "Botín piel negro T38",
+                          "importe": 92,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 99,
+                          "fecha": "2026-09-04",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 100,
+                          "fecha": "2026-09-04",
+                          "concepto": "Botín piel negro T37",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 101,
+                          "fecha": "2026-09-04",
+                          "concepto": "Botín piel negro T32",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 102,
+                          "fecha": "2026-09-04",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 103,
+                          "fecha": "2026-09-05",
+                          "concepto": "Deportiva niño T32",
+                          "importe": 32,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 104,
+                          "fecha": "2026-09-05",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 105,
+                          "fecha": "2026-09-05",
+                          "concepto": "Bota montaña T34",
+                          "importe": 79.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 106,
+                          "fecha": "2026-09-05",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 107,
+                          "fecha": "2026-09-07",
+                          "concepto": "Deportiva niño T44",
+                          "importe": 32,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 108,
+                          "fecha": "2026-09-07",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 109,
+                          "fecha": "2026-09-07",
+                          "concepto": "Bota montaña T42",
+                          "importe": 79.9,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 110,
+                          "fecha": "2026-09-07",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 111,
+                          "fecha": "2026-09-07",
+                          "concepto": "Bota montaña T45",
+                          "importe": 79.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 112,
+                          "fecha": "2026-09-08",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 113,
+                          "fecha": "2026-09-08",
+                          "concepto": "Bota montaña T37",
+                          "importe": 79.9,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 114,
+                          "fecha": "2026-09-08",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 115,
+                          "fecha": "2026-09-08",
+                          "concepto": "Bota montaña T45",
+                          "importe": 79.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 116,
+                          "fecha": "2026-09-09",
+                          "concepto": "Deportiva niño T42",
+                          "importe": 32,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 117,
+                          "fecha": "2026-09-09",
+                          "concepto": "Botín piel negro T34",
+                          "importe": 92,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 118,
+                          "fecha": "2026-09-09",
+                          "concepto": "Sandalia playa",
+                          "importe": 14.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 119,
+                          "fecha": "2026-09-09",
+                          "concepto": "Bota montaña T30",
+                          "importe": 79.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 120,
+                          "fecha": "2026-09-09",
+                          "concepto": "Bota montaña T34",
+                          "importe": 79.9,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 121,
+                          "fecha": "2026-09-10",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 122,
+                          "fecha": "2026-09-10",
+                          "concepto": "Bota montaña T40",
+                          "importe": 79.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 123,
+                          "fecha": "2026-09-10",
+                          "concepto": "Botín piel negro T40",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 124,
+                          "fecha": "2026-09-11",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 125,
+                          "fecha": "2026-09-11",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 126,
+                          "fecha": "2026-09-11",
+                          "concepto": "Botín piel negro T30",
+                          "importe": 92,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 127,
+                          "fecha": "2026-09-11",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 128,
+                          "fecha": "2026-09-11",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 129,
+                          "fecha": "2026-09-12",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 130,
+                          "fecha": "2026-09-12",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 131,
+                          "fecha": "2026-09-14",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 132,
+                          "fecha": "2026-09-14",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 133,
+                          "fecha": "2026-09-14",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 134,
+                          "fecha": "2026-09-14",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 135,
+                          "fecha": "2026-09-14",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 136,
+                          "fecha": "2026-09-14",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 137,
+                          "fecha": "2026-09-15",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 138,
+                          "fecha": "2026-09-15",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 139,
+                          "fecha": "2026-09-15",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 140,
+                          "fecha": "2026-09-15",
+                          "concepto": "Bota montaña T42",
+                          "importe": 79.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 141,
+                          "fecha": "2026-09-15",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 142,
+                          "fecha": "2026-09-15",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 143,
+                          "fecha": "2026-09-16",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 144,
+                          "fecha": "2026-09-16",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 145,
+                          "fecha": "2026-09-16",
+                          "concepto": "Sandalia playa",
+                          "importe": 14.9,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 146,
+                          "fecha": "2026-09-16",
+                          "concepto": "Deportiva niño T32",
+                          "importe": 32,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 147,
+                          "fecha": "2026-09-17",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 148,
+                          "fecha": "2026-09-17",
+                          "concepto": "Botín piel negro T33",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 149,
+                          "fecha": "2026-09-17",
+                          "concepto": "Deportiva niño T44",
+                          "importe": 32,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 150,
+                          "fecha": "2026-09-17",
+                          "concepto": "Bota montaña T35",
+                          "importe": 79.9,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 151,
+                          "fecha": "2026-09-18",
+                          "concepto": "Sandalia playa",
+                          "importe": 14.9,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 152,
+                          "fecha": "2026-09-18",
+                          "concepto": "Botín piel negro T43",
+                          "importe": 92,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 153,
+                          "fecha": "2026-09-18",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 154,
+                          "fecha": "2026-09-18",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 155,
+                          "fecha": "2026-09-19",
+                          "concepto": "Botín piel negro T37",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 156,
+                          "fecha": "2026-09-19",
+                          "concepto": "Bota montaña T40",
+                          "importe": 79.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 157,
+                          "fecha": "2026-09-19",
+                          "concepto": "Botín piel negro T40",
+                          "importe": 92,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 158,
+                          "fecha": "2026-09-19",
+                          "concepto": "Botín piel negro T36",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 159,
+                          "fecha": "2026-09-21",
+                          "concepto": "Deportiva niño T38",
+                          "importe": 32,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 160,
+                          "fecha": "2026-09-21",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 161,
+                          "fecha": "2026-09-21",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 162,
+                          "fecha": "2026-09-21",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 163,
+                          "fecha": "2026-09-22",
+                          "concepto": "Bota montaña T45",
+                          "importe": 79.9,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 164,
+                          "fecha": "2026-09-22",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 165,
+                          "fecha": "2026-09-22",
+                          "concepto": "Botín piel negro T44",
+                          "importe": 92,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 166,
+                          "fecha": "2026-09-23",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 167,
+                          "fecha": "2026-09-23",
+                          "concepto": "Bota montaña T37",
+                          "importe": 79.9,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 168,
+                          "fecha": "2026-09-24",
+                          "concepto": "Deportiva niño T45",
+                          "importe": 32,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 169,
+                          "fecha": "2026-09-24",
+                          "concepto": "Sandalia playa",
+                          "importe": 14.9,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 170,
+                          "fecha": "2026-09-24",
+                          "concepto": "Bota montaña T40",
+                          "importe": 79.9,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 171,
+                          "fecha": "2026-09-24",
+                          "concepto": "Botín piel negro T38",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 172,
+                          "fecha": "2026-09-24",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 173,
+                          "fecha": "2026-09-24",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 174,
+                          "fecha": "2026-09-25",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 175,
+                          "fecha": "2026-09-25",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 176,
+                          "fecha": "2026-09-25",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 177,
+                          "fecha": "2026-09-25",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 178,
+                          "fecha": "2026-09-26",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 179,
+                          "fecha": "2026-09-26",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 180,
+                          "fecha": "2026-09-26",
+                          "concepto": "Zapatilla casa",
+                          "importe": 18.95,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 181,
+                          "fecha": "2026-09-26",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 182,
+                          "fecha": "2026-09-26",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 183,
+                          "fecha": "2026-09-26",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 184,
+                          "fecha": "2026-09-28",
+                          "concepto": "Calcetines pack 3",
+                          "importe": 6.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 185,
+                          "fecha": "2026-09-28",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 186,
+                          "fecha": "2026-09-29",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 187,
+                          "fecha": "2026-09-29",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 188,
+                          "fecha": "2026-09-29",
+                          "concepto": "Botín piel negro T44",
+                          "importe": 92,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 189,
+                          "fecha": "2026-09-29",
+                          "concepto": "Crema calzado",
+                          "importe": 4.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 190,
+                          "fecha": "2026-09-29",
+                          "concepto": "Cordones",
+                          "importe": 2.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 191,
+                          "fecha": "2026-09-30",
+                          "concepto": "Plantillas gel",
+                          "importe": 12,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 192,
+                          "fecha": "2026-09-30",
+                          "concepto": "Botín piel negro T32",
+                          "importe": 92,
+                          "forma_pago": "bizum"
+                        }
+                      ],
+                      "abonos": [
+                        {
+                          "id": 79,
+                          "apartado_id": 22,
+                          "fecha": "2026-06-14",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 58,
+                          "apartado_id": 16,
+                          "fecha": "2026-06-26",
+                          "importe": 5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 80,
+                          "apartado_id": 22,
+                          "fecha": "2026-06-30",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 54,
+                          "apartado_id": 15,
+                          "fecha": "2026-07-10",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 50,
+                          "apartado_id": 14,
+                          "fecha": "2026-07-18",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 46,
+                          "apartado_id": 13,
+                          "fecha": "2026-07-25",
+                          "importe": 5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 75,
+                          "apartado_id": 21,
+                          "fecha": "2026-07-26",
+                          "importe": 20,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 51,
+                          "apartado_id": 14,
+                          "fecha": "2026-07-27",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 81,
+                          "apartado_id": 22,
+                          "fecha": "2026-07-27",
+                          "importe": 15,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 47,
+                          "apartado_id": 13,
+                          "fecha": "2026-07-28",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 38,
+                          "apartado_id": 11,
+                          "fecha": "2026-07-31",
+                          "importe": 15,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 42,
+                          "apartado_id": 12,
+                          "fecha": "2026-07-31",
+                          "importe": 15,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 39,
+                          "apartado_id": 11,
+                          "fecha": "2026-08-02",
+                          "importe": 5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 76,
+                          "apartado_id": 21,
+                          "fecha": "2026-08-02",
+                          "importe": 5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 52,
+                          "apartado_id": 14,
+                          "fecha": "2026-08-04",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 34,
+                          "apartado_id": 10,
+                          "fecha": "2026-08-08",
+                          "importe": 5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 35,
+                          "apartado_id": 10,
+                          "fecha": "2026-08-15",
+                          "importe": 5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 31,
+                          "apartado_id": 9,
+                          "fecha": "2026-08-19",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 36,
+                          "apartado_id": 10,
+                          "fecha": "2026-08-20",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 43,
+                          "apartado_id": 12,
+                          "fecha": "2026-08-23",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 71,
+                          "apartado_id": 20,
+                          "fecha": "2026-08-23",
+                          "importe": 5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 55,
+                          "apartado_id": 15,
+                          "fecha": "2026-08-27",
+                          "importe": 20,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 32,
+                          "apartado_id": 9,
+                          "fecha": "2026-08-28",
+                          "importe": 15,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 72,
+                          "apartado_id": 20,
+                          "fecha": "2026-09-01",
+                          "importe": 20,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 27,
+                          "apartado_id": 8,
+                          "fecha": "2026-09-02",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 40,
+                          "apartado_id": 11,
+                          "fecha": "2026-09-02",
+                          "importe": 15,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 44,
+                          "apartado_id": 12,
+                          "fecha": "2026-09-03",
+                          "importe": 10,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 33,
+                          "apartado_id": 9,
+                          "fecha": "2026-09-04",
+                          "importe": 14.5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 48,
+                          "apartado_id": 13,
+                          "fecha": "2026-09-05",
+                          "importe": 15,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 28,
+                          "apartado_id": 8,
+                          "fecha": "2026-09-07",
+                          "importe": 10,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 67,
+                          "apartado_id": 19,
+                          "fecha": "2026-09-07",
+                          "importe": 15,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 23,
+                          "apartado_id": 7,
+                          "fecha": "2026-09-11",
+                          "importe": 5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 29,
+                          "apartado_id": 8,
+                          "fecha": "2026-09-20",
+                          "importe": 15,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 73,
+                          "apartado_id": 20,
+                          "fecha": "2026-09-21",
+                          "importe": 15,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 19,
+                          "apartado_id": 6,
+                          "fecha": "2026-09-22",
+                          "importe": 15,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 24,
+                          "apartado_id": 7,
+                          "fecha": "2026-09-22",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 63,
+                          "apartado_id": 18,
+                          "fecha": "2026-09-24",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 53,
+                          "apartado_id": 14,
+                          "fecha": "2026-09-25",
+                          "importe": 20,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 49,
+                          "apartado_id": 13,
+                          "fecha": "2026-09-26",
+                          "importe": 5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 25,
+                          "apartado_id": 7,
+                          "fecha": "2026-09-27",
+                          "importe": 20,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 74,
+                          "apartado_id": 20,
+                          "fecha": "2026-09-27",
+                          "importe": 24.5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 30,
+                          "apartado_id": 8,
+                          "fecha": "2026-09-28",
+                          "importe": 20,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 64,
+                          "apartado_id": 18,
+                          "fecha": "2026-09-29",
+                          "importe": 20,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 15,
+                          "apartado_id": 5,
+                          "fecha": "2026-09-30",
+                          "importe": 5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 65,
+                          "apartado_id": 18,
+                          "fecha": "2026-10-01",
+                          "importe": 20,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 56,
+                          "apartado_id": 15,
+                          "fecha": "2026-10-02",
+                          "importe": 20,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 45,
+                          "apartado_id": 12,
+                          "fecha": "2026-10-04",
+                          "importe": 15,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 57,
+                          "apartado_id": 15,
+                          "fecha": "2026-10-04",
+                          "importe": 10,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 68,
+                          "apartado_id": 19,
+                          "fecha": "2026-10-04",
+                          "importe": 5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 77,
+                          "apartado_id": 21,
+                          "fecha": "2026-10-04",
+                          "importe": 10,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 69,
+                          "apartado_id": 19,
+                          "fecha": "2026-10-05",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 11,
+                          "apartado_id": 4,
+                          "fecha": "2026-10-07",
+                          "importe": 10,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 20,
+                          "apartado_id": 6,
+                          "fecha": "2026-10-07",
+                          "importe": 15,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 70,
+                          "apartado_id": 19,
+                          "fecha": "2026-10-07",
+                          "importe": 39.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 12,
+                          "apartado_id": 4,
+                          "fecha": "2026-10-09",
+                          "importe": 15,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 16,
+                          "apartado_id": 5,
+                          "fecha": "2026-10-10",
+                          "importe": 10,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 41,
+                          "apartado_id": 11,
+                          "fecha": "2026-10-10",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 59,
+                          "apartado_id": 17,
+                          "fecha": "2026-10-10",
+                          "importe": 20,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 37,
+                          "apartado_id": 10,
+                          "fecha": "2026-10-11",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 60,
+                          "apartado_id": 17,
+                          "fecha": "2026-10-11",
+                          "importe": 10,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 17,
+                          "apartado_id": 5,
+                          "fecha": "2026-10-12",
+                          "importe": 5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 61,
+                          "apartado_id": 17,
+                          "fecha": "2026-10-12",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 66,
+                          "apartado_id": 18,
+                          "fecha": "2026-10-12",
+                          "importe": 29.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 7,
+                          "apartado_id": 3,
+                          "fecha": "2026-10-13",
+                          "importe": 20,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 21,
+                          "apartado_id": 6,
+                          "fecha": "2026-10-13",
+                          "importe": 15,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 13,
+                          "apartado_id": 4,
+                          "fecha": "2026-10-14",
+                          "importe": 15,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 26,
+                          "apartado_id": 7,
+                          "fecha": "2026-10-16",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 3,
+                          "apartado_id": 2,
+                          "fecha": "2026-10-17",
+                          "importe": 20,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 8,
+                          "apartado_id": 3,
+                          "fecha": "2026-10-17",
+                          "importe": 15,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 4,
+                          "apartado_id": 2,
+                          "fecha": "2026-10-18",
+                          "importe": 5,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 9,
+                          "apartado_id": 3,
+                          "fecha": "2026-10-18",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 78,
+                          "apartado_id": 21,
+                          "fecha": "2026-10-18",
+                          "importe": 29.5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 22,
+                          "apartado_id": 6,
+                          "fecha": "2026-10-19",
+                          "importe": 10,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 1,
+                          "apartado_id": 1,
+                          "fecha": "2026-10-20",
+                          "importe": 5,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 5,
+                          "apartado_id": 2,
+                          "fecha": "2026-10-20",
+                          "importe": 10,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 18,
+                          "apartado_id": 5,
+                          "fecha": "2026-10-20",
+                          "importe": 15,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 2,
+                          "apartado_id": 1,
+                          "fecha": "2026-10-21",
+                          "importe": 10,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 6,
+                          "apartado_id": 2,
+                          "fecha": "2026-10-21",
+                          "importe": 5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 10,
+                          "apartado_id": 3,
+                          "fecha": "2026-10-21",
+                          "importe": 15,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 14,
+                          "apartado_id": 4,
+                          "fecha": "2026-10-21",
+                          "importe": 5,
+                          "forma_pago": "bizum"
+                        },
+                        {
+                          "id": 62,
+                          "apartado_id": 17,
+                          "fecha": "2026-10-21",
+                          "importe": 44.9,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 83,
+                          "apartado_id": 24,
+                          "fecha": "2026-10-21",
+                          "importe": 10,
+                          "forma_pago": "efectivo"
+                        },
+                        {
+                          "id": 82,
+                          "apartado_id": 23,
+                          "fecha": "2026-10-22",
+                          "importe": 20,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 84,
+                          "apartado_id": 25,
+                          "fecha": "2026-10-23",
+                          "importe": 23,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 85,
+                          "apartado_id": 26,
+                          "fecha": "2026-10-23",
+                          "importe": 30,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 86,
+                          "apartado_id": 26,
+                          "fecha": "2026-10-23",
+                          "importe": 30,
+                          "forma_pago": "tarjeta"
+                        },
+                        {
+                          "id": 87,
+                          "apartado_id": 27,
+                          "fecha": "2026-10-23",
+                          "importe": 20,
+                          "forma_pago": "bizum"
+                        }
+                      ],
+                      "apartados": [
+                        {
+                          "id": 22,
+                          "fecha": "2026-06-14",
+                          "cliente": "Beatriz Medina",
+                          "telefono": "600 000 022",
+                          "email": "beatriz22@example.com",
+                          "producto": "Bailarina roja",
+                          "talla": "42",
+                          "precio": 39.9,
+                          "fecha_limite": "2026-09-12",
+                          "estado": "vencido",
+                          "abonado": 25,
+                          "pendiente": 14.9
+                        },
+                        {
+                          "id": 16,
+                          "fecha": "2026-06-26",
+                          "cliente": "Paula Ramos",
+                          "telefono": "600 000 016",
+                          "email": "paula16@example.com",
+                          "producto": "Zapatilla running azul",
+                          "talla": "40",
+                          "precio": 64.5,
+                          "fecha_limite": "2026-09-24",
+                          "estado": "activo",
+                          "abonado": 5,
+                          "pendiente": 59.5
+                        },
+                        {
+                          "id": 15,
+                          "fecha": "2026-07-10",
+                          "cliente": "Sergio Delgado",
+                          "telefono": "600 000 015",
+                          "email": "sergio15@example.com",
+                          "producto": "Bota montaña",
+                          "talla": "38",
+                          "precio": 79.9,
+                          "fecha_limite": "2026-10-08",
+                          "estado": "activo",
+                          "abonado": 60,
+                          "pendiente": 19.9
+                        },
+                        {
+                          "id": 14,
+                          "fecha": "2026-07-18",
+                          "cliente": "Marta Molina",
+                          "telefono": "600 000 014",
+                          "email": "marta14@example.com",
+                          "producto": "Botín piel negro",
+                          "talla": "36",
+                          "precio": 92,
+                          "fecha_limite": "2026-10-16",
+                          "estado": "activo",
+                          "abonado": 45,
+                          "pendiente": 47
+                        },
+                        {
+                          "id": 13,
+                          "fecha": "2026-07-25",
+                          "cliente": "Pablo Rubio",
+                          "telefono": "600 000 013",
+                          "email": "pablo13@example.com",
+                          "producto": "Bota montaña",
+                          "talla": "43",
+                          "precio": 79.9,
+                          "fecha_limite": "2026-10-23",
+                          "estado": "activo",
+                          "abonado": 30,
+                          "pendiente": 49.9
+                        },
+                        {
+                          "id": 21,
+                          "fecha": "2026-07-26",
+                          "cliente": "Iván Blanco",
+                          "telefono": "600 000 021",
+                          "email": "iván21@example.com",
+                          "producto": "Zapatilla running azul",
+                          "talla": "42",
+                          "precio": 64.5,
+                          "fecha_limite": "2026-10-24",
+                          "estado": "liquidado",
+                          "abonado": 64.5,
+                          "pendiente": 0
+                        },
+                        {
+                          "id": 11,
+                          "fecha": "2026-07-31",
+                          "cliente": "David Romero",
+                          "telefono": "600 000 011",
+                          "email": "david11@example.com",
+                          "producto": "Deportiva blanca",
+                          "talla": "44",
+                          "precio": 55,
+                          "fecha_limite": "2026-10-29",
+                          "estado": "activo",
+                          "abonado": 40,
+                          "pendiente": 15
+                        },
+                        {
+                          "id": 12,
+                          "fecha": "2026-07-31",
+                          "cliente": "Laura Ortega",
+                          "telefono": "600 000 012",
+                          "email": "laura12@example.com",
+                          "producto": "Deportiva blanca",
+                          "talla": "37",
+                          "precio": 55,
+                          "fecha_limite": "2026-10-29",
+                          "estado": "activo",
+                          "abonado": 45,
+                          "pendiente": 10
+                        },
+                        {
+                          "id": 10,
+                          "fecha": "2026-08-08",
+                          "cliente": "Elena Castro",
+                          "telefono": "600 000 010",
+                          "email": "elena10@example.com",
+                          "producto": "Zapato vestir hombre",
+                          "talla": "38",
+                          "precio": 95,
+                          "fecha_limite": "2026-11-06",
+                          "estado": "activo",
+                          "abonado": 25,
+                          "pendiente": 70
+                        },
+                        {
+                          "id": 9,
+                          "fecha": "2026-08-19",
+                          "cliente": "Javier Moreno",
+                          "telefono": "600 000 009",
+                          "email": "javier9@example.com",
+                          "producto": "Zueco sanitario",
+                          "talla": "42",
+                          "precio": 34.5,
+                          "fecha_limite": "2026-11-17",
+                          "estado": "liquidado",
+                          "abonado": 34.5,
+                          "pendiente": 0
+                        },
+                        {
+                          "id": 20,
+                          "fecha": "2026-08-23",
+                          "cliente": "Nuria Serrano",
+                          "telefono": "600 000 020",
+                          "email": "nuria20@example.com",
+                          "producto": "Zapatilla running azul",
+                          "talla": "38",
+                          "precio": 64.5,
+                          "fecha_limite": "2026-11-21",
+                          "estado": "liquidado",
+                          "abonado": 64.5,
+                          "pendiente": 0
+                        },
+                        {
+                          "id": 8,
+                          "fecha": "2026-09-02",
+                          "cliente": "Sofía Navarro",
+                          "telefono": "600 000 008",
+                          "email": "sofía8@example.com",
+                          "producto": "Botín piel marrón",
+                          "talla": "38",
+                          "precio": 89.9,
+                          "fecha_limite": "2026-12-01",
+                          "estado": "activo",
+                          "abonado": 50,
+                          "pendiente": 39.9
+                        },
+                        {
+                          "id": 19,
+                          "fecha": "2026-09-07",
+                          "cliente": "Alberto Vázquez",
+                          "telefono": "600 000 019",
+                          "email": "alberto19@example.com",
+                          "producto": "Zapatilla running azul",
+                          "talla": "36",
+                          "precio": 64.5,
+                          "fecha_limite": "2026-12-06",
+                          "estado": "liquidado",
+                          "abonado": 64.5,
+                          "pendiente": 0
+                        },
+                        {
+                          "id": 7,
+                          "fecha": "2026-09-11",
+                          "cliente": "Miguel Ángel López",
+                          "telefono": "600 000 007",
+                          "email": "miguel7@example.com",
+                          "producto": "Bota alta mujer",
+                          "talla": "45",
+                          "precio": 119,
+                          "fecha_limite": "2026-12-10",
+                          "estado": "activo",
+                          "abonado": 45,
+                          "pendiente": 74
+                        },
+                        {
+                          "id": 6,
+                          "fecha": "2026-09-22",
+                          "cliente": "Rosa Díaz",
+                          "telefono": "600 000 006",
+                          "email": "rosa6@example.com",
+                          "producto": "Mocasín ante",
+                          "talla": "36",
+                          "precio": 72,
+                          "fecha_limite": "2026-12-21",
+                          "estado": "activo",
+                          "abonado": 55,
+                          "pendiente": 17
+                        },
+                        {
+                          "id": 18,
+                          "fecha": "2026-09-24",
+                          "cliente": "Cristina Gil",
+                          "telefono": "600 000 018",
+                          "email": "cristina18@example.com",
+                          "producto": "Bota montaña",
+                          "talla": "38",
+                          "precio": 79.9,
+                          "fecha_limite": "2026-12-23",
+                          "estado": "liquidado",
+                          "abonado": 79.9,
+                          "pendiente": 0
+                        },
+                        {
+                          "id": 5,
+                          "fecha": "2026-09-30",
+                          "cliente": "Pedro Sanz",
+                          "telefono": "600 000 005",
+                          "email": "pedro5@example.com",
+                          "producto": "Zapatilla running azul",
+                          "talla": "41",
+                          "precio": 64.5,
+                          "fecha_limite": "2026-12-29",
+                          "estado": "activo",
+                          "abonado": 35,
+                          "pendiente": 29.5
+                        },
+                        {
+                          "id": 4,
+                          "fecha": "2026-10-07",
+                          "cliente": "Ana Torres",
+                          "telefono": "600 000 004",
+                          "email": "ana4@example.com",
+                          "producto": "Sandalia tacón negra",
+                          "talla": "38",
+                          "precio": 45,
+                          "fecha_limite": "2027-01-05",
+                          "estado": "liquidado",
+                          "abonado": 45,
+                          "pendiente": 0
+                        },
+                        {
+                          "id": 17,
+                          "fecha": "2026-10-10",
+                          "cliente": "Raúl Iglesias",
+                          "telefono": "600 000 017",
+                          "email": "raúl17@example.com",
+                          "producto": "Bota montaña",
+                          "talla": "38",
+                          "precio": 79.9,
+                          "fecha_limite": "2027-01-08",
+                          "estado": "liquidado",
+                          "abonado": 79.9,
+                          "pendiente": 0
+                        },
+                        {
+                          "id": 3,
+                          "fecha": "2026-10-13",
+                          "cliente": "Lucía Gómez",
+                          "telefono": "600 000 003",
+                          "email": "lucía3@example.com",
+                          "producto": "Mocasín ante",
+                          "talla": "45",
+                          "precio": 72,
+                          "fecha_limite": "2027-01-11",
+                          "estado": "activo",
+                          "abonado": 60,
+                          "pendiente": 12
+                        },
+                        {
+                          "id": 2,
+                          "fecha": "2026-10-17",
+                          "cliente": "Jorge Martín",
+                          "telefono": "600 000 002",
+                          "email": "jorge2@example.com",
+                          "producto": "Bota alta mujer",
+                          "talla": "36",
+                          "precio": 119,
+                          "fecha_limite": "2027-01-15",
+                          "estado": "activo",
+                          "abonado": 40,
+                          "pendiente": 79
+                        },
+                        {
+                          "id": 1,
+                          "fecha": "2026-10-20",
+                          "cliente": "Carmen Ruiz",
+                          "telefono": "600 000 001",
+                          "email": "carmen1@example.com",
+                          "producto": "Zueco sanitario",
+                          "talla": "36",
+                          "precio": 34.5,
+                          "fecha_limite": "2027-01-18",
+                          "estado": "activo",
+                          "abonado": 15,
+                          "pendiente": 19.5
+                        },
+                        {
+                          "id": 24,
+                          "fecha": "2026-10-21",
+                          "cliente": "Silvia Cortés",
+                          "telefono": "600 000 024",
+                          "email": "silvia24@example.com",
+                          "producto": "Sandalia tacón negra",
+                          "talla": "38",
+                          "precio": 45,
+                          "fecha_limite": "2027-01-19",
+                          "estado": "activo",
+                          "abonado": 10,
+                          "pendiente": 35
+                        },
+                        {
+                          "id": 23,
+                          "fecha": "2026-10-22",
+                          "cliente": "Óscar Garrido",
+                          "telefono": "600 000 023",
+                          "email": "óscar23@example.com",
+                          "producto": "Bota agua niño",
+                          "talla": "41",
+                          "precio": 29.95,
+                          "fecha_limite": "2027-01-20",
+                          "estado": "activo",
+                          "abonado": 20,
+                          "pendiente": 9.95
+                        },
+                        {
+                          "id": 25,
+                          "fecha": "2026-10-23",
+                          "cliente": "Carlos",
+                          "telefono": "37701385'191",
+                          "email": "carlos@gmail.com",
+                          "producto": "Botines",
+                          "talla": "42",
+                          "precio": 123,
+                          "fecha_limite": "2027-01-21",
+                          "estado": "activo",
+                          "abonado": 23,
+                          "pendiente": 100
+                        },
+                        {
+                          "id": 26,
+                          "fecha": "2026-10-23",
+                          "cliente": "RAMON",
+                          "telefono": "2377589242",
+                          "email": null,
+                          "producto": "botas",
+                          "talla": "36",
+                          "precio": 120,
+                          "fecha_limite": "2027-01-21",
+                          "estado": "activo",
+                          "abonado": 60,
+                          "pendiente": 60
+                        },
+                        {
+                          "id": 27,
+                          "fecha": "2026-10-23",
+                          "cliente": "rafael",
+                          "telefono": "3187842",
+                          "email": null,
+                          "producto": "Zapas botas",
+                          "talla": "42",
+                          "precio": 120,
+                          "fecha_limite": "2027-01-21",
+                          "estado": "activo",
+                          "abonado": 20,
+                          "pendiente": 100
+                        }
+                      ],
+                      "vales": [
+                        {
+                          "id": 1,
+                          "codigo": "VALE-00022",
+                          "apartado_id": 22,
+                          "fecha": "2026-10-22",
+                          "importe": 25,
+                          "usado": 0
+                        }
+                      ]
+                    },
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Calcular métricas del informe": [
+          {
+            "startTime": 1793277951539,
+            "executionIndex": 3,
+            "source": [
+              {
+                "previousNode": "Consultar datos de la app",
+                "previousNodeOutput": 0,
+                "previousNodeRun": 0
+              }
+            ],
+            "hints": [],
+            "executionTime": 63,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "periodo_texto": "septiembre de 2026",
+                      "desde": "2026-09-01",
+                      "hasta": "2026-09-30",
+                      "total_ventas": 3868.75,
+                      "total_abonos": 289,
+                      "total_recaudacion": 4157.75,
+                      "total_pendiente": 847.15,
+                      "nuevos_count": 6,
+                      "liquidados_count": 2,
+                      "vencidos_count": 0,
+                      "ventas_count": 110,
+                      "abonos_count": 21,
+                      "html": "<h2>📊 Informe mensual · Zapatería Paso Firme</h2>\n<p>Hola Marisa,</p>\n<p>Aquí tienes el resumen del negocio correspondiente a <b>septiembre de 2026</b> (2026-09-01 al 2026-09-30):</p>\n\n<h3>💰 Recaudación del mes anterior</h3>\n<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse; width: 100%; max-width: 500px;\">\n  <tr><td><b>Ventas directas (110)</b></td><td style=\"text-align: right;\"><b>3868.75 €</b></td></tr>\n  <tr><td><b>Abonos de apartados (21)</b></td><td style=\"text-align: right;\"><b>289.00 €</b></td></tr>\n  <tr style=\"background-color: #f2f2f2;\"><td><b>Recaudación total mensual</b></td><td style=\"text-align: right;\"><b>4157.75 €</b></td></tr>\n</table>\n\n<h3>📦 Estado de los apartados</h3>\n<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse; width: 100%; max-width: 500px;\">\n  <tr><td><b>Total pendiente de cobro (lo que deben)</b></td><td style=\"text-align: right;\"><b>847.15 €</b></td></tr>\n  <tr><td><b>Apartados nuevos del mes</b></td><td style=\"text-align: right;\">6</td></tr>\n  <tr><td><b>Apartados liquidados del mes</b></td><td style=\"text-align: right;\">2</td></tr>\n  <tr><td><b>Apartados vencidos del mes</b></td><td style=\"text-align: right;\">0</td></tr>\n</table>\n\n<br>\n<p>Zapatería Paso Firme · Gestión automatizada</p>"
+                    },
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ],
+        "Enviar informe mensual a Marisa": [
+          {
+            "startTime": 1793277951602,
+            "executionIndex": 4,
+            "source": [
+              {
+                "previousNode": "Calcular métricas del informe",
+                "previousNodeOutput": 0,
+                "previousNodeRun": 0
+              }
+            ],
+            "hints": [],
+            "executionTime": 278,
+            "executionStatus": "success",
+            "data": {
+              "main": [
+                [
+                  {
+                    "json": {
+                      "accepted": [
+                        "cambia-esta-direccion@paso-firme.local"
+                      ],
+                      "rejected": [],
+                      "ehlo": [
+                        "SIZE 52428800",
+                        "ENHANCEDSTATUSCODES",
+                        "8BITMIME",
+                        "SMTPUTF8"
+                      ],
+                      "envelopeTime": 13,
+                      "messageTime": 95,
+                      "messageSize": 2221,
+                      "response": "250 2.0.0 Ok: queued as 6GW4bvrdET6KDHfewMvthO",
+                      "envelope": {
+                        "from": "n8n@paso-firme.local",
+                        "to": [
+                          "cambia-esta-direccion@paso-firme.local"
+                        ]
+                      },
+                      "messageId": "<a74202d5-a1b8-3fac-b375-d1943f1aa6a2@paso-firme.local>"
+                    },
+                    "pairedItem": {
+                      "item": 0
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "lastNodeExecuted": "Enviar informe mensual a Marisa"
+    },
+    "executionData": {
+      "contextData": {},
+      "nodeExecutionStack": [],
+      "metadata": {},
+      "waitingExecution": {},
+      "waitingExecutionSource": {},
+      "runtimeData": {
+        "version": 1,
+        "establishedAt": 1793277947932,
+        "source": "cli",
+        "triggerNode": {
+          "name": "El día 1 de cada mes",
+          "type": "n8n-nodes-base.scheduleTrigger"
+        }
+      }
+    },
+    "resumeToken": "a95ddd08b03c3bf0065d1963540e1046916dec43d8d4f7035887a19340a062ed"
+  },
+  "mode": "cli",
+  "startedAt": "2026-10-29T12:45:47.895Z",
+  "stoppedAt": "2026-10-29T12:45:51.882Z",
+  "storedAt": "db",
+  "status": "success",
+  "finished": true
+}

@@ -1,0 +1,6 @@
+PASS · aviso-1-dia · el Flujo 06 se ejecuta sin error · n8n execute OK
+PASS · aviso-1-dia · el cliente que vence mañana (1 día) recibe el aviso · ⏰ Mañana vence tu apartado · Zapatería Paso Firme (apartado nº 3)
+PASS · aviso-1-dia · el mensaje incluye el importe pendiente exacto de la app · pendiente=49.5 €
+PASS · aviso-1-dia · el mensaje incluye la fecha límite de mañana · fecha_limite=30/10/2026 (2026-10-30)
+
+total: 4 PASS / 0 FAIL

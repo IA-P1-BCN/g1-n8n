@@ -8,6 +8,7 @@
 | Cuándo | Herramienta | Modelo / versión | Para qué |
 |---|---|---|---|
 | todo el proyecto | OpenCode (CLI de agente de código) | GLM · `glm-5.3-flash-free` (Z.ai) | specs SDD, flujos n8n, PRs, tests e2e, docs |
+| US-10 (handoff) | Antigravity | Gemini 4 Argon (Medium) | continuación del plan de US-10: spec SDD, Flujo 09, suite e2e y evidencia |
 | desde US-01 | **MCP `n8n-mcp`** (servidor MCP del repo, `.opencode/mcp/`) | n8n-mcp (npm) | docs y versiones de nodos, validación de workflows (`validate_workflow`), templates de referencia |
 | desde US-01 | `gh` CLI · Docker CLI · PowerShell · Python 3.14 · Task 3.54.0 | — | issues/PRs, stack local, shell, suites e2e, runner de tests |
 
@@ -64,6 +65,21 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - Elección del usuario: tasks `install` (copia `.env.example` → `.env` sin sobreescribir) y `arrancar` (`docker compose up -d`).
 - **Errores → correcciones**: ver tabla (E11 · buffered bajo task, E12 · carrera de arranque en frío).
 - **Resultado**: `task importar` probado end-to-end (importa 1 credencial + 4 flujos, 4 activados y rearranca); documentación nueva en README (`task install` → `task arrancar` → `task importar`, tabla de flujos y credenciales sin valores); stack sencillo de levantar de cero.
+
+
+
+### US-08 · Informe mensual ([#57](https://github.com/IA-P1-BCN/g1-n8n/issues/57), PR #130, 2026-10-29)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(29/10)* «Siguiente tarea: US-08 · Informe mensual»
+- **Decisiones**:
+  - *Aceptar*: diseño con Spec-Driven Development (`specs/flujo-07-informe-mensual.md`), definiendo el disparador programado (día 1 de mes a las 08:00) y manual, entradas vía API de la tienda, salidas estructuradas por correo a Marisa y gestión de fallos mediante Flujo 08.
+  - *Aceptar*: implementación de `Flujo 07 · Informe mensual` (`workflows/flujo-07-informe-mensual.json`) con llamadas HTTP autenticadas con `API_KEY` leída del entorno (`$env.API_KEY`).
+  - *Aceptar*: cálculo exacto de recaudación mensual (ventas directas y abonos por separado), total pendiente de cobro (apartados activos) y conteos de apartados nuevos, liquidados y vencidos en el mes de referencia.
+  - *Aceptar*: suite e2e en `tests/us-08/` (`ayudantes.py` y `escenario-a-informe-dia-1.py`) comparando las métricas de la app de la tienda contra el correo generado en Mailpit, y versionado de la evidencia en `docs/evidencia/us-08/`.
+  - *Aceptar*: actualización del mapa de procesos en Mermaid (`docs/business/mapa-proceso-apartado/flujos.md`) y del catálogo de flujos en `README.md`.
+- **Errores → correcciones**: ninguno en esta tarea.
+- **Resultado**: Spec SDD, workflow JSON validado con `scripts/valida_flujos.py`, suite e2e automatizada con evidencia adjunta, y documentación/mapas actualizados.
 
 
 
@@ -158,6 +174,34 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - *Aceptar*: `forma_pago: "bizum"` también para transferencias — el enum de la app (`efectivo|tarjeta|bizum`) no tiene «transferencia»; limitación anotada en la spec.
   - *Rechazar*: que la IA decida el apartado o el registro (el enunciado lo prohíbe: «la IA solo extrae»); que el flujo mande el recibo (lo manda el Flujo 02 al dispararse `abono.registrado`).
 - **Resultado**: `specs/flujo-03-abonos-a-distancia.md`, `workflows/flujo-03-abonos-a-distancia.json` (16 nodos; `valida_flujos` OK), rama `aviso.banco` + `Ejecutar Flujo 03` en el receptor, Mermaid de `flujos.md` y tablas del README actualizados. Credenciales `Groq (abonos a distancia)` y `API tienda (X-API-Key)` creadas en n8n por su API (secretos fuera del repo). **Validado end-to-end** contra el stack. `tests/us-03/` (un script por escenario A–H; cada uno RESETEA la app, crea su fixture por API, dispara el aviso por `aviso.banco` y comprueba executions de n8n + Mailpit + estado del apartado): **43 PASS / 0 FAIL**, evidencia versionada en `docs/evidencia/us-03/`. `task test` entero verde (us-03, us-05, us-17). La rama nueva del receptor obligó a actualizar `tests/us-17/ayudantes.py` (`RAMAS` + `INDICE_FALLBACK` 4 → 5): el contrato del Switch cambió al añadir `aviso.banco`.
+- **Resultado**: `data/correos/*.eml` con remitentes de bancos ficticios, `scripts/correos-banco.py`, task `correos` y sección en README. **No ejecutado en esta sesión**: el host no tiene Python ni Docker CLI y el stack estaba apagado; validado por lectura. Pendiente lanzarlo (`task correos -- --limpio`) con el stack arriba y adjuntar la salida.
+### US-10 · Flujo 09 · Migración del Excel antiguo ([#67](https://github.com/IA-P1-BCN/g1-n8n/issues/67), 2026-10-29)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(29/10, sesión previa en Plan mode)* Planificación del Flujo 09 (US-10, sub-issues #68, #69, #70 y #71) volcada en `handoff-us-10-migracion-excel.md`.
+  2. *(29/10)* «read /Users/jcxk/.opencode/plan/handoff-us-10-flujo-09-migracion-excel.md , is a plan for a github task from another agent , continue»
+  3. *(29/10, respuestas a preguntas abiertas)* Informe de dudosos solo por correo a Marisa (SMTP Mailpit) + salida del nodo en n8n; una sola rama `feat/us-10-migracion-excel` y una PR que cierre #67, #68, #69, #70 y #71.
+- **Decisiones**:
+  - *Aceptar*: numerar como `Flujo 09 · Migración del Excel` para respetar la reserva de los flujos 03–07 del enunciado.
+  - *Aceptar*: montar `./data:/data-fuentes:ro` en el contenedor `n8n` y leer los CSV reales con `Read/Write Files from Disk` (`readWriteFile`), con `N8N_RESTRICT_FILE_ACCESS_TO=/data-fuentes` y `N8N_DEFAULT_BINARY_DATA_MODE=default`.
+  - *Aceptar*: disparador `Manual Trigger` (operación puntual sin exponer un webhook de escritura) ejecutado en los tests por CLI (`docker compose exec -T -e N8N_RUNNERS_BROKER_PORT=5689 n8n n8n execute --id=pFlujo09MigracionExcel`).
+  - *Aceptar*: idempotencia consultando antes `GET /api/apartados`, `GET /api/abonos` y `GET /api/ventas` para no duplicar registros en segundas ejecuciones; exclusión de los apuntes de abonos en la hoja de ventas y de la suma manual (`TOTAL SEPTIEMBRE (a mano)`).
+  - *Aceptar*: descartar el grupo de **Lucía Gómez** (abono inicial `4 € < 5 €` del `03/09/2026` y su fila asociada de `41 €` del `20/09/2026`) y enviarlo en el informe por correo a Marisa.
+  - *Rechazar*: incrustar el contenido de los CSV dentro del JSON del flujo o exponer un webhook público para disparar la migración.
+- **Errores → correcciones**: ver tabla (E19 · conteo de abonos en el handoff, E20 · colisión del puerto 5679 del Task Broker al lanzar `n8n execute`, E21 · modo binario `filesystem-v2` en n8n 2.x).
+- **Resultado**: `specs/flujo-09-migracion-excel.md`, `workflows/flujo-09-migracion-excel.json`, `tests/us-10/` (17 PASS / 0 FAIL en los 3 escenarios) y evidencia versionada en `docs/evidencia/us-10/`.
+
+### US-06 · Flujo 06 · Recordatorios de vencimiento ([#47](https://github.com/IA-P1-BCN/g1-n8n/issues/47), 2026-10-29)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(29/10)* «ahora me toca hacer esta https://github.com/IA-P1-BCN/g1-n8n/issues/47»
+  2. *(29/10, respuestas a preguntas)* Alcance solo US-06 (#47 y sub-issues #48–#51) en `feat/us-06-recordatorios-vencimiento`; si el cliente no tiene email, avisar a la tienda por correo (como en Flujos 01 y 02) sin que el flujo falle.
+- **Decisiones**:
+  - *Aceptar*: doble disparador (`Cada mañana a las 09:00` con cron `0 9 * * *` + `Al ejecutar manualmente` para CLI/pruebas).
+  - *Aceptar*: consultar `GET /api/apartados?estado=activo` (`alwaysOutputData: true`) y filtrar en un nodo Code los apartados cuyo plazo vence en exactamente `7` días o `1` día (en zona `Europe/Madrid`), usando los importes (`pendiente`, `abonado`, `precio`) y `fecha_limite` de la app sin recalcularlos.
+  - *Aceptar*: deduplicación combinando `$getWorkflowStaticData('global').enviados` (persistente en ejecuciones programadas de n8n) y verificación de avisos ya emitidos en el buzón mediante la clave `apartado-{id}-aviso-{dias}d-{fecha_limite}`, garantizando `0` duplicados al re-ejecutar por CLI el mismo día (Escenario C).
+  - *Aceptar*: ajustar el apartado «por vencer» de `scripts/demo.py` de `hoy - 85 días` a `hoy - 83 días` (7 días restantes) para que `task demo` deje un escenario directo del Flujo 06.
+- **Resultado**: `specs/flujo-06-recordatorios-vencimiento.md`, `workflows/flujo-06-recordatorios-vencimiento.json` (validado con `n8n-mcp`: 9 nodos, 36 expresiones, 0 errores), `tests/us-06/` (11 PASS / 0 FAIL en los 3 escenarios) y evidencia versionada en `docs/evidencia/us-06/`.
 
 ### Tareas transversales (2026-10-22/28)
 
@@ -193,3 +237,9 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 | E15 | 28/10 | `scripts/demo.py` calculaba `RAIZ` con `parents[2]` (fuera del repo): no encontraría el `.env` y la clave saldría vacía (`401`) | Revisión del script antes de ejecutarlo | `parents[1]` (la raíz del repo es el padre de `scripts/`) | Ruta de un fichero de `scripts/`: `parents[1]`, no `parents[2]`; revisar antes del primer run |
 | E16 | 29/10 | `task correos` (y por igual `demo`/`payload`/`test`) fallaba con «Python was not found... Microsoft Store»: en la máquina `carito` `python`/`py`/`python3` eran stubs de la App Execution Alias, sin Python real | `exit status 49` al lanzar la task; `where.exe python` → solo `WindowsApps\python.exe` de 0 bytes | Instalado Python 3.12 con `winget install Python.Python.3.12 --scope user`; queda delante del stub en el PATH; se carga el buzón por Docker mientras tanto (`python:3.12-alpine` en la red `g1-n8n_default`, `MAILPIT_URL=http://mailpit:8025`) | Las tasks de host necesitan Python real; el stub de la Store intercepta `python` en Windows. Entre contenedores, Mailpit es `mailpit:8025` (no `localhost`) |
 | E17 | 29/10 | Flujo 03 fallaba en el nodo Groq: `404 The model llama-3.3-70b-versatile does not exist or you do not have access to it` | Primera ejecución real (status error; saltó el Flujo 08) | Consultado `GET api.groq.com/openai/v1/models` con la clave; la cuenta no tiene Llama de chat, sí `openai/gpt-oss-20b` (tool-calling) → fijado ese modelo y reimportado | No asumir el nombre del modelo del proveedor: listar los modelos disponibles de la cuenta antes de fijarlo en el nodo |
+| E16 | 28/10 | `task importar` decía «Successfully imported» pero la instancia seguía con el nombre/opciones viejos: el script montaba el volumen `paso-firme_n8n_data` (nombre del proyecto anterior) mientras el stack usa `g1-n8n_n8n_data` | Comparar la API de n8n después de importar: `versionId` sin cambiar y el Switch sin `fallbackOutput` | El importador usa `docker compose run` del servicio `n8n` (misma imagen y volumen del compose, sin nombres a mano); se quitan `IMAGEN_N8N`/`VOLUMEN_N8N` del Taskfile | Un import que no falla no es un import que aplica: verifica el estado en la instancia, no el exit code |
+| E17 | 28/10 | El paso de activación fallaba con `EACCES: permission denied, open '/out/export.json'`: el CLI corre como `node` (uid 1000) y no puede escribir en el `mkdtemp` del host (0700, uid 501); `chmod 777` tampoco basta en macOS | Error del `export:workflow` dentro de `task importar` | Se exporta con `export:workflow --all --stdout` y se captura la salida en Python: sin fichero ni montaje `/out` | Para leer datos de un contenedor, `--stdout` + parseo en el host evita permisos de volúmenes |
+| E18 | 28/10 | `scripts/demo.py` calculaba `RAIZ` con `parents[2]` (fuera del repo): no encontraría el `.env` y la clave saldría vacía (`401`) | Revisión del script antes de ejecutarlo | `parents[1]` (la raíz del repo es el padre de `scripts/`) | Ruta de un fichero de `scripts/`: `parents[1]`, no `parents[2]`; revisar antes del primer run |
+| E19 | 29/10 | El handoff de planificación decía «7 apartados + 4 abonos» al contar las 12 filas de `excel_actual_apartados.csv`, incluyendo por error la liquidación de Lucía Gómez como abono válido | Análisis fila a fila de `data/excel_actual_apartados.csv` antes de escribir la spec y los tests | 12 filas = 7 apartados válidos + 3 abonos posteriores válidos + 2 filas dudosas de Lucía Gómez (`03/09` de 4 € y `20/09` de 41 €) | Verificar siempre el conteo contra el CSV real antes de fijar las aserciones de los tests |
+| E20 | 29/10 | `docker compose exec -T n8n n8n execute --id=...` fallaba con `n8n Task Broker's port 5679 is already in use` porque el proceso principal de n8n ya ocupa el puerto 5679 dentro del contenedor | Fase roja (TDD) de `task test -- us-10` | Pasar `-e N8N_RUNNERS_BROKER_PORT=5689` en `docker compose exec` para que el CLI levante su broker en un puerto libre | En n8n 2.x, `n8n execute` dentro de un contenedor activo necesita un `N8N_RUNNERS_BROKER_PORT` distinto de 5679 |
+| E21 | 29/10 | `Read/Write Files from Disk` devolvía `binary.<prop>.data = "filesystem-v2"` en lugar del base64 del CSV (modo por defecto de n8n 2.x), por lo que `Buffer.from(..., 'base64')` leía 0 filas | Primera prueba de `n8n execute --id=pFlujo09MigracionExcel` (`apartados_creados: 0`) | Añadir `N8N_DEFAULT_BINARY_DATA_MODE=default` en `docker-compose.yml` para que el binario viaje en memoria (base64) entre nodos | En n8n 2.x el binario por defecto es puntero `filesystem-v2`; si un nodo Code lee `.binary.<prop>.data` de nodos previos, fijar `N8N_DEFAULT_BINARY_DATA_MODE=default` |

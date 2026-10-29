@@ -1,0 +1,271 @@
+{
+  "name": "Flujo 09 · Migración del Excel",
+  "id": "pFlujo09MigracionExcel",
+  "nodes": [
+    {
+      "id": "trigger-manual-flujo09",
+      "name": "Al ejecutar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "leer-csv-apartados",
+      "name": "Leer CSV de apartados",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        0
+      ],
+      "parameters": {
+        "operation": "read",
+        "fileSelector": "/data-fuentes/excel_actual_apartados.csv",
+        "options": {
+          "dataPropertyName": "apartados_csv"
+        }
+      }
+    },
+    {
+      "id": "leer-csv-ventas",
+      "name": "Leer CSV de ventas",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        0
+      ],
+      "parameters": {
+        "operation": "read",
+        "fileSelector": "/data-fuentes/excel_actual_ventas.csv",
+        "options": {
+          "dataPropertyName": "ventas_csv"
+        }
+      }
+    },
+    {
+      "id": "limpiar-y-agrupar",
+      "name": "Limpiar y agrupar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const b64Apartados = $('Leer CSV de apartados').first().binary.apartados_csv.data;\nconst b64Ventas = $('Leer CSV de ventas').first().binary.ventas_csv.data;\nconst txtApartados = Buffer.from(b64Apartados, 'base64').toString('utf8');\nconst txtVentas = Buffer.from(b64Ventas, 'base64').toString('utf8');\n\nfunction parsearLineaCSV(linea) {\n  const campos = [];\n  let actual = '';\n  let enComillas = false;\n  for (let i = 0; i < linea.length; i++) {\n    const ch = linea[i];\n    if (ch === '\"') {\n      enComillas = !enComillas;\n    } else if (ch === ',' && !enComillas) {\n      campos.push(actual.trim());\n      actual = '';\n    } else {\n      actual += ch;\n    }\n  }\n  campos.push(actual.trim());\n  return campos;\n}\n\nfunction parsearCSV(texto) {\n  const lineas = texto.split(/\\r?\\n/).filter(l => l.trim().length > 0);\n  const cabeceras = parsearLineaCSV(lineas[0]);\n  return lineas.slice(1).map((linea, idx) => {\n    const valores = parsearLineaCSV(linea);\n    const obj = { _fila: idx + 2 };\n    cabeceras.forEach((c, i) => { obj[c] = valores[i] ?? ''; });\n    return obj;\n  });\n}\n\nfunction limpiarFecha(raw) {\n  const texto = String(raw || '').trim();\n  const m = texto.match(/^(\\d{1,2})\\/(\\d{1,2})\\/(\\d{2,4})$/);\n  if (!m) return null;\n  const dia = m[1].padStart(2, '0');\n  const mes = m[2].padStart(2, '0');\n  const anio = m[3].length === 2 ? '20' + m[3] : m[3];\n  return `${anio}-${mes}-${dia}`;\n}\n\nfunction limpiarImporte(raw) {\n  const limpio = String(raw ?? '').replace(/€/g, '').replace(/\\s+/g, '').replace(',', '.').trim();\n  if (!limpio) return null;\n  const num = Number(limpio);\n  return Number.isFinite(num) ? Math.round(num * 100) / 100 : null;\n}\n\nfunction limpiarNombre(raw) {\n  return String(raw || '')\n    .trim()\n    .split(/\\s+/)\n    .filter(Boolean)\n    .map(p => p.charAt(0).toLocaleUpperCase('es-ES') + p.slice(1).toLocaleLowerCase('es-ES'))\n    .join(' ');\n}\n\nconst filasApartados = parsearCSV(txtApartados);\nconst filasVentas = parsearCSV(txtVentas);\n\nconst ventas = [];\nconst descartadosVentas = [];\nconst formasPagoPorFechaImporte = {};\n\nfor (const fv of filasVentas) {\n  const fecha = limpiarFecha(fv.fecha);\n  const concepto = String(fv.concepto || '').trim();\n  const importe = limpiarImporte(fv.importe);\n  const forma_pago = String(fv.forma_pago || 'efectivo').trim().toLowerCase() || 'efectivo';\n\n  if (!fecha || !concepto) {\n    descartadosVentas.push({\n      fila: fv._fila,\n      fecha_original: fv.fecha,\n      concepto: concepto || fv.fecha,\n      importe_original: fv.importe,\n      motivo: 'Fila de suma manual o sin fecha válida'\n    });\n    continue;\n  }\n  if (/abono|apartado/i.test(concepto)) {\n    formasPagoPorFechaImporte[`${fecha}|${importe}`] = forma_pago;\n    descartadosVentas.push({\n      fila: fv._fila,\n      fecha_original: fv.fecha,\n      concepto,\n      importe_original: String(importe),\n      motivo: 'Apunte de abono de apartado en hoja de ventas (se registra en su apartado para no duplicar)'\n    });\n    continue;\n  }\n  ventas.push({ fecha, concepto, importe, forma_pago });\n}\n\nconst grupos = new Map();\nfor (const fa of filasApartados) {\n  const fecha = limpiarFecha(fa.fecha);\n  const cliente = limpiarNombre(fa.cliente);\n  const telefono = String(fa.telefono || '').trim() || null;\n  const producto = String(fa.modelo || '').trim();\n  const talla = String(fa.talla || '').trim() || null;\n  const precio = limpiarImporte(fa.precio);\n  const abono = limpiarImporte(fa.abono);\n  const resta = limpiarImporte(fa.resta);\n  const notas = String(fa.notas || '').trim();\n  const clave = `${cliente.toLowerCase()}|${producto.toLowerCase()}|${talla || ''}`;\n  if (!grupos.has(clave)) grupos.set(clave, []);\n  grupos.get(clave).push({\n    fila: fa._fila,\n    clave,\n    fecha,\n    fecha_original: fa.fecha,\n    cliente,\n    telefono,\n    producto,\n    talla,\n    precio,\n    abono,\n    resta,\n    notas\n  });\n}\n\nconst apartados = [];\nconst abonos = [];\nconst dudosos = [];\n\nfor (const [clave, filas] of grupos.entries()) {\n  filas.sort((a, b) => (a.fecha || '').localeCompare(b.fecha || '') || (a.fila - b.fila));\n  const inicial = filas[0];\n  if (!inicial.fecha || inicial.abono === null || inicial.abono < 5) {\n    dudosos.push({\n      fila: inicial.fila,\n      fecha: inicial.fecha_original,\n      fecha_iso: inicial.fecha,\n      cliente: inicial.cliente,\n      producto: inicial.producto,\n      talla: inicial.talla,\n      precio: inicial.precio,\n      importe: inicial.abono,\n      notas: inicial.notas,\n      motivo: `Abono inicial de ${inicial.abono} € inferior al mínimo permitido de 5 €`\n    });\n    for (const dep of filas.slice(1)) {\n      dudosos.push({\n        fila: dep.fila,\n        fecha: dep.fecha_original,\n        fecha_iso: dep.fecha,\n        cliente: dep.cliente,\n        producto: dep.producto,\n        talla: dep.talla,\n        precio: dep.precio,\n        importe: dep.abono,\n        notas: dep.notas,\n        motivo: `Abono posterior (${dep.abono} €) dependiente del apartado dudoso de ${inicial.cliente} (abono inicial < 5 €)`\n      });\n    }\n    continue;\n  }\n\n  const fpInicial = formasPagoPorFechaImporte[`${inicial.fecha}|${inicial.abono}`] || 'efectivo';\n  apartados.push({\n    clave,\n    fecha: inicial.fecha,\n    cliente: inicial.cliente,\n    telefono: inicial.telefono,\n    producto: inicial.producto,\n    talla: inicial.talla,\n    precio: inicial.precio,\n    abono_inicial: inicial.abono,\n    forma_pago: fpInicial\n  });\n\n  for (const sig of filas.slice(1)) {\n    const fpAbono = formasPagoPorFechaImporte[`${sig.fecha}|${sig.abono}`] || 'efectivo';\n    abonos.push({\n      clave_apartado: clave,\n      cliente: sig.cliente,\n      producto: sig.producto,\n      talla: sig.talla,\n      fecha: sig.fecha,\n      importe: sig.abono,\n      forma_pago: fpAbono,\n      notas: sig.notas\n    });\n  }\n}\n\nreturn [{ json: { apartados, abonos, ventas, dudosos, descartadosVentas } }];"
+      }
+    },
+    {
+      "id": "que-hay-en-la-app",
+      "name": "Qué hay ya en la app",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "http://tienda:8000/api/apartados/resumen",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "={{ $env.API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "filtrar-ya-migrado",
+      "name": "Filtrar lo ya migrado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const limpio = $('Limpiar y agrupar').first().json;\nconst apiKey = $env.API_KEY;\nconst baseUrl = 'http://tienda:8000';\n\nconst apartadosExistentes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `${baseUrl}/api/apartados`,\n  headers: { 'X-API-Key': apiKey },\n  json: true\n});\nconst abonosExistentes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `${baseUrl}/api/abonos`,\n  headers: { 'X-API-Key': apiKey },\n  json: true\n});\nconst ventasExistentes = await this.helpers.httpRequest({\n  method: 'GET',\n  url: `${baseUrl}/api/ventas`,\n  headers: { 'X-API-Key': apiKey },\n  json: true\n});\n\nconst mapaApartados = {};\nfor (const ap of (apartadosExistentes || [])) {\n  const clave = `${String(ap.cliente).toLowerCase()}|${String(ap.producto).toLowerCase()}|${ap.talla || ''}`;\n  if (ap.fecha) {\n    mapaApartados[`${clave}|${ap.fecha}`] = ap.id;\n  }\n  mapaApartados[clave] = ap.id;\n}\n\nconst apartadosNuevos = [];\nconst apartadosOmitidos = [];\nfor (const ap of limpio.apartados) {\n  const idExistente = mapaApartados[`${ap.clave}|${ap.fecha}`];\n  if (idExistente) {\n    apartadosOmitidos.push({ ...ap, id: idExistente });\n  } else {\n    apartadosNuevos.push(ap);\n  }\n}\n\nconst ventasNuevas = [];\nconst ventasOmitidas = [];\nfor (const v of limpio.ventas) {\n  const yaExiste = (ventasExistentes || []).some(ve =>\n    ve.fecha === v.fecha &&\n    String(ve.concepto).trim().toLowerCase() === v.concepto.toLowerCase() &&\n    Math.abs(Number(ve.importe) - Number(v.importe)) < 0.01\n  );\n  if (yaExiste) {\n    ventasOmitidas.push(v);\n  } else {\n    ventasNuevas.push(v);\n  }\n}\n\nreturn [{\n  json: {\n    ...limpio,\n    mapaApartados,\n    abonosExistentes: abonosExistentes || [],\n    apartadosNuevos,\n    apartadosOmitidos,\n    ventasNuevas,\n    ventasOmitidas\n  }\n}];"
+      }
+    },
+    {
+      "id": "crear-apartado",
+      "name": "Crear apartado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const estado = $input.first().json;\nconst apiKey = $env.API_KEY;\nconst baseUrl = 'http://tienda:8000';\nconst mapaApartados = { ...(estado.mapaApartados || {}) };\nconst apartadosCreados = [];\n\nfor (const ap of estado.apartadosNuevos) {\n  const creado = await this.helpers.httpRequest({\n    method: 'POST',\n    url: `${baseUrl}/api/apartados`,\n    headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' },\n    body: {\n      cliente: ap.cliente,\n      telefono: ap.telefono,\n      producto: ap.producto,\n      talla: ap.talla,\n      precio: ap.precio,\n      abono_inicial: ap.abono_inicial,\n      forma_pago: ap.forma_pago,\n      fecha: ap.fecha\n    },\n    json: true\n  });\n  mapaApartados[ap.clave] = creado.id;\n  mapaApartados[`${ap.clave}|${ap.fecha}`] = creado.id;\n  apartadosCreados.push(creado);\n}\n\nreturn [{\n  json: {\n    ...estado,\n    mapaApartados,\n    apartadosCreados\n  }\n}];"
+      }
+    },
+    {
+      "id": "registrar-abono",
+      "name": "Registrar abono",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const estado = $input.first().json;\nconst apiKey = $env.API_KEY;\nconst baseUrl = 'http://tienda:8000';\nconst abonosCreados = [];\nconst abonosOmitidos = [];\n\nfor (const ab of estado.abonos) {\n  const apartadoId = estado.mapaApartados[ab.clave_apartado];\n  if (!apartadoId) continue;\n  const yaExiste = (estado.abonosExistentes || []).some(ex =>\n    Number(ex.apartado_id) === Number(apartadoId) &&\n    ex.fecha === ab.fecha &&\n    Math.abs(Number(ex.importe) - Number(ab.importe)) < 0.01\n  );\n  if (yaExiste) {\n    abonosOmitidos.push({ ...ab, apartado_id: apartadoId });\n    continue;\n  }\n  const creado = await this.helpers.httpRequest({\n    method: 'POST',\n    url: `${baseUrl}/api/apartados/${apartadoId}/abonos`,\n    headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' },\n    body: {\n      importe: ab.importe,\n      forma_pago: ab.forma_pago,\n      fecha: ab.fecha\n    },\n    json: true\n  });\n  abonosCreados.push({ ...ab, apartado_id: apartadoId, estado_apartado: creado.estado });\n}\n\nreturn [{\n  json: {\n    ...estado,\n    abonosCreados,\n    abonosOmitidos\n  }\n}];"
+      }
+    },
+    {
+      "id": "registrar-venta",
+      "name": "Registrar venta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const estado = $input.first().json;\nconst apiKey = $env.API_KEY;\nconst baseUrl = 'http://tienda:8000';\nconst ventasCreadas = [];\n\nfor (const v of estado.ventasNuevas) {\n  const creada = await this.helpers.httpRequest({\n    method: 'POST',\n    url: `${baseUrl}/api/ventas`,\n    headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' },\n    body: {\n      concepto: v.concepto,\n      importe: v.importe,\n      forma_pago: v.forma_pago,\n      fecha: v.fecha\n    },\n    json: true\n  });\n  ventasCreadas.push(creada);\n}\n\nconst filasDudososHtml = estado.dudosos.map(d =>\n  `<tr>` +\n  `<td>${d.fecha} (${d.fecha_iso || ''})</td>` +\n  `<td><b>${d.cliente}</b></td>` +\n  `<td>${d.producto} (T${d.talla || '-'})</td>` +\n  `<td>${d.precio} €</td>` +\n  `<td>${d.importe} €</td>` +\n  `<td>${d.motivo}${d.notas ? ' · Nota: ' + d.notas : ''}</td>` +\n  `</tr>`\n).join('');\n\nconst filasVentasDescartadasHtml = (estado.descartadosVentas || []).map(dv =>\n  `<tr>` +\n  `<td>${dv.fecha_original || '-'}</td>` +\n  `<td>${dv.concepto}</td>` +\n  `<td>${dv.importe_original}</td>` +\n  `<td>${dv.motivo}</td>` +\n  `</tr>`\n).join('');\n\nconst htmlInforme =\n  `<h2>📋 Informe de migración del Excel · Zapatería Paso Firme</h2>` +\n  `<p>Hola Marisa, se ha ejecutado la migración de los ficheros CSV de la tienda.</p>` +\n  `<h3>Resumen de la ejecución</h3>` +\n  `<ul>` +\n  `<li><b>Apartados creados ahora:</b> ${estado.apartadosCreados.length} (omitidos por existir ya: ${estado.apartadosOmitidos.length})</li>` +\n  `<li><b>Abonos posteriores registrados ahora:</b> ${estado.abonosCreados.length} (omitidos por existir ya: ${estado.abonosOmitidos.length})</li>` +\n  `<li><b>Ventas registradas ahora:</b> ${ventasCreadas.length} (omitidas por existir ya: ${estado.ventasOmitidas.length})</li>` +\n  `<li><b>Casos dudosos NO cargados:</b> ${estado.dudosos.length} fila(s)</li>` +\n  `</ul>` +\n  `<h3>⚠️ Casos dudosos de apartados/abonos (no cargados — pendientes de tu decisión)</h3>` +\n  `<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\">` +\n  `<tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Precio</th><th>Abono</th><th>Motivo</th></tr>` +\n  `${filasDudososHtml}` +\n  `</table>` +\n  `<h3>ℹ️ Filas excluidas de la hoja de ventas (totales a mano y abonos ya incluidos en apartados)</h3>` +\n  `<table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\">` +\n  `<tr><th>Fecha</th><th>Concepto</th><th>Importe</th><th>Motivo</th></tr>` +\n  `${filasVentasDescartadasHtml}` +\n  `</table>` +\n  `<p>Revisa los casos dudosos y regístralos manualmente en la app si procede. — Flujo 09</p>`;\n\nreturn [{\n  json: {\n    resumen: {\n      apartados_creados: estado.apartadosCreados.length,\n      apartados_omitidos: estado.apartadosOmitidos.length,\n      abonos_creados: estado.abonosCreados.length,\n      abonos_omitidos: estado.abonosOmitidos.length,\n      ventas_creadas: ventasCreadas.length,\n      ventas_omitidas: estado.ventasOmitidas.length,\n      casos_dudosos: estado.dudosos.length\n    },\n    dudosos: estado.dudosos,\n    htmlInforme\n  }\n}];"
+      }
+    },
+    {
+      "id": "enviar-informe-dudosos",
+      "name": "Enviar informe de dudosos a Marisa",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1340,
+        0
+      ],
+      "parameters": {
+        "fromEmail": "n8n@paso-firme.local",
+        "toEmail": "cambia-esta-direccion@paso-firme.local",
+        "subject": "📋 Informe de migración del Excel · casos dudosos para revisar",
+        "emailFormat": "html",
+        "html": "={{ $json.htmlInforme }}",
+        "options": {}
+      },
+      "credentials": {
+        "smtp": {
+          "id": "NJ0d4FNqNiljQZMU",
+          "name": "SMTP Mailpit (pruebas)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Al ejecutar manualmente": {
+      "main": [
+        [
+          {
+            "node": "Leer CSV de apartados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer CSV de apartados": {
+      "main": [
+        [
+          {
+            "node": "Leer CSV de ventas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer CSV de ventas": {
+      "main": [
+        [
+          {
+            "node": "Limpiar y agrupar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limpiar y agrupar": {
+      "main": [
+        [
+          {
+            "node": "Qué hay ya en la app",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qué hay ya en la app": {
+      "main": [
+        [
+          {
+            "node": "Filtrar lo ya migrado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar lo ya migrado": {
+      "main": [
+        [
+          {
+            "node": "Crear apartado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear apartado": {
+      "main": [
+        [
+          {
+            "node": "Registrar abono",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar abono": {
+      "main": [
+        [
+          {
+            "node": "Registrar venta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar venta": {
+      "main": [
+        [
+          {
+            "node": "Enviar informe de dudosos a Marisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "pFlujo08AvisoFallo"
+  },
+  "active": false
+}

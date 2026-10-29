@@ -1,0 +1,6 @@
+PASS · sin-duplicados · la segunda ejecución del Flujo 09 termina sin error · n8n execute OK
+PASS · sin-duplicados · no se duplican apartados (siguen los mismos 7 IDs) · antes=7 · despues=7
+PASS · sin-duplicados · no se duplican abonos (siguen exactamente 10) · antes=10 · despues=10
+PASS · sin-duplicados · no se duplican ventas (siguen exactamente 6) · antes=6 · despues=6
+
+total: 4 PASS / 0 FAIL

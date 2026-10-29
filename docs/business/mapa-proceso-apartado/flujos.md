@@ -60,6 +60,7 @@ flowchart LR
 
     subgraph LaneBanco["Lane · Banco"]
         bk["Aviso de Bizum o transferencia al correo de la tienda"]
+        m4["Recibe el Informe mensual por correo el día 1"]
     end
 
     subgraph LaneApp["Lane · App de la tienda"]
@@ -84,10 +85,16 @@ flowchart LR
         f3d{"¿Apartado único y regla OK?"}
         f3ask["Pregunta o avisa a Marisa (correo a la tienda)"]
         f4["Flujo 04 · cierre diario (rama venta.registrada, reservada a US-09, sin conectar)"]
-        f6["Flujo 06 · vencimiento y Vale (rama apartado.vencido, reservada a US-07, sin conectar)"]
+        f6["Flujo 06 · Recordatorios de vencimiento (programado cada mañana: 7d y 1d sin duplicar)"]
+        f6m["Enviar correo «Tu apartado vence en 7 días» / «Mañana vence tu apartado»"]
+        f6v["Flujo 06 · vencimiento y Vale (rama apartado.vencido, reservada a US-07, sin conectar)"]
         fx["Rama evento desconocido: queda visible en Executions"]
         nm["Se registra y se acabó: sin correo"]
+        f7["Flujo 07 · Informe mensual (programado día 1)"]
+        f7m["Enviar correo «Informe mensual» a Marisa"]
         f8["Flujo 08 · Aviso de fallo a Marisa"]
+        f9["Flujo 09 · Migración del Excel antiguo (data/*.csv → API sin duplicados)"]
+        f9m["Enviar correo «Informe de migración del Excel» (casos dudosos)"]
     end
 
     c1 --> m1
@@ -118,12 +125,28 @@ flowchart LR
     f3d -- "No: dudoso o rechazado" --> f3ask
     f3ask --> m4
     f3 -. "si un flujo falla" .-> f8
+    n3 -- "apartado.vencido" --> f6v
+    a1 -- "GET /api/apartados?estado=activo" --> f6
+    f6 --> f6m
+    f6m --> c4
     f2u --> m3
     m3 --> c3
     a3 --> m2
     f1 -. "si un flujo falla" .-> f8
     f2 -.-> f8
+    f6 -.-> f8
+    f7 -.-> f8
+    f7 --> f7m
+    f7m --> m4
     n3 -- "Cualquier otro evento" --> fx
 ```
 
 El **Flujo 03 · Abonos a distancia** ya reconcilia Bizum y transferencia: la IA (Groq) solo extrae ordenante, importe y concepto, y el flujo decide con la API (registra el Abono —que dispara el recibo del Flujo 02— o pregunta/avisa a Marisa si es dudoso o lo rechaza la app). El aviso de fallo (Flujo 08) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.
+Bizum y transferencia se revisan aún a mano hasta el flujo de Abonos a distancia; el aviso de fallo (Flujo 08) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes; el informe mensual (Flujo 07) se ejecuta automáticamente el día 1 de cada mes y consolida la recaudación y apartados consultando la app.
+    f9 -.-> f8
+    f9 -- "POST /api/apartados · abonos · ventas" --> a1
+    f9 -- "casos dudosos (ej. abono inicial < 5 €)" --> f9m
+    n3 -- "Cualquier otro evento" --> fx
+```
+
+Bizum y transferencia se revisan aún a mano hasta el flujo de Abonos a distancia; la migración puntual de las hojas antiguas (`data/*.csv`) corre en el **Flujo 09**; el aviso de fallo (Flujo 08) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.

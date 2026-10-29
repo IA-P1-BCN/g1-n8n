@@ -1,0 +1,9 @@
+PASS · carga-limpia · el Flujo 09 se ejecuta sin error · n8n execute OK
+PASS · carga-limpia · se crean los 7 apartados válidos por API · total=7 · clientes=['Ana Torres', 'Carmen Ruiz', 'Jorge Martín', 'Miguel Ángel López', 'Pedro Sanz', 'Rosa Díaz', 'Sofía Navarro']
+PASS · carga-limpia · nombres normalizados (Carmen Ruiz agrupa 'Carmen Ruiz' y 'carmen ruiz') · fecha=2026-09-02 · abonado=30.0 · pendiente=59.9
+PASS · carga-limpia · fechas originales conservadas (Jorge Martín 02/09/2026 + abono 12/09/2026) · fecha=2026-09-02 · abonado=35.0 · pendiente=29.5
+PASS · carga-limpia · fecha corta '7/9/26' e importe '15€' limpiados en Ana Torres (+ abono de 20 €) · fecha=2026-09-07 · abonado=35.0 · pendiente=37.0
+PASS · carga-limpia · se registran los 10 abonos (7 iniciales + 3 posteriores) con sus fechas originales · total=10 · fechas=['2026-09-02', '2026-09-02', '2026-09-05', '2026-09-07', '2026-09-10', '2026-09-12', '2026-09-15', '2026-10-01', '2026-10-03', '2026-10-06']
+PASS · carga-limpia · se cargan las 6 ventas directas excluyendo apuntes de abonos y el total a mano · total=6 · conceptos=['Calcetines pack 3', 'Bota montaña T41', 'Plantillas gel', 'Zapatilla casa T38', 'Botín piel negro T40', 'Crema calzado']
+
+total: 7 PASS / 0 FAIL

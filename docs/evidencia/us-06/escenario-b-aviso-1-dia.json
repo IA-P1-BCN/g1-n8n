@@ -1,0 +1,27 @@
+{
+  "apartado_1d": {
+    "id": 3,
+    "fecha": "2026-08-01",
+    "cliente": "Marcos Un Día",
+    "telefono": null,
+    "email": "marcos.1d@paso-firme.local",
+    "producto": "Zapatilla running azul",
+    "talla": "42",
+    "precio": 64.5,
+    "fecha_limite": "2026-10-30",
+    "estado": "activo",
+    "abonado": 15.0,
+    "pendiente": 49.5
+  },
+  "correo_recibido": {
+    "id": "2rweizLCtrqxsd0eRkYv8P",
+    "asunto": "⏰ Mañana vence tu apartado · Zapatería Paso Firme (apartado nº 3)",
+    "to": [
+      {
+        "Name": "",
+        "Address": "marcos.1d@paso-firme.local"
+      }
+    ],
+    "html": "\r\n\t\t\t\t\t<h2>⏰ Mañana termina el plazo de tu apartado</h2><p>Hola Marcos Un Día,</p><p>Te recordamos que <b>mañana (30/10/2026)</b> vence el plazo de 90 días de tu apartado en Zapatería Paso Firme.</p><table border=\"1\" cellpadding=\"6\" style=\"border-collapse:collapse\"><tr><td><b>Producto</b></td><td>Zapatilla running azul (talla 42)</td></tr><tr><td><b>Precio</b></td><td>64.5 €</td></tr><tr><td><b>Ya abonado</b></td><td>15 €</td></tr><tr><td><b>Pendiente por pagar</b></td><td><b>49.5 €</b></td></tr><tr><td><b>Fecha límite</b></td><td><b>30/10/2026</b> (2026-10-30)</td></tr></table><p>Pásate por la tienda o realiza el abono pendiente antes de que finalice el plazo para no perder tus zapatos.</p><p>Zapatería Paso Firme · Ref: apartado-3-aviso-1d-2026-10-30</p>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t---\r\n\t\t\t\t\t<br>\r\n\t\t\t\t\t<em>This email was sent automatically with <a href=\"https://n8n.io/?utm_source=n8n-internal&utm_medium=powered_by&utm_campaign=n8n-nodes-base.emailSend_2b450c1056ff4f9622ec0b31937381bef9fbd7d4b76cadd7ebf8798799ff58b8\" target=\"_blank\">n8n</a></em>\r\n\t\t\t\t\t\r\n"
+  }
+}

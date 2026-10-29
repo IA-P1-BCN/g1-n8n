@@ -1,0 +1,21 @@
+{
+  "antes": {
+    "apartados": 7,
+    "abonos": 10,
+    "ventas": 6
+  },
+  "despues": {
+    "apartados": 7,
+    "abonos": 10,
+    "ventas": 6
+  },
+  "ids_apartados_despues": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ]
+}
