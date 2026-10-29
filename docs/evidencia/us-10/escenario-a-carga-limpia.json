@@ -1,0 +1,224 @@
+{
+  "status_apartados": 200,
+  "total_apartados": 7,
+  "apartados": [
+    {
+      "id": 1,
+      "fecha": "2026-09-02",
+      "cliente": "Carmen Ruiz",
+      "telefono": "612 345 001",
+      "email": null,
+      "producto": "Botín piel marrón",
+      "talla": "38",
+      "precio": 89.9,
+      "fecha_limite": "2026-12-01",
+      "estado": "activo",
+      "abonado": 30.0,
+      "pendiente": 59.9
+    },
+    {
+      "id": 2,
+      "fecha": "2026-09-02",
+      "cliente": "Jorge Martín",
+      "telefono": "612345002",
+      "email": null,
+      "producto": "Zapatilla running azul",
+      "talla": "43",
+      "precio": 64.5,
+      "fecha_limite": "2026-12-01",
+      "estado": "activo",
+      "abonado": 35.0,
+      "pendiente": 29.5
+    },
+    {
+      "id": 3,
+      "fecha": "2026-09-07",
+      "cliente": "Ana Torres",
+      "telefono": null,
+      "email": null,
+      "producto": "Mocasín ante",
+      "talla": "39",
+      "precio": 72.0,
+      "fecha_limite": "2026-12-06",
+      "estado": "activo",
+      "abonado": 35.0,
+      "pendiente": 37.0
+    },
+    {
+      "id": 4,
+      "fecha": "2026-09-10",
+      "cliente": "Pedro Sanz",
+      "telefono": "612 345 005",
+      "email": null,
+      "producto": "Bota agua niño",
+      "talla": "31",
+      "precio": 29.95,
+      "fecha_limite": "2026-12-09",
+      "estado": "activo",
+      "abonado": 5.0,
+      "pendiente": 24.95
+    },
+    {
+      "id": 5,
+      "fecha": "2026-09-15",
+      "cliente": "Rosa Díaz",
+      "telefono": "612 345 006",
+      "email": null,
+      "producto": "Zapato vestir hombre",
+      "talla": "42",
+      "precio": 95.0,
+      "fecha_limite": "2026-12-14",
+      "estado": "activo",
+      "abonado": 50.0,
+      "pendiente": 45.0
+    },
+    {
+      "id": 6,
+      "fecha": "2026-10-01",
+      "cliente": "Miguel Ángel López",
+      "telefono": "612 345 007",
+      "email": null,
+      "producto": "Deportiva blanca",
+      "talla": "44",
+      "precio": 55.0,
+      "fecha_limite": "2026-12-30",
+      "estado": "activo",
+      "abonado": 5.0,
+      "pendiente": 50.0
+    },
+    {
+      "id": 7,
+      "fecha": "2026-10-06",
+      "cliente": "Sofía Navarro",
+      "telefono": "612 345 008",
+      "email": null,
+      "producto": "Bailarina roja",
+      "talla": "36",
+      "precio": 39.9,
+      "fecha_limite": "2027-01-04",
+      "estado": "activo",
+      "abonado": 10.0,
+      "pendiente": 29.9
+    }
+  ],
+  "status_abonos": 200,
+  "total_abonos": 10,
+  "abonos": [
+    {
+      "id": 1,
+      "apartado_id": 1,
+      "fecha": "2026-09-02",
+      "importe": 10.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 2,
+      "apartado_id": 2,
+      "fecha": "2026-09-02",
+      "importe": 5.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 8,
+      "apartado_id": 1,
+      "fecha": "2026-09-05",
+      "importe": 20.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 3,
+      "apartado_id": 3,
+      "fecha": "2026-09-07",
+      "importe": 15.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 4,
+      "apartado_id": 4,
+      "fecha": "2026-09-10",
+      "importe": 5.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 9,
+      "apartado_id": 2,
+      "fecha": "2026-09-12",
+      "importe": 30.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 5,
+      "apartado_id": 5,
+      "fecha": "2026-09-15",
+      "importe": 50.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 6,
+      "apartado_id": 6,
+      "fecha": "2026-10-01",
+      "importe": 5.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 10,
+      "apartado_id": 3,
+      "fecha": "2026-10-03",
+      "importe": 20.0,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 7,
+      "apartado_id": 7,
+      "fecha": "2026-10-06",
+      "importe": 10.0,
+      "forma_pago": "bizum"
+    }
+  ],
+  "status_ventas": 200,
+  "total_ventas": 6,
+  "ventas": [
+    {
+      "id": 1,
+      "fecha": "2026-10-01",
+      "concepto": "Calcetines pack 3",
+      "importe": 6.5,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 2,
+      "fecha": "2026-10-01",
+      "concepto": "Bota montaña T41",
+      "importe": 79.9,
+      "forma_pago": "tarjeta"
+    },
+    {
+      "id": 3,
+      "fecha": "2026-10-02",
+      "concepto": "Plantillas gel",
+      "importe": 12.0,
+      "forma_pago": "tarjeta"
+    },
+    {
+      "id": 4,
+      "fecha": "2026-10-02",
+      "concepto": "Zapatilla casa T38",
+      "importe": 18.95,
+      "forma_pago": "efectivo"
+    },
+    {
+      "id": 5,
+      "fecha": "2026-10-03",
+      "concepto": "Botín piel negro T40",
+      "importe": 92.0,
+      "forma_pago": "tarjeta"
+    },
+    {
+      "id": 6,
+      "fecha": "2026-10-06",
+      "concepto": "Crema calzado",
+      "importe": 4.5,
+      "forma_pago": "efectivo"
+    }
+  ]
+}

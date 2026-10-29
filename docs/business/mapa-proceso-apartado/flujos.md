@@ -79,6 +79,8 @@ flowchart LR
         fx["Rama evento desconocido: queda visible en Executions"]
         nm["Se registra y se acabó: sin correo"]
         f8["Flujo 08 · Aviso de fallo a Marisa"]
+        f9["Flujo 09 · Migración del Excel antiguo (data/*.csv → API sin duplicados)"]
+        f9m["Enviar correo «Informe de migración del Excel» (casos dudosos)"]
     end
 
     c1 --> m1
@@ -106,7 +108,10 @@ flowchart LR
     a3 --> m2
     f1 -. "si un flujo falla" .-> f8
     f2 -.-> f8
+    f9 -.-> f8
+    f9 -- "POST /api/apartados · abonos · ventas" --> a1
+    f9 -- "casos dudosos (ej. abono inicial < 5 €)" --> f9m
     n3 -- "Cualquier otro evento" --> fx
 ```
 
-Bizum y transferencia se revisan aún a mano hasta el flujo de Abonos a distancia; el aviso de fallo (Flujo 08) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.
+Bizum y transferencia se revisan aún a mano hasta el flujo de Abonos a distancia; la migración puntual de las hojas antiguas (`data/*.csv`) corre en el **Flujo 09**; el aviso de fallo (Flujo 08) entra con `errorWorkflow`: todos los flujos lo apuntan en sus ajustes.
