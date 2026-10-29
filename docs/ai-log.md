@@ -1,4 +1,4 @@
-﻿# Bitácora de IA
+# Bitácora de IA
 
 > Entregable 8 (US-21, [issue #41](https://github.com/IA-P1-BCN/g1-n8n/issues/41)) · trazabilidad de prompts y decisiones con el agente.
 > Convención: cada tarea del nivel Esencial añade una entrada en «Registro por tarea» (prompts textuales cuando la sesión los conservó; marcados *(reconstruido)* cuando se recuperan de issues/PRs) y todo error del agente va a la tabla de errores, con su corrección. Regla de equipo en [`AGENTS.md`](../AGENTS.md) («Trazabilidad»).
@@ -8,6 +8,7 @@
 | Cuándo | Herramienta | Modelo / versión | Para qué |
 |---|---|---|---|
 | todo el proyecto | OpenCode (CLI de agente de código) | GLM · `glm-5.3-flash-free` (Z.ai) | specs SDD, flujos n8n, PRs, tests e2e, docs |
+| US-10 (handoff) | Antigravity | Gemini 4 Argon (Medium) | continuación del plan de US-10: spec SDD, Flujo 09, suite e2e y evidencia |
 | desde US-01 | **MCP `n8n-mcp`** (servidor MCP del repo, `.opencode/mcp/`) | n8n-mcp (npm) | docs y versiones de nodos, validación de workflows (`validate_workflow`), templates de referencia |
 | desde US-01 | `gh` CLI · Docker CLI · PowerShell · Python 3.14 · Task 3.54.0 | — | issues/PRs, stack local, shell, suites e2e, runner de tests |
 
@@ -111,6 +112,22 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   - *Rechazar*: `docker compose down -v` para limpiar: se lleva por delante n8n y obliga a `task importar`; el flag toca solo los datos de la app y el buzón.
 - **Resultado**: `scripts/demo.py`, task `demo`, sección «Datos frescos para la demo» en README (tabla de escenarios), fila en la guía de la app, regla de escenarios y de **comandos/flags documentados** en AGENTS.md y esta entrada. Ejecutado con `--limpio` contra el stack local: apartados #1/#2/#3, ventas #1-#3, vale `VALE-00003`, 6 correos en Mailpit; `exit 0`. Evidencia en la PR.
 
+### US-10 · Flujo 09 · Migración del Excel antiguo ([#67](https://github.com/IA-P1-BCN/g1-n8n/issues/67), 2026-10-29)
+
+- **Prompts (textuales de la sesión)**:
+  1. *(29/10, sesión previa en Plan mode)* Planificación del Flujo 09 (US-10, sub-issues #68, #69, #70 y #71) volcada en `handoff-us-10-migracion-excel.md`.
+  2. *(29/10)* «read /Users/jcxk/.opencode/plan/handoff-us-10-flujo-09-migracion-excel.md , is a plan for a github task from another agent , continue»
+  3. *(29/10, respuestas a preguntas abiertas)* Informe de dudosos solo por correo a Marisa (SMTP Mailpit) + salida del nodo en n8n; una sola rama `feat/us-10-migracion-excel` y una PR que cierre #67, #68, #69, #70 y #71.
+- **Decisiones**:
+  - *Aceptar*: numerar como `Flujo 09 · Migración del Excel` para respetar la reserva de los flujos 03–07 del enunciado.
+  - *Aceptar*: montar `./data:/data-fuentes:ro` en el contenedor `n8n` y leer los CSV reales con `Read/Write Files from Disk` (`readWriteFile`), con `N8N_RESTRICT_FILE_ACCESS_TO=/data-fuentes` y `N8N_DEFAULT_BINARY_DATA_MODE=default`.
+  - *Aceptar*: disparador `Manual Trigger` (operación puntual sin exponer un webhook de escritura) ejecutado en los tests por CLI (`docker compose exec -T -e N8N_RUNNERS_BROKER_PORT=5689 n8n n8n execute --id=pFlujo09MigracionExcel`).
+  - *Aceptar*: idempotencia consultando antes `GET /api/apartados`, `GET /api/abonos` y `GET /api/ventas` para no duplicar registros en segundas ejecuciones; exclusión de los apuntes de abonos en la hoja de ventas y de la suma manual (`TOTAL SEPTIEMBRE (a mano)`).
+  - *Aceptar*: descartar el grupo de **Lucía Gómez** (abono inicial `4 € < 5 €` del `03/09/2026` y su fila asociada de `41 €` del `20/09/2026`) y enviarlo en el informe por correo a Marisa.
+  - *Rechazar*: incrustar el contenido de los CSV dentro del JSON del flujo o exponer un webhook público para disparar la migración.
+- **Errores → correcciones**: ver tabla (E16 · conteo de abonos en el handoff, E17 · colisión del puerto 5679 del Task Broker al lanzar `n8n execute`, E18 · modo binario `filesystem-v2` en n8n 2.x).
+- **Resultado**: `specs/flujo-09-migracion-excel.md`, `workflows/flujo-09-migracion-excel.json`, `tests/us-10/` (17 PASS / 0 FAIL en los 3 escenarios) y evidencia versionada en `docs/evidencia/us-10/`.
+
 ### Tareas transversales (2026-10-22/28)
 
 - US-17 · Receptor único `Receptor · Webhook tienda` (prompt reconstruido: «un único webhook con Switch por evento») — scaffold en PRs #111/#118; spec, renombrado, fallback y evidencia en la PR #125.
@@ -140,3 +157,6 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 | E13 | 28/10 | `task importar` decía «Successfully imported» pero la instancia seguía con el nombre/opciones viejos: el script montaba el volumen `paso-firme_n8n_data` (nombre del proyecto anterior) mientras el stack usa `g1-n8n_n8n_data` | Comparar la API de n8n después de importar: `versionId` sin cambiar y el Switch sin `fallbackOutput` | El importador usa `docker compose run` del servicio `n8n` (misma imagen y volumen del compose, sin nombres a mano); se quitan `IMAGEN_N8N`/`VOLUMEN_N8N` del Taskfile | Un import que no falla no es un import que aplica: verifica el estado en la instancia, no el exit code |
 | E14 | 28/10 | El paso de activación fallaba con `EACCES: permission denied, open '/out/export.json'`: el CLI corre como `node` (uid 1000) y no puede escribir en el `mkdtemp` del host (0700, uid 501); `chmod 777` tampoco basta en macOS | Error del `export:workflow` dentro de `task importar` | Se exporta con `export:workflow --all --stdout` y se captura la salida en Python: sin fichero ni montaje `/out` | Para leer datos de un contenedor, `--stdout` + parseo en el host evita permisos de volúmenes |
 | E15 | 28/10 | `scripts/demo.py` calculaba `RAIZ` con `parents[2]` (fuera del repo): no encontraría el `.env` y la clave saldría vacía (`401`) | Revisión del script antes de ejecutarlo | `parents[1]` (la raíz del repo es el padre de `scripts/`) | Ruta de un fichero de `scripts/`: `parents[1]`, no `parents[2]`; revisar antes del primer run |
+| E16 | 29/10 | El handoff de planificación decía «7 apartados + 4 abonos» al contar las 12 filas de `excel_actual_apartados.csv`, incluyendo por error la liquidación de Lucía Gómez como abono válido | Análisis fila a fila de `data/excel_actual_apartados.csv` antes de escribir la spec y los tests | 12 filas = 7 apartados válidos + 3 abonos posteriores válidos + 2 filas dudosas de Lucía Gómez (`03/09` de 4 € y `20/09` de 41 €) | Verificar siempre el conteo contra el CSV real antes de fijar las aserciones de los tests |
+| E17 | 29/10 | `docker compose exec -T n8n n8n execute --id=...` fallaba con `n8n Task Broker's port 5679 is already in use` porque el proceso principal de n8n ya ocupa el puerto 5679 dentro del contenedor | Fase roja (TDD) de `task test -- us-10` | Pasar `-e N8N_RUNNERS_BROKER_PORT=5689` en `docker compose exec` para que el CLI levante su broker en un puerto libre | En n8n 2.x, `n8n execute` dentro de un contenedor activo necesita un `N8N_RUNNERS_BROKER_PORT` distinto de 5679 |
+| E18 | 29/10 | `Read/Write Files from Disk` devolvía `binary.<prop>.data = "filesystem-v2"` en lugar del base64 del CSV (modo por defecto de n8n 2.x), por lo que `Buffer.from(..., 'base64')` leía 0 filas | Primera prueba de `n8n execute --id=pFlujo09MigracionExcel` (`apartados_creados: 0`) | Añadir `N8N_DEFAULT_BINARY_DATA_MODE=default` en `docker-compose.yml` para que el binario viaje en memoria (base64) entre nodos | En n8n 2.x el binario por defecto es puntero `filesystem-v2`; si un nodo Code lee `.binary.<prop>.data` de nodos previos, fijar `N8N_DEFAULT_BINARY_DATA_MODE=default` |

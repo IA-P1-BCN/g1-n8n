@@ -73,6 +73,7 @@ Al final comprueba con `GET` que la API devuelve lo creado, y si algo falla sale
 | 04 · Cierre diario (pendiente) | ventas de hoy en efectivo, tarjeta y bizum | — |
 | 06 · Vencimiento y vale (pendiente) | el apartado vencido con su vale | — |
 | 08 · Aviso de fallo | no es un escenario de datos: se prueba forzando un fallo | — |
+| 09 · Migración del Excel | los CSV reales de `data/` (montados en `/data-fuentes:ro` en n8n) | 7 apartados, 3 abonos y 6 ventas en la app + correo «Informe de migración del Excel» en Mailpit |
 
 Para probar un evento a mano (retocar algo o añadir un caso), duplica un fichero de `payloads/`, edítalo y lánzalo igual:
 
@@ -105,6 +106,7 @@ docker exec paso-firme-n8n-1 n8n export:workflow --all --stdout > workflows/fluj
 | Flujo 01 · Confirmación de apartado | `flujo-01-confirmacion-apartado.json` | evento `apartado.creado` vía receptor | SMTP Mailpit (pruebas) |
 | Flujo 02 · Recibo de cada abono | `flujo-02-recibo-de-cada-abono.json` | evento `abono.registrado` vía receptor | SMTP Mailpit (pruebas) |
 | Flujo 08 · Aviso de fallo | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara solo si otro flujo falla (el resto lo apuntan en sus ajustes) | SMTP Mailpit (pruebas) |
+| Flujo 09 · Migración del Excel | `flujo-09-migracion-excel.json` | *Manual Trigger*: lee `/data-fuentes/*.csv` (montaje `./data:/data-fuentes:ro`), migra por API sin duplicar y envía informe de casos dudosos | SMTP Mailpit (pruebas), `API_KEY` (`.env`) |
 | Receptor · Webhook tienda | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (la app avisa aquí) | — |
 
 #### Eventos del receptor
@@ -124,11 +126,11 @@ Un único webhook publicado reparte los eventos de la app con un Switch (`Repart
 
 | Credencial / variable | Tipo | Qué hay que configurar (valores en tu entorno, no en el repo) | La usan los flujos |
 |---|---|---|---|
-| `SMTP Mailpit (pruebas)` | SMTP | servidor (`mailpit` en la red de Docker), puerto, usuario y contraseña (Mailpit no los pide en local) y TLS desactivado | 01, 02 y 08 |
-| credencial SMTP real (producción) | SMTP u OAuth2 de Gmail | asignarla a los nodos de correo en lugar de la de Mailpit | 01, 02 y 08 |
-| `API_KEY` (`.env`) | variable de la app | clave que exige la API de la tienda; la generas en n8n con **Settings > n8n API** | app ↔ n8n |
+| `SMTP Mailpit (pruebas)` | SMTP | servidor (`mailpit` en la red de Docker), puerto, usuario y contraseña (Mailpit no los pide en local) y TLS desactivado | 01, 02, 08 y 09 |
+| credencial SMTP real (producción) | SMTP u OAuth2 de Gmail | asignarla a los nodos de correo en lugar de la de Mailpit | 01, 02, 08 y 09 |
+| `API_KEY` (`.env`) | variable de la app | clave que exige la API de la tienda; la generas en n8n con **Settings > n8n API** | app ↔ n8n (y Flujo 09) |
 | `N8N_WEBHOOK_URL` (`.env`) | variable de la app | URL del receptor de n8n para los eventos de la tienda | todos los eventos |
-| `cambia-esta-direccion@paso-firme.local` | `toEmail` de los avisos a la tienda | **sustituir por el correo real de la tienda** antes de pasar a producción | 01, 02 y 08 |
+| `cambia-esta-direccion@paso-firme.local` | `toEmail` de los avisos a la tienda | **sustituir por el correo real de la tienda** antes de pasar a producción | 01, 02, 08 y 09 |
 
 Ninguna credencial pide valores dentro de los JSON de `workflows/`: se referencian por id/nombre y los valores viven en `credentials/` (o en n8n) — nunca los subas al repo.
 
