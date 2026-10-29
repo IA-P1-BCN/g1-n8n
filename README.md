@@ -107,15 +107,6 @@ docker exec paso-firme-n8n-1 n8n export:workflow --all --stdout > workflows/fluj
 | Flujo 08 · Aviso de fallo | `flujo-08-aviso-de-fallo.json` | *Error Trigger*: se dispara solo si otro flujo falla (el resto lo apuntan en sus ajustes) | SMTP Mailpit (pruebas) |
 | Receptor · Webhook tienda | `receptor-webhook-tienda.json` | `POST /webhook/tienda` (la app avisa aquí) | — |
 
-#### Mapa del proceso (hoy vs automatizado)
-
-Los diagramas BPMN del proceso viven en [`docs/business/mapa-proceso-apartado/`](docs/business/mapa-proceso-apartado/):
-
-- [proceso-hoy.bpmn](docs/business/mapa-proceso-apartado/proceso-hoy.bpmn) — el proceso a mano (libreta, Excel, calculadora).
-- [proceso-automatizado.bpmn](docs/business/mapa-proceso-apartado/proceso-automatizado.bpmn) — el proceso con n8n.
-
-Para visualizarlos, arrastra el fichero a [bpmn.io](https://demo.bpmn.io) o importa el BPMN en Miro/Excalidraw.
-
 #### Eventos del receptor
 
 Un único webhook publicado reparte los eventos de la app con un Switch (`Repartir por evento`); su spec está en [`specs/receptor-webhook-tienda.md`](specs/receptor-webhook-tienda.md).
@@ -181,6 +172,10 @@ Hay ejemplos listos para copiar y retocar en `payloads/` (`apartado-creado.json`
 - Destino: variable `N8N_URL` (por defecto `http://localhost:5678`) o `--url`. Ojo: el `.env` guarda `http://n8n:5678/...`, que es la URL interna de Docker para la app; desde el host usa la de por defecto.
 - `--esperar` espera la ejecución como máximo `--timeout` segundos (30 por defecto).
 - Códigos de salida: `0` bien · `1` fichero, JSON o `evento` inválido (o respuesta distinta de 200) · `2` uso. Al lanzarlo con `task`, cualquier fallo termina con el código 201 del propio task.
+
+### Mapa del proceso: hoy vs automatizado
+
+El apartado completo de la zapatería, dibujado en **Mermaid** — [ver los flujos](docs/business/mapa-proceso-apartado/flujos.md): GitHub los pinta al abrir esta página; nada que arrastrar ni importar.
 
 ### 5. Configurar el MCP de n8n en opencode
 

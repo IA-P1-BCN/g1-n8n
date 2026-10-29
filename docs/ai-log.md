@@ -67,7 +67,7 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
 
 
 
-### US-20 · Mapa BPMN del proceso de apartado ([#38](https://github.com/IA-P1-BCN/g1-n8n/issues/38), PR #128, 2026-10-28)
+### US-20 · Mapa del proceso de apartado ([#38](https://github.com/IA-P1-BCN/g1-n8n/issues/38), PR #128, 2026-10-28)
 
 - **Prompts (textuales de la sesión)**:
   1. *(28/10)* «Hagamos esta tarea: Mapa BPMN del proceso de apartado [US-20 #38]»
@@ -76,14 +76,16 @@ No se han usado otros modelos ni generadores de imagen/código n8n comercial.
   4. *(28/10)* «Haz PR» → PR #128 abierta; commit posterior del nº real en la bitácora
   5. *(28/10)* «Haz pull de la main para traer los cambios» → entran US-17/#125 (receptor sin scaffold + fallback), US-18/#127 (`task demo`); conflicto de `AGENTS.md` resuelto en el PR (merge de main en la rama)
   6. *(28/10)* «Elimina el readme.md … dentro de mapa-proceso-apartado. En el readme.md del proyecto añade solo los links para visualizar los diagramas»
+  7. *(28/10)* «Haz los flujos con mermaid, que en readme.md del proyecto esté el link para ver los flujos sin tener que arrastrar ficheros. No los hagas en BPMN. En el readme haz que el título sea legible, haz visibilidad de apartado»
 - **Decisiones**:
-  - *Aceptar*: diagramas **BPMN 2.0** ficheros versionados (`proceso-hoy.bpmn`, `proceso-automatizado.bpmn` en `docs/business/mapa-proceso-apartado/`) generados con un script Python (temporal, no versionado) — el criterio pide BPMN/Miro/Excalidraw y así queda editable y exportable.
-  - *Aceptar*: automatizado dibujado solo con **lo construido** (Receptor · Webhook tienda, Flujos 01/02/08); las ramas `venta.registrada`/`apartado.vencido` del Switch y los abonos a distancia van como **notas** de pendientes, no como flujos inventados.
-  - *Rechazar*: README dedicado del mapa y los bloques Mermaid duplicados (3.ª iteración del equipo): los `.bpmn` versionados + links en el README del proyecto bastan; sin doble mantenimiento.
+  - *Rechazar* (iteración final del equipo): los `.bpmn` y su «arrastrar a bpmn.io» — se sustituyen por **Mermaid** en `flujos.md`, que GitHub pinta al abrir la página; el README solo enlaza.
+  - *Rechazar*: README dedicado del mapa (2.ª iteración) — quedó sustituido por `flujos.md` como única página del mapa.
+  - *Aceptar*: el apartado del mapa pasa a **sección propia del README** (`### Mapa del proceso: hoy vs automatizado`, título legible y visible, no una subsección enterrada en los flujos).
+  - *Aceptar*: diagramas generados/editables con un script Python (temporal), dibujados solo con **lo construido** (Receptor · Webhook tienda, Flujos 01/02/08); ramas `venta.registrada`/`apartado.vencido` reservadas (04 · US-09, 06 · US-07, sin conectar) y Bizum a mano como notas honestas.
   - *Aceptar*: tras el sync con main, la nota del Switch cita los flujos reservados con su número real (04 · venta, US-09; 06 · vencido, US-07).
   - *Aceptar*: `task importar` tras traer cambios de main cuando toquen `workflows/` — el n8n local seguía con el Receptor viejo y `task test` fallaba de nombre/fallback (carrera de «executions» post-rearranque, un solo rerun y en verde).
 - **Errores → correcciones**: ver tabla (E13 · inline de jq, E14 · namespaces y plane del BPMN, E15 · «Switchán»).
-- **Resultado**: los dos diagramas abren en bpmn.io y en las vistas locales (bpmn-js); validación con `bpmn-moddle` (0 warnings) e importación del viewer OK.
+- **Resultado**: `docs/business/mapa-proceso-apartado/flujos.md` con los 2 bloques Mermaid (validados con `mermaid-cli`: 2/2 renderizan), link desde el README y regla actualizada en AGENTS.md; los `.bpmn` eliminados del repo.
 
 
 ### Dev · `task payload` para probar el receptor con payloads propios (2026-10-28)
