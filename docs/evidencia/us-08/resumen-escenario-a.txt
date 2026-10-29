@@ -1,0 +1,7 @@
+PASS · informe-dia-1 · ejecutar el flujo el día 1 de mes (o forzarlo manualmente) · exit code 0
+PASS · informe-dia-1 · correo de informe mensual recibido en Mailpit · ID=msg-informe-mensual-01
+PASS · informe-dia-1 · correo incluye recaudación del mes anterior con ventas y abonos por separado · ventas=3284.10€ (OK), abonos=160.00€ (OK), total=3444.10€ (OK)
+PASS · informe-dia-1 · correo incluye el total pendiente de cobro y apartados nuevos, liquidados y vencidos · pendiente=558.80€, nuevos=4, liquidados=1, vencidos=1
+PASS · informe-dia-1 · los importes del correo coinciden con los de la app · recaudación=3444.10€ (app 3444.10€), pendiente=558.80€ (app 558.80€)
+
+total: 5 PASS / 0 FAIL
