@@ -72,9 +72,9 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
       "typeVersion": 1,
       "position": [160, -220],
-      "parameters": { "model": "llama-3.3-70b-versatile", "options": {} },
+      "parameters": { "model": "openai/gpt-oss-20b", "options": {} },
       "credentials": {
-        "groqApi": { "id": "GROQABONOSDISTANCIA01", "name": "Groq (abonos a distancia)" }
+        "groqApi": { "id": "U33Y0PgdWo5ipSHz", "name": "Groq (abonos a distancia)" }
       }
     },
     {
@@ -120,7 +120,7 @@
         "options": { "response": { "response": { "fullResponse": true } } }
       },
       "credentials": {
-        "httpHeaderAuth": { "id": "APITIENDAXAPIKEY001", "name": "API tienda (X-API-Key)" }
+        "httpHeaderAuth": { "id": "xmq3REEJx9EEH458", "name": "API tienda (X-API-Key)" }
       }
     },
     {
@@ -169,7 +169,7 @@
         "options": { "response": { "response": { "fullResponse": true } } }
       },
       "credentials": {
-        "httpHeaderAuth": { "id": "APITIENDAXAPIKEY001", "name": "API tienda (X-API-Key)" }
+        "httpHeaderAuth": { "id": "xmq3REEJx9EEH458", "name": "API tienda (X-API-Key)" }
       }
     },
     {
